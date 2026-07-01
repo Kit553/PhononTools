@@ -22,13 +22,13 @@ plt.rcParams["savefig.format"] = "svg"
 # USER SETTINGS
 # ---------------------------------------------------------------------
 # Files
-h5file = Path(r"/home/peckert/data/1_MasterThesis/1_Na3PS4_tet_114/6_FreqBall/directional_pdos.h5")
-structure_file = Path(r"/home/peckert/data/1_MasterThesis/1_Na3PS4_tet_114/6_FreqBall/POSCAR-unitcell")
+h5file = Path(r"path/to/directional_pdos.h5")
+structure_file = Path(r"path/to/POSCAR")
 
 # Atom/site selection
 # This is the local index into /ions/primitive_indices in the HDF5 file, not
 # necessarily the raw POSCAR index. The script prints the mapping at startup.
-h5_local_ion_index = 5
+h5_local_ion_index = 1
 
 # Set to None to use the primitive index corresponding to h5_local_ion_index.
 # Override with an integer if you want the neighbor cage around another site.
