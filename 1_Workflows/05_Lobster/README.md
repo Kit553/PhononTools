@@ -39,7 +39,7 @@ Writing the `WAVECAR` can take some calculation time especially since the requir
 
 ---
 
-#### 2. Creation of the Inpout file:
+#### 2. Creation of the Input file:
 Creation of the `lobsterin` file depends strongly on the usecase of your calculation. The file provided here is an all-rounder
 providing basically all metric needed for thorough bonding analysis, an explanation of the keywords is given below, <opt> marks optional tags.
 
