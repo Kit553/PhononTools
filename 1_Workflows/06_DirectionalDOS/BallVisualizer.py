@@ -90,7 +90,7 @@ selected_2d_arrow_zorder = 80
 
 WORLD_UP = np.array([0.0, 0.0, 1.0])
 
--
+
 def set_window_title(fig: plt.Figure, title: str) -> None:
     try:
         fig.canvas.manager.set_window_title(title)
@@ -645,7 +645,7 @@ if central_site.species_string != "Na":
         "\nWARNING: central_structure_index does not point to Na. "
         "The ball can still be colored by Na pDOS, but the neighbor cage is not around Na."
     )
-e.
+    
 (
     voronoi_directions,
     voronoi_values,
