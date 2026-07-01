@@ -12,11 +12,11 @@ import numpy as np
 # USER SETTINGS
 
 h5file = Path(
-    r"/home/peckert/data/1_MasterThesis/1_Na3PS4_tet_114/6_FreqBall/directional_pdos.h5"
+    r"path/to/directional_pdos.h5"
 )
 
 outdir = Path(
-    r"/home/peckert/data/1_MasterThesis/1_Na3PS4_tet_114/6_FreqBall/freqballz_analysis"
+    r"path/to/output"
 )
 
 # Set to None to skip the check.
