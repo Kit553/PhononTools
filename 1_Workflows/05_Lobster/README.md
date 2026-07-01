@@ -156,66 +156,66 @@ Usually the post-processing take between ~15-20 minutes and can be done in an in
 
 ## Theory and Further Reading:
 
-**Plane-Wave Projection:**
-[Müller, P. C.; Reitz, L. S.; Hemker, D.; Dronskowski, R. Orbital-based bonding analysis in solids. Chemical Science 2025, 16, 12212–12226.]( https://doi.org/10.1039/d5sc02936h)
-[Maintz, S.; Deringer, V. L.; Tchougréeff, A. L.; Dronskowski, R. Analytic projection from plane-wave and PAW wavefunctions and application to chemical-bonding analysis in solids. Journal of Computational Chemistry 2013, 34, 2557–2567.](https://doi.org/10.1002/jcc.23424)
-[Maintz, S.; Esser, M.; Dronskowski, R. Efficient Rotation of Local Basis Functions Using Real Spherical Harmonics. Acta Physica Polonica B 2016, 47, 1165.](https://doi.org/10.5506/APhysPolB.47.1165)
-
+**Plane-Wave Projection:**  
+[Müller, P. C.; Reitz, L. S.; Hemker, D.; Dronskowski, R. Orbital-based bonding analysis in solids. Chemical Science 2025, 16, 12212–12226.]( https://doi.org/10.1039/d5sc02936h)  
+[Maintz, S.; Deringer, V. L.; Tchougréeff, A. L.; Dronskowski, R. Analytic projection from plane-wave and PAW wavefunctions and application to chemical-bonding analysis in solids. Journal of Computational Chemistry 2013, 34, 2557–2567.](https://doi.org/10.1002/jcc.23424)  
+[Maintz, S.; Esser, M.; Dronskowski, R. Efficient Rotation of Local Basis Functions Using Real Spherical Harmonics. Acta Physica Polonica B 2016, 47, 1165.](https://doi.org/10.5506/APhysPolB.47.1165)  
+  
 ---
 
-**LOBSTER:**
-[Nelson, R.; Ertural, C.; George, J.; Deringer, V. L.; Hautier, G.; Dronskowski, R. LOBSTER: Local orbital projections, atomic charges, and chemical-bonding analysis from projector-augmented-wave-based density-functional theory. Journal of Computational Chemistry 2020, 41, 1931–1940](https://doi.org/10.1002/jcc.26353)
+**LOBSTER:**  
+[Nelson, R.; Ertural, C.; George, J.; Deringer, V. L.; Hautier, G.; Dronskowski, R. LOBSTER: Local orbital projections, atomic charges, and chemical-bonding analysis from projector-augmented-wave-based density-functional theory. Journal of Computational Chemistry 2020, 41, 1931–1940](https://doi.org/10.1002/jcc.26353)  
 [Maintz, S.; Deringer, V. L.; Tchougréeff, A. L.; Dronskowski, R. LOBSTER: A tool to extract chemical bonding from plane-wave based DFT. Journal of Computational Chemistry 2016, 37, 1030–1035](https://doi.org/10.1002/jcc.24300)
 
 ---
 
-**COHP:**
-[Dronskowski, R.; Bloechl, P. E. Crystal orbital Hamilton populations (COHP): energy-resolved visualization of chemical bonding in solids based on density-functional calculations. The Journal of Physical Chemistry 1993, 97, 8617–8624.](https://doi.org/10.1021/j100135a014)
-[Deringer, V. L.; Tchougréeff, A. L.; Dronskowski, R. Crystal Orbital Hamilton Population (COHP) Analysis As Projected from Plane-Wave Basis Sets. The Journal of Physical Chemistry A 2011, 115, 5461–5466.](https://doi.org/10.1021/jp202489s)
-[Steinberg, S.; Dronskowski, R. The Crystal Orbital Hamilton Population (COHP) Method as a Tool to Visualize and Analyze Chemical Bonding in Intermetallic Compounds. Crystals 2018, 8, 225.](https://doi.org/10.3390/cryst8050225)
+**COHP:**  
+[Dronskowski, R.; Bloechl, P. E. Crystal orbital Hamilton populations (COHP): energy-resolved visualization of chemical bonding in solids based on density-functional calculations. The Journal of Physical Chemistry 1993, 97, 8617–8624.](https://doi.org/10.1021/j100135a014)  
+[Deringer, V. L.; Tchougréeff, A. L.; Dronskowski, R. Crystal Orbital Hamilton Population (COHP) Analysis As Projected from Plane-Wave Basis Sets. The Journal of Physical Chemistry A 2011, 115, 5461–5466.](https://doi.org/10.1021/jp202489s)  
+[Steinberg, S.; Dronskowski, R. The Crystal Orbital Hamilton Population (COHP) Method as a Tool to Visualize and Analyze Chemical Bonding in Intermetallic Compounds. Crystals 2018, 8, 225.](https://doi.org/10.3390/cryst8050225)  
 
 ---
 
-**COBI:**
+**COBI:**  
 [Peter C. Müller, Christina Ertural, Jan Hempelmann, and Richard Dronskowski The Journal of Physical Chemistry C 2021 125 (14), 7959-7970 ](https://doi.org/10.1021/acs.jpcc.1c00718)
 
 ---
 
-**DOS/pDOS:**
+**DOS/pDOS:**  
 [Toriyama, M. Y.; Ganose, A. M.; Dylla, M.; Anand, S.; Park, J.; Brod, M. K.; Munro, J. M.; Persson, K. A.; Jain, A.; Snyder, G. J. How to analyse a density of states. Materials Today Electronics 2022, 1, 100002.](https://doi.org/10.1016/j.mtelec.2022.100002)
 
 ---
 
-**Charge Population Analysis:**
+**Charge Population Analysis:**  
 [Ertural, C.; Steinberg, S.; Dronskowski, R. Development of a robust tool to extract Mulliken and Löwdin charges from plane waves and its application to solid-state materials. RSC Advances 2019, 9, 29821–29830](https://doi.org/10.1039/c9ra05190b)
 
 ---
 
-**Fatband Plots**
+**Fatband Plots**  
 [Landrum, G. A.; Dronskowski, R.; Niewa, R.; DiSalvo, F. J. Electronic Structure and Bonding in Cerium (Nitride) Compounds: Trivalent versus Tetravalent Cerium. Chemistry – A European Journal 1999, 5, 515–522.](https://doi.org/10.1002/(SICI)1521-3765(19990201)5:2<515::AID-CHEM515>3.0.CO;2-Y)
 
 ---
 
-**Density of Energies**
+**Density of Energies**  
 [Küpers, M.; Konze, P. M.; Maintz, S.; Steinberg, S.; Mio, A. M.; Cojocaru-Mirédin, O.; Zhu, M.; Müller, M.; Luysberg, M.; Mayer, J.; Wuttig, M.; Dronskowski, R. Unexpected Ge–Ge Contacts in the Two-Dimensional Ge4Se3Te Phase and Analysis of Their Chemical Cause with the Density of Energy (DOE) Function. Angewandte Chemie International Edition 2017, 56, 10204–10208.](https://doi.org/10.1002/anie.201612121)
 ---
 
-**Molecular Fragment Analysis:**
+**Molecular Fragment Analysis:**  
 [Peter C. Müller, Nathalie Schmit, Leander Sann, Simon Steinberg, and Richard Dronskowski Inorganic Chemistry 2024 63 (43), 20161-20172](https://doi.org/10.1021/acs.inorgchem.4c01024)
 
 ---
 
-**A Quantum-Chemical Bonding Database for Solid-State Materials**
+**A Quantum-Chemical Bonding Database for Solid-State Materials**  
 [Naik, A. A.; Ertural, C.; Dhamrait, N.; Benner, P.; George, J. A Quantum-Chemical Bonding Database for Solid-State Materials. Scientific Data 2023, 10, 610.](https://doi.org/10.1038/s41597-023-02477-5)
 
 ---
 
-**Additional Software**
+**Additional Software**  
 [PyMatGen Implementations](https://pymatgen.org/pymatgen.io.lobster.html)
 
 ---
 
-**Automation Workflows**
-[Wang, Y.; Müller, P. C.; Hemker, D.; Dronskowski, R. LOPOSTER: A Cascading Post-processor for LOBSTER. Journal of Computational Chemistry 2025, 46, e70167.](https://doi.org/10.1002/jcc.70167)
+**Automation Workflows**  
+[Wang, Y.; Müller, P. C.; Hemker, D.; Dronskowski, R. LOPOSTER: A Cascading Post-processor for LOBSTER. Journal of Computational Chemistry 2025, 46, e70167.](https://doi.org/10.1002/jcc.70167)  
 [George, J.; Petretto, G.; Naik, A.; Esters, M.; Jackson, A. J.; Nelson, R.; Dronskowski, R.; Rignanese, G.-M.; Hautier, G. Automated Bonding Analysis with Crystal Orbital Hamilton Populations. ChemPlusChem 2022, 87, e202200123.](https://doi.org/10.1002/cplu.202200123)
 
