@@ -1,0 +1,27 @@
+  SYSTEM = VASPCALC  # name of calculation
+
+  NWRITE =      2    # how much will be written to the file OUTCAR
+  PREC   = Accurate  # precision
+  ENCUT  =    520    # cutoff energy for the plane-wave-basis set in eV
+  NPAR =       4     # number of bands that are treated in parallel (recomm: sqrt(no. of cores))
+  GGA = PS
+
+# Electronic Relaxation
+  EDIFF  =  1E-08    # stopping-criterion for ELM
+  ALGO  =     Normal # electronic minimisation algorithm; if possible fast
+  NELM   =    100    # max. number of electronic iterations
+  NELMIN =      5    # require at least 3 electronic iterations per ionic step
+  NELMDL =     -5    # number of non-selfconsistent steps at the beginning
+
+  LCHARG = .FALSE.   # determines whether the charge densities are written
+  LWAVE  = .TRUE.   # determines whether the wavefunctions are written to the WAVECAR file
+  ADDGRID = .TRUE.
+  LASPH = .TRUE.
+
+# Ionic relaxation
+  NSW = 0           # max. number of ionic iterations
+  IBRION = -1        # determines how the ions are updated and moved; if possible 1
+
+  ISYM = 0
+  ISMEAR = -5        # how the partial occupancies are set for each orbital
+  NBANDS = 64
