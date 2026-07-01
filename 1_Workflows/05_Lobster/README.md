@@ -75,7 +75,11 @@ The chosen basis is extremely important for any descriptor you calculate, it sho
 - `cohpBetween`   &rarr; requests COHP calculation between an explicit pair of atoms syntax like `cohpBetween atom 1 atom 2 cell n1 n2 n3 <opt>:orbitalWise` where n1 n2 n3 denote the zero-based indices of the unitcell, if a primitive cell is used, wrapping between periodic images can be done by providing negative indices. The atom numeration follows the one-based `POSCAR` syntax.  
 - `skipCOHP`      &rarr; requests to skip COHP calculation for a pair of atoms  
 - `kSpaceCOHP`    &rarr; requests *k*-resolution of the COHP  
-The provided script ... can read in your POSCAR and automatically generate the `cohpBetween` lines to match your usecase. 
+The provided script PairFinder.py can read in your POSCAR and automatically generate the `cohpBetween` lines to match your usecase. The relevant CLI is
+
+```bash
+python write_cohp_between.py POSCAR --pairs Element1-Element2 --rmax Value <opt:> --orbital-wise
+```
 
 **COOP:** Overlap population analysis, created alongside the COHPs.  
 - `skipCOOP` &rarr; explicitly skips COOP calculation for a pair of atoms, same syntax as `cohpGenerator`  
