@@ -2,7 +2,7 @@
 **Use:** Obtain information on the electronic structure of the material and get the relevant bonding descriptors from a finished static VASP run.
 
 ## Workflow:
-**Prerequisites:** It is necessary to have the LOBSTER program downloaded and on PATH e.g. in your `/bin/` folder, for setup of the software see the [LOBSTER Website](http://www.cohp.de/).
+**Prerequisites:** It is necessary to have the LOBSTER program downloaded and on `PATH` e.g. in your `/bin/` folder, for setup of the software see the [LOBSTER Website](http://www.cohp.de/).
 
 **Folder Setup:**
 **Static Calculation Run**
@@ -147,13 +147,14 @@ This requires the molecules to be defined first via:
 - `skipMolecularOrbitals`                &rarr; skips writing molecular-orbital cube files
 
 #### 3. Running the LOBSTER Calculation
+
 Once the calculation has finished running and the `lobsterin` file has been written according to your specifications, you can run the LOBSTER post-processing with the command:
 
 ```bash
 lobster > lobster.out
 ```
 
-Usually the post-processing take between ~15-20 minutes and can be done in an interactive job. If your system is huge or you request a lot of descriptors use the jobLOB.sh file to submit it to queue.
+Usually the post-processing take between ~15-20 minutes and can be done in an interactive job. If your system is huge or you request a lot of descriptors use the jobLOB.sh file to submit it to queue, this can make trouble with `PATH` inheritance be sure to alias your `LOBSTER` executable.
 
 ## Theory and Further Reading:
 
