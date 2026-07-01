@@ -1,0 +1,74 @@
+phonopy:
+  phonopy_yaml: phonopy_disp.yaml
+  force_sets: FORCE_SETS
+  born: BORN_Symm
+  mesh: [15, 15, 15]
+
+sampling:
+  n_directions: 1000
+  freq_min: -2.0
+  freq_max: 25.0
+  freq_pitch: 0.01
+  sigma: 0.05
+
+named_directions:
+  coordinate_system: fractional
+  entries:
+    - name: Na0_to_s1_BVS_5_BVS   # distance = 1.621595; grouped = Na0_to_s1_BVS_5_BVS
+      vector: [-0.222000, 0.014000, -0.074801]
+    - name: Na0_to_s1_BVS_7_BVS   # distance = 1.621595; grouped = Na0_to_s1_BVS_7_BVS
+      vector: [0.222000, -0.014000, -0.074801]
+    - name: Na0_to_s3_BVS_0_BVS   # distance = 1.716655; grouped = Na0_to_s3_BVS_0_BVS, Na1_to_s3_BVS_1_BVS, Na3_to_s3_BVS_2_BVS, Na4_to_s3_BVS_3_BVS
+      vector: [0.000000, 0.000000, 0.244199]
+    - name: Na1_to_s1_BVS_4_BVS   # distance = 1.621595; grouped = Na1_to_s1_BVS_4_BVS
+      vector: [0.014000, 0.222000, 0.074801]
+    - name: Na1_to_s1_BVS_6_BVS   # distance = 1.621595; grouped = Na1_to_s1_BVS_6_BVS
+      vector: [-0.014000, -0.222000, 0.074801]
+    - name: Na3_to_s1_BVS_1_BVS   # distance = 1.621595; grouped = Na3_to_s1_BVS_1_BVS
+      vector: [-0.222000, -0.014000, 0.074801]
+    - name: Na3_to_s1_BVS_3_BVS   # distance = 1.621595; grouped = Na3_to_s1_BVS_3_BVS
+      vector: [0.222000, 0.014000, 0.074801]
+    - name: Na4_to_s1_BVS_0_BVS   # distance = 1.621595; grouped = Na4_to_s1_BVS_0_BVS
+      vector: [0.014000, -0.222000, -0.074801]
+    - name: Na4_to_s1_BVS_2_BVS   # distance = 1.621595; grouped = Na4_to_s1_BVS_2_BVS
+      vector: [-0.014000, 0.222000, -0.074801]
+    - name: Na5_to_s1_BVS_0_BVS   # distance = 1.919542; grouped = Na5_to_s1_BVS_0_BVS, Na5_to_s1_BVS_2_BVS
+      vector: [0.014000, 0.278000, 0.000000]
+    - name: Na5_to_s1_BVS_1_BVS   # distance = 1.919542; grouped = Na5_to_s1_BVS_1_BVS
+      vector: [0.278000, -0.014000, 0.000000]
+    - name: Na6_to_s1_BVS_4_BVS   # distance = 1.919542; grouped = Na6_to_s1_BVS_4_BVS, Na6_to_s1_BVS_6_BVS
+      vector: [0.014000, -0.278000, 0.000000]
+    - name: Na6_to_s1_BVS_5_BVS   # distance = 1.919542; grouped = Na6_to_s1_BVS_5_BVS
+      vector: [0.278000, 0.014000, 0.000000]
+    - name: Na0_to_Na6_NaNa   # distance = 3.487908; grouped = Na0_to_Na6_NaNa, Na3_to_Na5_NaNa, Na5_to_Na3_NaNa, Na6_to_Na0_NaNa
+      vector: [0.500000, 0.000000, -0.074801]
+    - name: Na0_to_Na4_NaNa   # distance = 3.514869; grouped = Na0_to_Na4_NaNa, Na1_to_Na3_NaNa, Na3_to_Na1_NaNa, Na4_to_Na0_NaNa
+      vector: [0.000000, 0.000000, 0.500000]
+    - name: Na0_to_Na5_NaNa   # distance = 4.563261; grouped = Na0_to_Na5_NaNa, Na3_to_Na6_NaNa, Na5_to_Na0_NaNa, Na6_to_Na3_NaNa
+      vector: [0.000000, -0.500000, 0.425199]
+    - name: Na1_to_Na6_NaNa   # distance = 3.487908; grouped = Na1_to_Na6_NaNa, Na4_to_Na5_NaNa, Na5_to_Na4_NaNa, Na6_to_Na1_NaNa
+      vector: [0.000000, 0.500000, 0.074801]
+    - name: Na1_to_Na5_NaNa   # distance = 4.563261; grouped = Na1_to_Na5_NaNa, Na4_to_Na6_NaNa
+      vector: [-0.500000, 0.000000, -0.425199]
+
+ions:
+  indices: [8, 9, 10, 11, 12, 13]
+
+output:
+  file: results/directional_pdos.h5
+  spectra_dtype: float32
+
+einstein:
+  min_freq: 0.10
+
+selection:
+  low_freq_cutoff: 2.0
+  n_high_avg: 3
+  n_low_avg: 3
+  n_high_lowfreq: 4
+  n_high_einstein_weight: 4
+  max_selected: 20
+  min_separation_deg: 12.0
+
+  mode_extrema_overlap_fraction: 0.10
+  mode_extrema_min_abs_overlap: 1.0e-10
