@@ -10,10 +10,14 @@
 - `INCAR`   &rarr; job parameters; be sure that the run is A) Static and B) `LEPSILON` is set to .TRUE. to compute the dielectric tensor
 - `job.sh`  &rarr; Job starter; see the uploaded file for recommended timings on PALMA-II
 
+---
+
 #### 1. Perform a static run
 As VASP has to calculate the dielectric tensor in this run, it can be far longer than a simple static SCF calculation. While an odd numbered grid is
 recommended to capture the behavior of the material around $\Gamma$ correctly, even numbered grids can be used to prevent visual weirdness around the
 zone center.
+
+---
 
 #### 2. Writing the BORN file
 After this run has concluded the BORN file can be written with PhonoPy using the created `OUTCAR` or `vasprun.xml`. 
@@ -28,6 +32,8 @@ when trying to debug or for low-symmetry/defective structures.
 ```python
   phonopy-vasp-born --nost > BORN_NoSymm
 ```
+
+---
 
 ## Theory:
 \[1\] [Gonze, X.; Lee, C. Dynamical matrices, Born effective charges, dielectric permittivity ten-
