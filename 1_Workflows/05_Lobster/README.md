@@ -198,6 +198,7 @@ Usually the post-processing take between ~15-20 minutes and can be done in an in
 
 **Density of Energies**  
 [Küpers, M.; Konze, P. M.; Maintz, S.; Steinberg, S.; Mio, A. M.; Cojocaru-Mirédin, O.; Zhu, M.; Müller, M.; Luysberg, M.; Mayer, J.; Wuttig, M.; Dronskowski, R. Unexpected Ge–Ge Contacts in the Two-Dimensional Ge4Se3Te Phase and Analysis of Their Chemical Cause with the Density of Energy (DOE) Function. Angewandte Chemie International Edition 2017, 56, 10204–10208.](https://doi.org/10.1002/anie.201612121)
+
 ---
 
 **Molecular Fragment Analysis:**  
