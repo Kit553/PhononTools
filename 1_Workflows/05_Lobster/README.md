@@ -1,21 +1,19 @@
-## Lobster
-**Use:** Obtain information on the electronic structure of the material and get the relvant bonding descriptors from a finished static VASP run.
+## LOBSTER
+**Use:** Obtain information on the electronic structure of the material and get the relevant bonding descriptors from a finished static VASP run.
 
 ## Workflow:
-**Prerequisites:** It is necessary to have the LOBSTER program downloaded and on PATH e.g. in your `/bin/` folder, for setup of the software see the [Lobster Website](http://www.cohp.de/).
+**Prerequisites:** It is necessary to have the LOBSTER program downloaded and on PATH e.g. in your `/bin/` folder, for setup of the software see the [LOBSTER Website](http://www.cohp.de/).
 
 **Folder Setup:**
 **Static Calculation Run**
 - `POSCAR`  &rarr; the final relaxed structure of your system
 - `POTCAR`  &rarr; the corresponding potential file
-- `INCAR`   &rarr; check that the Lobster relevant tags are set to the specifications below
-- `KPOINTS` &rarr; approprate *k*
-- `job.sh`  &rarr; job submitter for the static and LOBSTER run
+- `INCAR`   &rarr; check that the LOBSTER relevant tags are set to the specifications below
+- `KPOINTS` &rarr; appropriate *k*
+- `job.sh`  &rarr; job submiter for the static and LOBSTER run
 
-**Lobster Specific**
-- `lobsterin` &rarr; Input Parameters for Lobster; see below on details to write this file
-
-## Workflow:
+**LOBSTER Specific**
+- `lobsterin` &rarr; Input Parameters for LOBSTER; see below on details to write this file
 
 #### 1. Static Calculation
 The first step of this workflow is obtaining a high-quality PAW output from VASP, to achieve this make sure to adjust these tags of the `INCAR`:
@@ -24,7 +22,6 @@ The first step of this workflow is obtaining a high-quality PAW output from VASP
 These tags are required for LOBSTER to work on your run.
 - Write the `WAVECAR` with `LWAVE = .TRUE.`
 - Disable Symmetry with `ISYM = 0`
-- Set the appropriate amount of calculated bands with `NBANDS = N`, `N` should be
 - `NBANDS` needs to be set to include enough states, a general rule of thumb to setting this tag is $NBANDS \gtrapprox \sum_{Ions} n_{\mathrm{Ion}}\cdot n_{\mathrm{Orbitals}}$
 - Enable VASPs internal projection to make LOBSTERS job easier `LORBIT = 11`
 
@@ -44,8 +41,8 @@ Creation of the `lobsterin` file depends strongly on the usecase of your calcula
 providing basically all metric needed for thorough bonding analysis, an explanation of the keywords is given below, <opt> marks optional tags.
 
 **Mandatory Keywords:** Basis set definition
-- `basisSet` &rarr; Defines the electronic basis set used for Lobster; recommended to use `pbeVaspFit2015` for PBE functionals, be sure to adjust this when using other funtionals though; non-specified will use a standard LOBSTER set.
-- `basisFuntions` &rarr; defines what funtions are used and what orbitals are considered syntax like `basisFunctions Element orbitals` e.g. `basisFunctions S  3s 3p`.
+- `basisSet` &rarr; Defines the electronic basis set used for LOBSTER; recommended to use `pbeVaspFit2015` for PBE functionals, be sure to adjust this when using other functionals though; non-specified will use a standard LOBSTER set.
+- `basisFucntions` &rarr; defines what funtions are used and what orbitals are considered syntax like `basisFunctions Element orbitals` e.g. `basisFunctions S  3s 3p`.
 The chosen basis is extremely important for any descriptor you calculate, it should match well with the functional set used for the DFT runs**!**
 
 ---
@@ -54,7 +51,7 @@ The chosen basis is extremely important for any descriptor you calculate, it sho
 - `COHPstartEnergy` and `COHPendEnergy` &rarr; define the considered energy window in eV; this applies to all metrics  
 - `COHPsteps` &rarr; sets the energy grid resolution important for smooth curves without gaussian smearing; this applies to all metrics  
 - `saveProjectionToFile` &rarr; saves the projection to a local file for reruns  
-- `writeBasisSetFunctions` &rarr; writes out the used basis funtions; important for debugging and reproducibility  
+- `writeBasisFunctions` &rarr; writes out the used basis funtions; important for debugging and reproducibility  
 - `printTotalSpilling` &rarr; explicitly prints out charge spilling for diagnostics  
 
 ---  
@@ -64,7 +61,7 @@ The chosen basis is extremely important for any descriptor you calculate, it sho
 **Projection Quality:** More explicit reconstruction of the projected basis set; use for reproducibility and validation.  
 - `kpointwiseSpilling`      &rarr; reports the charge spilling per *k*-point  
 - `bondwiseSpilling`        &rarr; reports the charge spilling per bond type  
-- `loadProjectionFromFile`  &rarr; used to restart desriptor calculation from already existing calculation
+- `loadProjectionFromFile`  &rarr; used to restart descriptor calculation from already existing calculation
 
 - Advanced
     - `basisRotation`           &rarr; rotates the basis set read from the rerun file
@@ -76,20 +73,20 @@ The chosen basis is extremely important for any descriptor you calculate, it sho
 **COHP:** Energy-resolved bonding analysis, the main descriptor for bonding in LOBSTER.
 - `cohpGenerator` &rarr; defines the spatial extension in which COHP is generated between atoms syntax like `cohpGenerator from rmin to rmax type Element1  type Element2 <opt>:orbitalWise` 
 - `cohpBetween`   &rarr; requests COHP calculation between an explicit pair of atoms syntax like `cohpBetween atom 1 atom 2 cell n1 n2 n3 <opt>:orbitalWise` where n1 n2 n3 denote the zero-based indices of the unitcell, if a primitive cell is used, wrapping between periodic images can be done by providing negative indices. The atom numeration follows the one-based `POSCAR` syntax.  
-- `skipCOHP`      &rarr; requests to skip COHP calculaiton for a pair of atoms  
+- `skipCOHP`      &rarr; requests to skip COHP calculation for a pair of atoms  
 - `kSpaceCOHP`    &rarr; requests *k*-resolution of the COHP  
 The provided script ... can read in your POSCAR and automatically generate the `cohpBetween` lines to match your usecase. 
 
 **COOP:** Overlap population analysis, created alongside the COHPs.  
-- `skipCOHP` &rarr; explicilty skips COOP calculation for a pair of atoms, same syntax as `cohpGenerator`  
+- `skipCOOP` &rarr; explicitly skips COOP calculation for a pair of atoms, same syntax as `cohpGenerator`  
 
 **COBI:** Bond order analysis, created alongside the COHPs but can be explicitly computed.
 - `cobiBetween` &rarr; explicitly requests COBI calculations, same syntax as `cohpGenerator`  
-- `skipCOBI`    &rarr; explicilty skips COBI calculation for a pair of atoms, same syntax as `cohpGenerator`  
+- `skipCOBI`    &rarr; explicitly skips COBI calculation for a pair of atoms, same syntax as `cohpGenerator`  
 
 **DOS/pDOS:** Electronic Density of states, can be element- and/or orbital-resolved, created alongside the COHPs. 
 - `skipDOS` &rarr; explicitly requests to skip DOS/pDOS creation  
-- `LSODOS`  &rarr; writes the DOS   
+- `LSODOS`  &rarr; writes the local-symmetry-orbital-resolved DOS 
   
 **Population Analysis:** Wavefunction-based atomic charges and electron population at the atoms, created alongside COHPs.  
 - `skipPopulationAnalysis` &rarr; skips *Mulliken* and *Löwdin* atom charge calculation  
@@ -98,7 +95,7 @@ Population analysis is needed for estimation of Madelung energies *vide infra*
   
 **Madelung Energies:** Lattice energy and site potentials estimated from population analysis.  
 - `EwaldSum`             &rarr; changes scaling parameters for long-range electrostatic interaction syntax like `EwaldSum Param1 Param2`
-- `skipMadelungEnergies` &rarr; skips lattice energy calculation  
+- `skipMadelungEnergy`   &rarr; skips lattice energy calculation  
 
 --- 
  
@@ -109,10 +106,10 @@ This feature is **highly** dependent on the projection that is being used, make 
 ---  
 
 **Distribution Funtions:** Weighted spatial RDFs used to reconstruct bonding structure.
-- `BWDF`     &rarr; calculate ond weighted distribution funtion
-- `BWDFCOHP` &rarr; colculate COHP weighted distribution funtion
+- `BWDF`     &rarr; calculate bond-weighted distribution funtion
+- `BWDFCOHP` &rarr; calculate COHP weighted distribution funtion
 These are especially useful for large/disordered/defective systems where the bonding information is spatially variant.
-For small/ordered phases this information is usually redunant with COHP/COBI/COOP
+For small/ordered phases this information is usually redundant with COHP/COBI/COOP
 
 ---
 
@@ -123,14 +120,14 @@ This is very informative in systems where bonding isnt necesarrily pair-wise but
 ---
 
 **Real-Space Analysis:** matrix-level analysis, visualization tools and advanced debugging.
-- `printLCAORealSpaceWavefunction` &rarr; prints the real-space LCAO wavefuntion for a selected *k*-point, synatax like `printLCAORealSpaceWavefunction kpoint 1 coordinates 0 0 0 coordinates 1 1 1 box pointsPerAngstrom 25 bandList 10 11`
-- `printPAWRealSpaceWavefunction`  &rarr; prints the real-space PAW wavefuntion for a selected *k*-point, syntax like `printPAWRealSpaceWavefunction kpoint 1 coordinates 0 0 0 coordinates 1 1 1 box pointsPerAngstrom 25 bandList 10 11`
+- `printLCAORealSpaceWavefunction` &rarr; prints the real-space LCAO wavefunction for a selected *k*-point, syntax like `printLCAORealSpaceWavefunction kpoint 1 coordinates 0 0 0 coordinates 1 1 1 box pointsPerAngstrom 25 bandList 10 11`
+- `printPAWRealSpaceWavefunction`  &rarr; prints the real-space PAW wavefunction for a selected *k*-point, syntax like `printPAWRealSpaceWavefunction kpoint 1 coordinates 0 0 0 coordinates 1 1 1 box pointsPerAngstrom 25 bandList 10 11`
 - `writeAtomicOrbitals`            &rarr; writes out what orbitals are used in the local basis
-- `gridDensityForPrinting`         &rarr; controlls real-space grid spacing, syntax like `gridBufferForPrinting dist`
+- `gridDensityForPrinting`         &rarr; controlls real-space grid spacing, syntax like `gridBufferForPrinting value`
 - `gridBufferForPrinting`          &rarr; adds a buffer region in angström around printed orbitals to prevent boundary cutoff
 - `noFFTforVisualization`          &rarr; enforces direct, (potentally) more accurate visualization instead of FFT-based approach
-- `realspaceHamiltonian`           &rarr; wrties out the real-space Hamiltonian matrix, can be used for tight-binding style analysis, syntax like `realspaceHamiltonian layers 2`
-- `realspaceOverlap`               &rarr; writes the real-space overlapp matrix, synatx like `realspaceOverlap layers N`
+- `realspaceHamiltonian`           &rarr; writes out the real-space Hamiltonian matrix, can be used for tight-binding style analysis, syntax like `realspaceHamiltonian layers 2`
+- `realspaceOverlap`               &rarr; writes the real-space overlap matrix, syntax like `realspaceOverlap layers N`
 - `writeMatricesToFile`            &rarr; extract all matrices to file
 
 ---
@@ -145,19 +142,19 @@ This requires the molecules to be defined first via:
 - `skipMOFE`                             &rarr; skips printing out the molecular formation energies
 - `skipMolecularOrbitals`                &rarr; skips writing molecular-orbital cube files
 
-#### 3. Running the Lobster Calculation
+#### 3. Running the LOBSTER Calculation
 Once the calculation has finished running and the `lobsterin` file has been written according to your specifications, you can run the LOBSTER post-processing with the command:
 
 ```bash
 lobster > lobster.out
 ```
 
-Usually the post-processing take between ~15-20 minutes and can be done in an interactive job. If your system is huge or you request a lot of descriptors use the jobLOB.sh file to submitt it to queue.
+Usually the post-processing take between ~15-20 minutes and can be done in an interactive job. If your system is huge or you request a lot of descriptors use the jobLOB.sh file to submit it to queue.
 
 ## Theory and Further Reading:
 
 **Plane-Wave Projection:**  
-[Müller, P. C.; Reitz, L. S.; Hemker, D.; Dronskowski, R. Orbital-based bonding analysis in solids. Chemical Science 2025, 16, 12212–12226.]( https://doi.org/10.1039/d5sc02936h)  
+[Müller, P. C.; Reitz, L. S.; Hemker, D.; Dronskowski, R. Orbital-based bonding analysis in solids. Chemical Science 2025, 16, 12212–12226.](https://doi.org/10.1039/d5sc02936h)  
 
 [Maintz, S.; Deringer, V. L.; Tchougréeff, A. L.; Dronskowski, R. Analytic projection from plane-wave and PAW wavefunctions and application to chemical-bonding analysis in solids. Journal of Computational Chemistry 2013, 34, 2557–2567.](https://doi.org/10.1002/jcc.23424)  
 
