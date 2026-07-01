@@ -15,7 +15,7 @@
 - `BORN`       &rarr; optionally to compute the frequencies with NAC active, to write see [4_LO-TO](https://github.com/Kit553/PhononTools/tree/main/1_Workflows/04_LO-TO)
 - `conf.yaml`  &rarr; recipe for the `FreqBallz_4_1.py` script to work
 
-#### 1. Customizing your Config file
+### 1. Customizing your Config file
 
 The output of the calculation is fully controlled by the `config.yaml` file. The currently implemented options are listed below ordered by the `yaml` blocks:
 
@@ -60,10 +60,10 @@ Here you can optionally define explicit directions to be calculated besides the 
     - entries:                      &rarr; list of named directions with name and vector e.g. `name: Na5_to_s1_BVS_0_BVS vector: [0.014000, 0.278000, 0.000000]`; I recommend keeping identifiers near comment funtion of `yaml` files is #
 
 
-###### Defining Sampling and Selection Rules:
+#### Defining Sampling and Selection Rules:
 
 
-###### Finding the named_directions:
+#### Finding the named_directions:
 This folder also includes the `SiteFinder.py` python script; it can be used to automatically generate the list of named directions from the `POSCAR` of the structure and a second `SiteFinderConfig.yaml` explained below:
 
 ```yaml
@@ -101,7 +101,7 @@ The script can then be run via the command line giving the correctly formated `n
                                 --include-distance
 ```
 
-#### 2. Running the calculation:
+### 2. Running the calculation:
 
 Once the `config.yaml` file has been set up, the calculation can be run either locally via:
 
@@ -173,7 +173,7 @@ Idx  Symbol  Cartesian Position          Wyckoff
 [rank 0] Finished writing results to results/directional_pdos.h5
 ```
 
-#### 3. Inspecting the Output
+### 3. Inspecting the Output
 
 To make sure that the calculation run was successfull check the `directional_pdos.h5` file, it should contain the following keys:
 
