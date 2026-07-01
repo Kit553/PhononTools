@@ -9,9 +9,6 @@ import numpy as np
 from pymatgen.core import Structure
 
 
-# =========================
-# Editable defaults
-# =========================
 DEFAULT_STRUCTURE = Path("POSCAR")
 DEFAULT_OUTPUT = Path("cohpBetween_auto.txt")
 
@@ -23,8 +20,6 @@ DEFAULT_RMAX = 3.5
 DEFAULT_PAIRS: list[str] = []
 
 DEFAULT_ORBITAL_WISE = False
-# =========================
-
 
 @dataclass(frozen=True)
 class Contact:
