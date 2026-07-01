@@ -66,10 +66,10 @@ The chosen basis is extremely important for any descriptor you calculate, it sho
 - `bondwiseSpilling`        &rarr; reports the charge spilling per bond type  
 - `loadProjectionFromFile`  &rarr; used to restart desriptor calculation from already existing calculation
 
-Advanced
-- `basisRotation`           &rarr; rotates the basis set read from the rerun file
-- `autoRotate`              &rarr; allows LOBSTER to rotate the basis set where needed in reruns
-- `doNotOrthogonalizeBasis`, `skipReOrthonormalization` and `doNotUseAbsoluteSpilling` &rarr; skip validation of the projected basis 
+- Advanced
+    - `basisRotation`           &rarr; rotates the basis set read from the rerun file
+    - `autoRotate`              &rarr; allows LOBSTER to rotate the basis set where needed in reruns
+    - `doNotOrthogonalizeBasis`, `skipReOrthonormalization` and `doNotUseAbsoluteSpilling` &rarr; skip validation of the projected basis 
 
 ---  
 
