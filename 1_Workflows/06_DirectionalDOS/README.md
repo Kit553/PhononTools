@@ -59,10 +59,6 @@ Here you can optionally define explicit directions to be calculated besides the 
     - coordinate_system: fractional &rarr; defines how the directions are parsed either `fractiona`/`frac` or `cartesian`/`cart`
     - entries:                      &rarr; list of named directions with name and vector e.g. `name: Na5_to_s1_BVS_0_BVS vector: [0.014000, 0.278000, 0.000000]`; I recommend keeping identifiers near comment funtion of `yaml` files is #
 
-
-#### Defining Sampling and Selection Rules:
-
-
 #### Finding the named_directions:
 This folder also includes the `SiteFinder.py` python script; it can be used to automatically generate the list of named directions from the `POSCAR` of the structure and a second `SiteFinderConfig.yaml` explained below:
 
@@ -94,11 +90,11 @@ It should be noted here that this script only generates the minimum-image direct
 The script can then be run via the command line giving the correctly formated `named_direction` entries to be pasted into the `config.yaml` file.
 
 ```bash
-  python MakeNamedDirections.py input_positions.yaml \
-                                --n-nearest 4 \
-                                --max-distance 3.0 \
-                                --decimals 6 \
-                                --include-distance
+python MakeNamedDirections.py input_positions.yaml \
+                              --n-nearest 4 \           # max number of nearest sites
+                              --max-distance 3.0 \      # max radial distance for neighbouring sites
+                              --decimals 6 \            # Precision of the vectors
+                              --include-distance        # write distances into config.yaml
 ```
 
 ### 2. Running the calculation:
@@ -177,14 +173,14 @@ Idx  Symbol  Cartesian Position          Wyckoff
 
 To make sure that the calculation run was successfull check the `directional_pdos.h5` file, it should contain the following keys:
 
-  - /metadata           &rarr; a copy of the `config.yaml` file and provenance information
-  - /direction          &rarr; list of all computed directions as fractional or cartesian vectors
-  - /ions               &rarr; stores the ion group
-  - /frequency_points   &rarr; the frequency grid defining the pDOS spectra
-  - spectra             &rarr; contains the full pDOS curves for the directions
-  - /scalars            &rarr; has all the scalar descriptors defined in the selection section of the `config.yaml`   
-  - mode_extrema        &rarr; stores the extrema directions set in the selection section of the `config.yaml` 
-  - named_diredctions   &rarr; stores the named directions set in the selection section of the `config.yaml`
+- /metadata           &rarr; a copy of the `config.yaml` file and provenance information
+- /direction          &rarr; list of all computed directions as fractional or cartesian vectors
+- /ions               &rarr; stores the ion group
+- /frequency_points   &rarr; the frequency grid defining the pDOS spectra
+- spectra             &rarr; contains the full pDOS curves for the directions
+- /scalars            &rarr; has all the scalar descriptors defined in the selection section of the `config.yaml`   
+- mode_extrema        &rarr; stores the extrema directions set in the selection section of the `config.yaml` 
+- named_diredctions   &rarr; stores the named directions set in the selection section of the `config.yaml`
 
 Run the included helper script `h5Keys.py` to quickly check that everythings in order.
 
@@ -210,10 +206,24 @@ It opens four windows to control the visualization:
     4. Metric Marker Toggles:
        This toggles markers for special directions of the system; it shows (if available) the directions of the scalar descriptors define in the selection section of the `config.yaml`
 
+Finally, extract the scalar metrics and relevant pDOS curves with the `BallAnalyzer.py` script. This batch analyzer takes all ions in the `directional_pdos.h5` file and prints out the outputs:
+- summary.txt                                   &rarr; quick summary file about the calculation, similar to the `metadata` section of the `h5` file
+- rankings.txt                                  &rarr; gives a quick ranking of the important directions by the specified metrics
+- direction_descriptors.csv                     &rarr; full list of the directions and the calculated descriptors
+- pdos_summary.csv                              &rarr; global average of the pDOS to compare direction resolution; check this against your standard `PhonoPy` run to validate
+- pdos_per_atom_mean.csv                        &rarr; conventional atom resolved pDOS from the calculation
+- mode_extrema_all_directions.csv               &rarr; match extreme directions to the corresponing *q*-points
+- mode_extrema_selected_directions.csv          &rarr; compact overview of the above
 
+If `export_selected_ion_pdos = True`:
+- single_ion_pdos/selected_direction_pdos.csv   &rarr; pDOS curves along representative directions for the selected ion
+- single_ion_pdos/selected_direction_info.csv   &rarr; metadata of the representative directions
+- single_ion_pdos/direction_selection_table.csv &rarr; metadata of all directions from the selected ion to regex
 
+To use the script change the relvant `USER_SETTINGS`, most important among them:
+- `h5file`                      &rarr; `path/to/directional_pdos.h5`
+- `outdir`                      &rarr; `path/to/output`
+- `expected_indices`            &rarr; one-based indices of the ions according to `POSCAR` ordering, important to prevent mismatches
+- `pdos_export_local_ion_index` &rarr; zero-based index of the selected ion in the list of ions
 
-
-   
-
-
+The pDOS curves can the be plotted to obtain extremely direction resolved information of the system.
