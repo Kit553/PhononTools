@@ -1,6 +1,6 @@
 ## Directional DOS Analysis
 
-**Use:** Create and analyse a spatialy reolved partial phonon density of states, mapping the average pDOS akin to [Böger *et al*]() and extracting useful descriptors and selected direcional pDOS curves.
+**Use:** Create and analyse a spatialy reolved partial phonon density of states, mapping the average pDOS akin to [Böger *et al*](https://doi.org/10.1021/jacs.4c12034) and extracting useful descriptors and selected direcional pDOS curves.
 
 ## Workflow:
 
@@ -190,11 +190,27 @@ Run the included helper script `h5Keys.py` to quickly check that everythings in 
 
 #### 4. Analysing Output
 
-After finishing the calculation, the output can be analyzed starting from the visual inspection of the mapped average frequencies with the `Ballz_Visual.py` script. This script gives an interactive visualization of the frequency ball and cannot be run on PALMA-II, transfer the result file `directional_pdos.h5` to your local machine then run:
+After finishing the calculation, the output can be analyzed starting from the visual inspection of the mapped average frequencies with the `Ballz_Visual.py` script. This script gives an interactive visualization of the frequency ball and cannot be run on PALMA-II, transfer the result file `directional_pdos.h5` to your local machine then adjust the relevant sections of the script `USER SETTINGS` according to your needs. The most important ones are:
 
-```python
+- `h5file`             &rarr; `path/to/directional_pdos.h5`
+- `structure_file`     &rarr; `path/to/POSCAR`
+- `h5_local_ion_index` &rarr; zero based index of the visualized ion in the selected ion group
+- `metric`             &rarr; visualized metric; most commonly `"avg_freq"`; see the list in the file for other options
 
-```
+The remaing parameters are specialized and their use is explained in place in the file.
+
+It opens four windows to control the visualization:
+    1. 3D FreqBall Orientation View:
+       This is the main window and displays your ion site coloured by average frequency with the surrounding ions being shown as yellow balls to help with orientation, it also includes the frequency scale and a cross to show crystallographic directions
+    2. 2D Projection Preview
+       This window show a high-quality image of your ion site without any markers etc. it should be used to export the an svg image of the ion to set it safely in your figures
+    3. Orientation Controls
+       This window changes the orientation of the 2D and 3D interactive viewers to the given orientation matrix; it accurately matches the orientation matrix given by VESTA up to a factor of -1 so sometimes it is necessary to mirror the view to be accurate
+       switches between ortographic and perspective views; orthographic prevents distortion due to depth effects while perspective gives nicer figure plots due to depth correction in perspective view focal lenght `f` and camera distance `d` can be adjusted specifically
+    4. Metric Marker Toggles:
+       This toggles markers for special directions of the system; it shows (if available) the directions of the scalar descriptors define in the selection section of the `config.yaml`
+
+
 
 
 
