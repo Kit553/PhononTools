@@ -158,20 +158,26 @@ Usually the post-processing take between ~15-20 minutes and can be done in an in
 
 **Plane-Wave Projection:**  
 [Müller, P. C.; Reitz, L. S.; Hemker, D.; Dronskowski, R. Orbital-based bonding analysis in solids. Chemical Science 2025, 16, 12212–12226.]( https://doi.org/10.1039/d5sc02936h)  
+
 [Maintz, S.; Deringer, V. L.; Tchougréeff, A. L.; Dronskowski, R. Analytic projection from plane-wave and PAW wavefunctions and application to chemical-bonding analysis in solids. Journal of Computational Chemistry 2013, 34, 2557–2567.](https://doi.org/10.1002/jcc.23424)  
+
 [Maintz, S.; Esser, M.; Dronskowski, R. Efficient Rotation of Local Basis Functions Using Real Spherical Harmonics. Acta Physica Polonica B 2016, 47, 1165.](https://doi.org/10.5506/APhysPolB.47.1165)  
+
   
 ---
 
 **LOBSTER:**  
 [Nelson, R.; Ertural, C.; George, J.; Deringer, V. L.; Hautier, G.; Dronskowski, R. LOBSTER: Local orbital projections, atomic charges, and chemical-bonding analysis from projector-augmented-wave-based density-functional theory. Journal of Computational Chemistry 2020, 41, 1931–1940](https://doi.org/10.1002/jcc.26353)  
+
 [Maintz, S.; Deringer, V. L.; Tchougréeff, A. L.; Dronskowski, R. LOBSTER: A tool to extract chemical bonding from plane-wave based DFT. Journal of Computational Chemistry 2016, 37, 1030–1035](https://doi.org/10.1002/jcc.24300)
 
 ---
 
 **COHP:**  
-[Dronskowski, R.; Bloechl, P. E. Crystal orbital Hamilton populations (COHP): energy-resolved visualization of chemical bonding in solids based on density-functional calculations. The Journal of Physical Chemistry 1993, 97, 8617–8624.](https://doi.org/10.1021/j100135a014)  
+[Dronskowski, R.; Bloechl, P. E. Crystal orbital Hamilton populations (COHP): energy-resolved visualization of chemical bonding in solids based on density-functional calculations. The Journal of Physical Chemistry 1993, 97, 8617–8624.](https://doi.org/10.1021/j100135a014) 
+
 [Deringer, V. L.; Tchougréeff, A. L.; Dronskowski, R. Crystal Orbital Hamilton Population (COHP) Analysis As Projected from Plane-Wave Basis Sets. The Journal of Physical Chemistry A 2011, 115, 5461–5466.](https://doi.org/10.1021/jp202489s)  
+
 [Steinberg, S.; Dronskowski, R. The Crystal Orbital Hamilton Population (COHP) Method as a Tool to Visualize and Analyze Chemical Bonding in Intermetallic Compounds. Crystals 2018, 8, 225.](https://doi.org/10.3390/cryst8050225)  
 
 ---
@@ -218,5 +224,6 @@ Usually the post-processing take between ~15-20 minutes and can be done in an in
 
 **Automation Workflows**  
 [Wang, Y.; Müller, P. C.; Hemker, D.; Dronskowski, R. LOPOSTER: A Cascading Post-processor for LOBSTER. Journal of Computational Chemistry 2025, 46, e70167.](https://doi.org/10.1002/jcc.70167)  
+
 [George, J.; Petretto, G.; Naik, A.; Esters, M.; Jackson, A. J.; Nelson, R.; Dronskowski, R.; Rignanese, G.-M.; Hautier, G. Automated Bonding Analysis with Crystal Orbital Hamilton Populations. ChemPlusChem 2022, 87, e202200123.](https://doi.org/10.1002/cplu.202200123)
 
