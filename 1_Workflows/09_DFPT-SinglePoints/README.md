@@ -63,3 +63,5 @@ phonopy-load --readfc --qpoints="0 0 0" -p
 ```
 
 Make sure that `--qpoints` is correctly specified to only be $\Gamma$ for primitive cell DFPT.
+
+The frequencies will be written band wise to the `qpoints.yaml` file. Double check the ordering of the bands, they are ordered in ascending frequency and small mismatches can cause them to differ from those obtained by `PhonoPy`; when in doubt match the eigenvectors to find the correct band number.
