@@ -3,11 +3,11 @@
 
 ## Workflow:
 **Folder Setup:**
-- POSCAR &rarr;
-- POTCAR &rarr;
-- KPOINTS &rarr;
+- POSCAR &rarr; relaxed primitive cell of your system
+- POTCAR &rarr; corresponding potentials
+- KPOINTS &rarr; choose the same settings that give good electronic convergence
 - INCAR &rarr; make sure you set the correct `IBROIN = 8` setting for a DFPT run
-- job.sh
+- job.sh &arr; job starter for PALMA-II; see file for rough memory estimates and timing
 
 ### 1. Run SCF Calculation:
 
