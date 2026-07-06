@@ -34,7 +34,7 @@ Additionally, it can be helpful to consider aspherical contributions (`LASPH = .
 ### 2. Determine the *k*-mesh: 
 A good relaxation is strongly dependent on thorough sampling of the Brillouin zone, controled via the `KPOINTS` file. For insulators and semiconductors a good guideline is to construct the *k*-mesh based on reciprocal space.\
 
-$$k-point lenght / reciprocal density \appox 40-50$$
+$$k-point lenght~/~reciprocal~density~\approx~40~-~50$$
 
 While this *k*-spacing is sufficient in most cases, it is still necessary to check for convergence against denser grids to make absolutely sure that the calculation run is valid. See Workflow 00_Convergence for more details.
 
