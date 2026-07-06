@@ -1,5 +1,5 @@
 ## Relaxation:
-**Use**: Obtain the local athermal minimum of the structure as a requirement for most other workflows
+**Use**: Obtain the local athermal minimum of the structure as a requirement for most other workflows.
 
 ## Workflow
 ### 0. Obtain the initial structure guess:
@@ -20,7 +20,7 @@ To start the relaxation a structure must be supplied as the starting point, pref
 - `KPOINTS` &rarr; Brillouin zone integration mesh parameters; recommended to use roughly 50 points per $A^{-1}$
 - `job.sh`  &rarr; job submission script for PALMA-II
 
-#### 1. INCAR settings:
+### 1. INCAR settings:
 Below a list of the most important settings for ionic relaxation in the `INCAR` is given:
 - `EDIFFG` &rarr; force convergence criterion, usually set to `EDIFFG = -1E-03` so all forces are below $-1E-03$ eV per Angström
 - `NSW`    &rarr; maximum number of ionic steps for one relaxation run
@@ -31,7 +31,7 @@ Below a list of the most important settings for ionic relaxation in the `INCAR` 
 As the relaxed structure is the foundation of all further characterization it is generally recommended to go for a high degree of accuracy of this calculations, set sufficiently tight `EDIFF` and `EDIFFG` criteria.
 Additionally, it can be helpful to consider aspherical contributions (`LASPH = .TRUE.`), use the support grid for augementation charges (`ADDGRID = .TRUE.`) and playing around with the smearing method (`ISMEAR`) to get the optimal starting point.
 
-#### 2. Determine the *k*-mesh: 
+### 2. Determine the *k*-mesh: 
 A good relaxation is strongly dependent on thorough sampling of the Brillouin zone, controled via the `KPOINTS` file. For insulators and semiconductors a good guideline is to construct the *k*-mesh based on reciprocal space.\
 
 $$k-point lenght / reciprocal density \appox 40-50$$
@@ -93,7 +93,7 @@ FORCES acting on ions
 For thorough relaxation it is also good to backup and resubmit the first relaxed structure and check if further displacement takes place. To backup use the `varc` script [tools]([https://github.com/user/repo/blob/branch/other_file.md). This moves the structure of the prior relaxation run `CONTCAR` to `POSCAR` and saves a copy of the `OUTCAR` and `vasprun.xml`.
 To compare the two structures use `vimdiff` or a similar feature to see if more movement took place, if so, resubmit the job and repeat.
 
-#### 4. Get the static energy:
+### 4. Get the static energy:
 After the structure is completely relaxed, change the `INCAR` settings to perform one static run to get the final energy of the system. In most cases it is sufficient to set `NS" = 0`, but to be fully sure, also change the settings of `IBRION`, and remove `ISIF`, `EDIFFG`, and `IWAVPR`.
 
 Before running the job, make sure you have saved the last relaxation run properly by backing up with `varc`. Then resubmit the job and obtain the total energy at the bottom of the `OUTCAR` under: 
