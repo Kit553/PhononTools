@@ -22,7 +22,7 @@
   NSW = 100
   IBRION = 2
   ISIF = 3
-  IWAVPR = -5
+  IWAVPR = 1
 
   ISMEAR = -5
   #SIGMA = 0.04
