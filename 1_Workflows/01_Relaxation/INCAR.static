@@ -1,0 +1,24 @@
+SYSTEM = Static
+
+  NWRITE =      2
+  PREC   = Accurate
+  ENCUT  =    520  
+  NPAR =       4 
+  GGA = PS
+
+  EDIFF  =  1E-08
+  ALGO  =     Normal
+  NELM   =    100
+  NELMIN =      5
+  NELMDL =     -5
+
+  LASPH = .TRUE.
+  ADDGRID = .TRUE.
+  
+  LCHARG = .FALSE.
+  LWAVE  = .FALSE.
+
+  NSW = 0
+  IBRION =     -1
+  ISIF = 3
+  ISMEAR = -5
