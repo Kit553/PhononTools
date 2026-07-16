@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=Na3PSe4_relaxation         # the name of your job
+#SBATCH --job-name=JobName         # the name of your job
 ###SBATCH --output=$SLURM_SUBMIT_DIR/out_job_%j
 #SBATCH --nodes=2                # the number of nodes you want to reserve
 #SBATCH --ntasks-per-node=16        # the number of CPU cores per node
@@ -12,7 +12,7 @@
 #SBATCH --account=uni
 
 #SBATCH --mail-type=NONE             # receive an email when your job starts, finishes normally or is aborted
-#SBATCH --mail-user=peckert@uni-muenster.de # your mail address
+#SBATCH --mail-user=your@mail.domain # your mail address
 
 module load palma/2020b
 module load intel/2020b
