@@ -12,7 +12,7 @@
 **Folder Setup:**
 - `POSCAR`     &rarr; fully relaxed strucutre, make sure to use the same one as for your `PhonoPy` run
 - `FORCE_SETS` &rarr; second-order force constants from a previous `PhonoPy` run, check that these are stable
-- `BORN`       &rarr; optionally to compute the frequencies with NAC active, to write see [4_LO-TO](https://github.com/Kit553/PhononTools/tree/main/1_Workflows/04_LO-TO)
+- `BORN`       &rarr; optionally to compute the frequencies with NAC active, to write see [04_LO-TO](https://github.com/Kit553/PhononTools/tree/main/1_Workflows/04_LO-TO)
 - `conf.yaml`  &rarr; recipe for the `FreqBallz_4_1.py` script to work
 
 ### 1. Customizing your Config file
