@@ -4,6 +4,8 @@
 
 **Use:** Obtain the harmonic lattice dynamics for the system; baseline for any vibrational analysis. The output of this workflow includes: the *q*-resolved vibrational spectrum, the total as well as element or site resolved phonon DOS, the group velocities (and thereby approximation of speed of sound), anisotropic thermal displacement parameters, eigenvectors, thermodynamic properties as well as the bridge to Phono3Pys output.
 
+---
+
 ## Workflow:
 
 **Prerequisits:**
@@ -17,6 +19,8 @@
 - `KPOINTS`          &rarr; *k*-point mesh used for the calculation, be sure to reduce the number of KPOINTS according to your supercell
 - `job.sh`           &rarr; starter for the single runs; can also submit as a job array with `jobArray.sh` but its often overkill depending on your structure
 - `INCAR`            &rarr; specifications for the scf runs; make sure the electronics are consistent with your previous calculations especially the relaxation run
+
+---
 
 ### 1. Creating the displaced structures:
 
@@ -39,6 +43,8 @@ The used tags here are:
 - `--pa`  &rarr; the primitive axis system used; take note of what you use here it is important to keep it consistent between calculations
 - `--amplitude` &rarr; displacement amplitude used; this value depends highly on the system that you work on, it should be large enough to clearly differ from the equilibrium structure but small enough to minimize error due to anharmonic PES
 
+---
+
 ### 2. Setup and run the VASP calculations:
 
 For consistency it is good to include the supercell of the equilibrium structure in your calculations, it is saved in the `SPOSCAR` file but for consistency with the rest of the structures rename it with:
@@ -60,6 +66,8 @@ done
 
 Afterwards start the `VASP` runs in all of these subdirectories, importantly check that you do not relax the structures. Since the supercell structures are comparably large, it is good to monitor these jobs occasionally and check for OOM-kills.
 
+---
+
 ### 3. Obtaining Results:
 
 After the calculations of all displaced structures finishes you can write out the forces in the `FORCE_SETS` file.
@@ -70,6 +78,8 @@ phonopy --fz 000/vasprun.xml -f {001..013}/vasprun.xml
 
 where `--fz` signifies the equilibrium structure and `-f` the list of displaced structures.
 For the analysis the files you need to move to your system from the cluster are `FORCE_SETS`, `phonopy_disp.yaml` and optionally the `BORN` file from the workflow [04_LO-TO](https://github.com/Kit553/PhononTools/tree/main/1_Workflows/04_LO-TO).
+
+---
 
 ### 4. Analysis:
 
@@ -104,7 +114,9 @@ To obtain the results you need, this allows for more specific post-processing of
 
 For routine post-processing, this repo provides a Python wrapper for loading, analysing and writing out plot ready results from the `FORCE_SETS` and `phonopy_disp.yaml` file.
 See
-[PhonoPy_Analysis_Tools]()
+[PhonoPy_Analysis_Tools]().
+
+---
 
 ## Theory and Further Reading:
 
