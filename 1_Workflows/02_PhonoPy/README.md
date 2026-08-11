@@ -100,7 +100,7 @@ Often the output from `PhonoPy` can be much more valuable than simple dispersion
 - PDOS			  &rarr; list  of integers to calculate site resolved partial DOS; order follows that in the `phonopy_disp.yaml` file (equivalent to the `POSCAR` ordering); comma separates summed sites e.g. 1 2, 3, 5
 - GROUP_VELOCITY  &rarr; boolean to calculate the group velocities
 - TPROP           &rarr; boolean to set calculation of the harmonic thermodynamic properties on/off
-- TDISP/TDIPSMAT  &rarr; booleans to set calculation of the thermal displacement/thermal displacement matrices on/off
+- TDISP/TDISPMAT  &rarr; booleans to set calculation of the thermal displacement/thermal displacement matrices on/off
 
 Set up your `settings.conf` with the tags you desire, then run
 
