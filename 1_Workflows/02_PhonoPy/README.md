@@ -1,4 +1,4 @@
-## Obtaining a Phonon Dispersion with PhonoPy
+## Obtaining Harmonic Lattice Dynamics Information with PhonoPy
 
 **Versioning:** This workflow is developed around a dual setup of a local installation of `PhonoPy` (v.4.4.0) for post-processing and a cluster installation of `PhonoPy` (v.2.20.0) for the displacemnt creation and calculations with VASP 6.2.0. 
 
