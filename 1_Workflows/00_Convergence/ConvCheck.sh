@@ -24,7 +24,7 @@ done
     exit 1
 }
 
-printf "%-24s %10s %16s %16s %18s %18s %18s\n" \
+printf "%-24s %10s %16s %16s %18s %18s %18s %12s\n" \
     "Directory" "ENCUT" "ETOT" "ETOT/Atom" \
     "MaxForceAtom" "MaxCellStress" "PullayStress" "WallTime"
 
@@ -127,7 +127,7 @@ for dir in ${PREFIX}*/; do
         WALLTIME="NA"
     fi
 
-    printf "%-24s %10s %16s %16s %18s %18s %18s\n" \
+    printf "%-24s %10s %16s %16s %18s %18s %18s %12s\n" \
         "${dir%/}" \
         "${ENCUT:-NA}" \
         "${ETOT:-NA}" \
