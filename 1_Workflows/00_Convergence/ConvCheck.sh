@@ -24,11 +24,11 @@ done
     exit 1
 }
 
-printf "%-24s %10s %16s %16s %18s %18s %18s %12s\n" \
+printf "%-24s %10s %16s %16s %18s %18s %18s %16s\n" \
     "Directory" "ENCUT" "ETOT" "ETOT/Atom" \
-    "MaxForceAtom" "MaxCellStress" "PullayStress" "WallTime"
+    "MaxForceAtom" "MaxCellStress" "PullayStress" "WallTime (s)"
 
-printf '%*s\n' 126 '' | tr ' ' '-'
+printf '%*s\n' 142 '' | tr ' ' '-'
 
 for dir in ${PREFIX}*/; do
     [[ -d "$dir" ]] || continue
