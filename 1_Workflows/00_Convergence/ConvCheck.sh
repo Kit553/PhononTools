@@ -26,7 +26,7 @@ done
 
 printf "%-24s %10s %16s %16s %18s %18s %18s\n" \
     "Directory" "ENCUT" "ETOT" "ETOT/Atom" \
-    "MaxForceAtom" "MaxCellStress" "PullayStress"
+    "MaxForceAtom" "MaxCellStress" "PullayStress" "WallTime"
 
 printf '%*s\n' 126 '' | tr ' ' '-'
 
@@ -40,7 +40,6 @@ for dir in ${PREFIX}*/; do
         continue
     fi
 
-    # Ignore unfinished calculations unless verbose warning requested
     if ! grep -q "General timing and accounting informations" "$out"; then
         $VERBOSE && echo "Warning: $dir may be unfinished" >&2
     fi
@@ -114,6 +113,20 @@ for dir in ${PREFIX}*/; do
         }
     ' "$out")
 
+    ELAPSED=$(awk '/Elapsed time \(sec\)/ {t=$4} END{print t}' "$out")
+    if [[ -n "$ELAPSED" ]]; then
+        WALLTIME=$(awk -v s="$ELAPSED" '
+            BEGIN {
+                h=int(s/3600)
+                m=int((s-h*3600)/60)
+                sec=int(s-h*3600-m*60)
+                printf "%02d:%02d:%02d", h, m, sec
+            }
+        ')
+    else
+        WALLTIME="NA"
+    fi
+
     printf "%-24s %10s %16s %16s %18s %18s %18s\n" \
         "${dir%/}" \
         "${ENCUT:-NA}" \
@@ -121,6 +134,7 @@ for dir in ${PREFIX}*/; do
         "$EPA" \
         "$MAXFORCE" \
         "$MAXCELL" \
-        "$PULAY"
+        "$PULAY"    \
+        "$ELAPSED"
 
 done
