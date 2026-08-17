@@ -1,0 +1,26 @@
+  SYSTEM  = VASPCALC
+  NWRITE  =      2
+  PREC    = Accurate
+  KPAR    = 1
+  NCORE   = 4
+
+  ENCUT   = 540
+  GGA     = PS
+
+  LAPSH   = .TRUE.
+  ADDGRID = .TRUE.
+  EDIFF   =  1E-08
+  ALGO    =     Normal
+  NELM    =    100
+  NELMIN  =      5
+  NELMDL  =     -5
+
+  LCHARG  = .FALSE.
+  LWAVE   = .FALSE.
+
+  NSW     = 0
+  IBRION  = -1
+  ISIF    = 3
+
+  ISMEAR  = 0
+  SIGMA   = 0.01
