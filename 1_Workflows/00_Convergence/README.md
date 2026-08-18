@@ -4,7 +4,7 @@
 
 **Use:** Establish numerically stable calculation parameters while retaining a reasonable computational cost.
 
-Convergence should be established as the step 0 of any computational project. This is especially true for phonon calculations, which depend on the derivatives of the PES and are therefore particularly sensitive to insufficiently converged forces.
+Convergence should be established as **step 0** of any computational project. This is especially true for phonon calculations, which depend on the derivatives of the PES and are therefore particularly sensitive to insufficiently converged forces.
 
 The main convergence axes considered here are:
 - Plane-wave basis completeness via `ENCUT`
@@ -25,7 +25,7 @@ The working directory should contain:
 - `KPOINTS`  &rarr; generic *k*-mesh settings file
 
 **Helper Scripts:**
-These should be callable for your workflow e.g. in your `/bin/` folder:
+These should be globally callable for your workflow e.g. in your `~/bin/` directory included in `PATH`:
 
 `KPOINTSGen.sh`
 
@@ -84,6 +84,7 @@ This script creates one directory per calculation, copies the necessary `VASP` i
 
 `--set TAG=VALUE`  &rarr; override an arbitrary `INCAR` tag; may be supplied repeatedly
 `--no-submit`      &rarr; generate calculation directories without submitting them
+`--prefix VALUE_`  &rarr; generate the calculations with a custom prefix
 `-v, --verbose`    &rarr; print detailed setup/submission information
 
 **Supported Convergence Axes:**
@@ -118,25 +119,19 @@ The static table contains the quantities:
 The directory prefix makes the tool reusable for all convergence checks:
 
 ```bash
-./ConvCheck.sh --prefix ENCUT
-```
-```bash
-./ConvCheck.sh --prefix KPOINTS
-```
-```bash
-./ConvCheck.sh --prefix EDIFF
-```
-```bash
-./ConvCheck.sh --prefix SIGMA
+./ConvCheck.sh --prefix VALUE
 ```
 
-For relaxtion scans:
+For relaxtion scans different modes are provided to inspect the change of the structure
 
 ```bash
-./ConvCheck.sh --prefix EDIFFG --relax
+./ConvCheck.sh --prefix EDIFFG --relax VALUE
 ```
 
-The script instead compares the starting `POCAR` with the final `CONTCAR` and reports the structural shift.
+with:
+`--relax abs`  &rarr; reports the absolute parameters of each final `CONTCAR`
+`--relax diff` &rarr; compares the `POSCAR` and the `CONTCAR` in the same directories
+`--relax ref`  &rarr; compares the respective `CONTCAR`s to that of the strictest setting
 
 ---
 
@@ -265,7 +260,13 @@ After this additional property-specific convergence tests are required based on 
 
 These should only be considered once the underlying electronic problem is stable. All of these are highly specific to the tools you use and the quantity you have in mind. As such no general criteria or workflows are provided here. 
 
+## Theory and Further Reading:
+\[1\] [J. Janssen, E. Makarov, T. Hickel, A. V. Shapeev, and J. Neugebauer, *Automated optimization and uncertainty quantification of convergence parameters in plane wave density functional theory calculations*, **npj Computational Materials 10**, 263 (2024).](https://doi.org/10.1038/s41524-024-01388-2)
 
+\[2\] [K. Choudhary and F. Tavazza, *Convergence and machine learning predictions of Monkhorst-Pack k-points and plane-wave cut-off in high-throughput DFT calculations*, **Computational Materials Science 161**, 300–308 (2019).](https://doi.org/10.1016/j.commatsci.2019.02.006)
 
+\[3\] [G. Prandini, A. Marrazzo, I. E. Castelli, N. Mounet, and N. Marzari, *Precision and efficiency in solid-state pseudopotential calculations*, **npj Computational Materials 4**, 72 (2018).](https://doi.org/10.1038/s41524-018-0127-2)
 
+\[4\] [E. Bosoni, L. Beal, M. Bercx, P. Blaha, S. Blügel, J. Bröder, et al., *How to verify the precision of density-functional-theory implementations via reproducible and universal workflows*, **Nature Reviews Physics 6**, 45–58 (2024).](https://doi.org/10.1038/s42254-023-00655-3)
 
+\[5\] [K. Lejaeghere, G. Bihlmayer, T. Björkman, P. Blaha, S. Blügel, V. Blum, et al., *Reproducibility in density functional theory calculations of solids*, **Science 351**, aad3000 (2016).](https://doi.org/10.1126/science.aad3000)
