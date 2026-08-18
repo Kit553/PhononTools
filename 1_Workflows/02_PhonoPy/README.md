@@ -120,14 +120,15 @@ See
 
 ## Theory and Further Reading:
 
-\[1\][A. Togo et al., Phonopy Documentation.](https://phonopy.github.io/phonopy/)
+\[1\] [A. Togo et al., Phonopy Documentation.](https://phonopy.github.io/phonopy/)
 
-\[2\][A. Togo and I. Tanaka, “First principles phonon calculations in materials science,” Scripta Materialia 108, 1–5 (2015).](https://doi.org/10.1016/j.scriptamat.2015.07.021)
+\[2\] [A. Togo and I. Tanaka, “First principles phonon calculations in materials science,” Scripta Materialia 108, 1–5 (2015).](https://doi.org/10.1016/j.scriptamat.2015.07.021)
 
-\[3\][A. Togo, L. Chaput, T. Tadano and I. Tanaka, “Implementation strategies in phonopy and phono3py,” Journal of Physics: Condensed Matter 35, 353001 (2023).](https://doi.org/10.1088/1361-648X/acd831)
+\[3\] [A. Togo, L. Chaput, T. Tadano and I. Tanaka, “Implementation strategies in phonopy and phono3py,” Journal of Physics: Condensed Matter 35, 353001 (2023).](https://doi.org/10.1088/1361-648X/acd831)
 
-\[4\][M. Born and K. Huang, Dynamical Theory of Crystal Lattices, Oxford University Press (1954).](https://global.oup.com/academic/product/dynamical-theory-of-crystal-lattices-9780198503699?cc=de&lang=en&)
+\[4\] [M. Born and K. Huang, Dynamical Theory of Crystal Lattices, Oxford University Press (1954).](https://global.oup.com/academic/product/dynamical-theory-of-crystal-lattices-9780198503699?cc=de&lang=en&)
 
-\[5\][M. T. Dove, Introduction to Lattice Dynamics, Cambridge University Press (1993).](https://www.cambridge.org/core/books/introduction-to-lattice-dynamics/85943FCCF2BA2797CE53D96D3A8BFCBF)
+\[5\] [M. T. Dove, Introduction to Lattice Dynamics, Cambridge University Press (1993).](https://www.cambridge.org/core/books/introduction-to-lattice-dynamics/85943FCCF2BA2797CE53D96D3A8BFCBF)
 
+\[6\] [Official PhonoPy API](https://phonopy.github.io/phonopy/phonopy-module.html)
 
