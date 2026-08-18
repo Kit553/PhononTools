@@ -15,6 +15,8 @@
 **LOBSTER Specific**
 - `lobsterin` &rarr; Input Parameters for LOBSTER; see below on details to write this file
 
+---
+
 #### 1. Static Calculation
 The first step of this workflow is obtaining a high-quality PAW output from VASP, to achieve this make sure to adjust these tags of the `INCAR`:
 
