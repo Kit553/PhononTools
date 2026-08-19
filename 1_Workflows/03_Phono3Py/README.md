@@ -1,4 +1,4 @@
-P## Phono3Py
+## Phono3Py
 
 **Versioning:**
 
