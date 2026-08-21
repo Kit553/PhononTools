@@ -4,10 +4,6 @@
 
 **Use:** Obtain the harmonic lattice dynamics for the system; baseline for any vibrational analysis. The output of this workflow includes: the *q*-resolved vibrational spectrum, the total as well as element or site resolved phonon DOS, the group velocities (and thereby approximation of speed of sound), anisotropic thermal displacement parameters, eigenvectors, thermodynamic properties as well as the bridge to Phono3Pys output.
 
----
-
-## Workflow:
-
 **Prerequisits:**
 - A well converged, stable input structure as `POSCAR`; for details see [01_Relaxation](https://github.com/Kit553/PhononTools/tree/master/1_Workflows/01_Relaxation) and [00_Convergence](https://github.com/Kit553/PhononTools/tree/master/1_Workflows/00_Convergence)
 - The following python packages need to be callable on the cluster: `phonopy`
@@ -21,6 +17,8 @@
 - `INCAR`            &rarr; specifications for the scf runs; make sure the electronics are consistent with your previous calculations especially the relaxation run
 
 ---
+
+## Workflow:
 
 ### 1. Creating the displaced structures:
 
