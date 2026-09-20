@@ -37,7 +37,7 @@ modes, especially nice for soft-mode or anharmonic-mode analysis.
 
 ### PhonoPy
 
-PhonoPy is used as Frozen Phonon method implementation, it is the base for any
+PhonoPy is used as a finite displacement method implementation, it is the base for any
 harmonic phonon calculaiton.
 
 - Project: PhonoPy
@@ -49,7 +49,7 @@ harmonic phonon calculaiton.
 
 ### Phono3Py
 
-Phono3Py is the Frozen Phonon implementation up to third order force constants,
+Phono3Py is the finite displacement implementation up to third order force constants,
 wrappers for workflow and analysis are provided here.
 
 - Project: Phono3Py
