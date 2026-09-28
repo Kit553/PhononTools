@@ -1,0 +1,28 @@
+# Starting template for nonmagnetic bulk PBEsol, not converged parameters.
+SYSTEM = harmonic-forces
+NWRITE = 2
+PREC = Accurate
+ENCUT = 540           # Placeholder in eV; replace after the cutoff scan.
+GGA = PS
+LASPH = .TRUE.
+ADDGRID = .TRUE.
+LREAL = .FALSE.       # Reciprocal-space reference for force comparisons.
+
+ISTART = 0
+ICHARG = 2
+ALGO = Normal
+EDIFF = 1E-08         # Tight starting reference; test attainable accuracy.
+NELM = 100
+
+IBRION = -1
+NSW = 0
+ISIF = 2
+ISMEAR = 0
+SIGMA = 0.04          # Starting Gaussian width; test with the k mesh.
+
+# CPU/MPI starting point; benchmark for the chosen ranks and method.
+# See ../../../../00_Common/00_SettingUp/VASP/benchmarking.md; omit NPAR when using NCORE.
+KPAR = 1
+NCORE = 3            # Pilot for 18 MPI ranks; benchmark the actual supercell.
+LCHARG = .FALSE.
+LWAVE = .FALSE.

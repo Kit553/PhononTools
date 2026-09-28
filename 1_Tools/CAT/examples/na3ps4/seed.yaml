@@ -1,0 +1,48 @@
+system:
+  structure: POSCAR
+  StartE: -20
+  EndeE: 15
+  basisSet: pbeVaspFit2015
+  basisFunctions:
+    S: 3s 3p
+    Na: 2p 3s
+    P: 3s 3p
+  save: true
+  write: true
+framework:
+  centers:
+    types:
+    - P
+  ligands:
+    types:
+    - S
+  distance:
+  - 1.8
+  - 2.4
+  coordination: 4
+  orbitalWise: true
+  interactions:
+  - bonds
+  - intra
+  - inter
+  inter:
+    selection: all
+    cutoff: 4.2
+    tolerance: 0.03
+    orbitalWise: true
+Generator:
+- types:
+  - P
+  - S
+  distance:
+  - 1.8
+  - 2.4
+  orbitalWise: true
+- types:
+  - Na
+  - S
+  distance:
+  - 2.4
+  - 3.6
+  orbitalWise: true
+Atom: []

@@ -1,0 +1,28 @@
+system: Na3PS4
+
+ppms:
+  path: ../data/D554_Na3PS4_PE(2).dat
+
+two_channel:
+  enabled: true
+  dos:
+    path: ../phonopy-analysis/dos.csv
+    frequency_column: frequency_THz
+    value_column: total_DOS
+  v_longitudinal_m_s: 3467.9
+  v_transverse_m_s: 2120.9
+  atom_density_m3: 4.786031e28
+  atoms_in_primitive_cell: 16
+  velocity_scale: 0.85
+  fit_mode: relative
+  temperature_range_K: [null, null]
+  dense_points: 400
+  parameters:
+    C1: {initial: 14.0, bounds: [0, null], free: true}
+    A: {initial: 0.015, bounds: [0, null], free: true}
+    C3: {initial: 20.0, bounds: [0, null], free: true}
+    P: {initial: 0.5, bounds: [0, null], free: true}
+
+output:
+  directory: thermal-analysis
+  format: csv

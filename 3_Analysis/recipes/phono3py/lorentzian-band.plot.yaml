@@ -1,0 +1,20 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  spectral_function:
+    path: ../../phono3py-analysis/lorentzian_band.csv
+    filters: [{column: temperature_K, op: eq, value: 300}]
+panels:
+  - id: spectral-function
+    axes:
+      x: {label: Wave vector}
+      y: {label: Frequency (THz)}
+    legend: false
+    colorbar: {label: "Spectral weight (THz$^{-1}$)"}
+    layers:
+      - type: heatmap
+        data: spectral_function
+        mapping: {x: distance, y: frequency_grid_THz, z: spectral_weight_per_THz}
+        options: {cmap: magma, rasterized: true}
+output: {name: lorentzian-band, directory: ../../plots, formats: [pdf]}

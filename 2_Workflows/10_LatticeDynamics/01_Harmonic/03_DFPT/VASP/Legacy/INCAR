@@ -1,0 +1,12 @@
+  SYSTEM = gamma_dfpt_phonons
+  NWRITE = 3
+  ALGO = Normal
+
+  ENCUT = 520
+  EDIFF = 1E-8
+  ISMEAR = -5
+  PREC = Accurate
+  LASPH = .TRUE.
+
+  IBRION = 8
+  NSW = 1

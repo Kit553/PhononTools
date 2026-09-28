@@ -1,0 +1,33 @@
+# Example only: adapt species, basis functions, and bond distances to your POSCAR.
+# Paths are relative to this YAML; use a positional POSCAR to override structure.
+system:
+  structure: POSCAR
+  StartE: -20
+  EndeE: 15
+  basisSet: pbeVaspFit2015
+  basisFunctions:
+    Si: 3s 3p
+    O: 2s 2p
+  save: false
+  write: false
+
+framework:
+  centers: {types: [Si]}
+  ligands: {types: [O]}
+  # Select all center-ligand bonds in this inclusive interval (angstrom).
+  distance: [0, 2.0]
+  # Optional: select only the nearest N within that interval; fail if fewer exist.
+  # coordination: 4
+  padding: 0.05
+  orbitalWise: true
+  interactions: [bonds, intra]
+
+Generator:
+  # Without distance, derive min/max from selected framework bonds + padding.
+  # These requests apply to ALL pairs of these types, regardless of site selectors.
+  - types: [Si, O]
+    orbitalWise: true
+
+# Topology fills this list with contacts not already covered by Generator.
+# For strictly site-specific requests, set Generator: [] above.
+Atom: []

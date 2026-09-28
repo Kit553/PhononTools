@@ -1,0 +1,27 @@
+name: monochrome
+description: Grayscale theme for print checks; combine with distinct line styles.
+
+series:
+  - "#111111"
+  - "#555555"
+  - "#888888"
+  - "#BBBBBB"
+
+line_styles:
+  - "-"
+  - "--"
+  - ":"
+  - "-."
+
+semantic:
+  primary: "#111111"
+  secondary: "#555555"
+  accent: "#888888"
+  experiment: "#111111"
+  calculation: "#555555"
+  reference: "#888888"
+  uncertainty: "#D0D0D0"
+  positive: "#444444"
+  negative: "#777777"
+  neutral: "#777777"
+

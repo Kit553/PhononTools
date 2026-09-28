@@ -1,0 +1,5 @@
+Automatic mesh
+0                # Create an automatic mesh
+Gamma            # Centering at Gamma, absolutely necessarry for tetrahedron methods
+7  7  7          # How many KPOINTS per direction
+0. 0. 0.         # Shift vector for the mesh

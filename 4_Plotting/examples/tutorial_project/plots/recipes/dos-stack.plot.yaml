@@ -1,0 +1,47 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout:
+  type: stack
+  direction: vertical
+  cell_edge_mm: 62
+  share_x: true
+  share_y: true
+  ratios: [1, 1, 1]
+data:
+  dos: {path: ../../data/dos.csv}
+panels:
+  - id: s
+    axes:
+      panel_label: a
+      y: {label: s DOS, limits: [0, 0.8]}
+    legend: false
+    layers:
+      - {type: area, data: dos, mapping: {x: energy, y: s}, options: {color: '#332288', alpha: 0.22}}
+      - {type: line, data: dos, mapping: {x: energy, y: s}, options: {color: '#332288'}}
+      - {type: reference, options: {axis: x, value: 0, linestyle: '--'}}
+  - id: p
+    axes:
+      panel_label: b
+      y: {label: p DOS, limits: [0, 0.8]}
+    legend: false
+    layers:
+      - {type: area, data: dos, mapping: {x: energy, y: p}, options: {color: '#CC6677', alpha: 0.22}}
+      - {type: line, data: dos, mapping: {x: energy, y: p}, options: {color: '#CC6677'}}
+      - {type: reference, options: {axis: x, value: 0, linestyle: '--'}}
+  - id: d
+    axes:
+      panel_label: c
+      x: {label: Energy - E$_F$ (eV), limits: [-5, 4]}
+      y: {label: d DOS, limits: [0, 0.8]}
+    legend: false
+    layers:
+      - {type: area, data: dos, mapping: {x: energy, y: d}, options: {color: '#117733', alpha: 0.22}}
+      - {type: line, data: dos, mapping: {x: energy, y: d}, options: {color: '#117733'}}
+      - {type: reference, options: {axis: x, value: 0, linestyle: '--'}}
+output:
+  name: dos-stack
+  directory: ..
+  formats: [pdf]
+  preview_dpi: 180
+  final_dpi: 600
+metadata: {Title: Aligned DOS stack, Author: CATPlot}

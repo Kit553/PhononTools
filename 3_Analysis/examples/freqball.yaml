@@ -1,0 +1,48 @@
+# Paths are relative to this file. Compute writes one raw HDF5; analysis writes one
+# tidy table per distinct concept and a manifest.
+system:
+  path: ../example_calculation
+  name: example
+  phonopy_yaml: phonopy_disp.yaml
+  force_sets: FORCE_SETS
+  born: BORN
+
+atoms:
+  elements: [Na]
+
+spectrum:
+  mesh: [21, 21, 21]
+  frequency_range_THz: [0, 15]
+  pitch_THz: 0.05
+  sigma_THz: 0.05
+  qpoint_chunk: 64
+  gamma_center: true
+
+families:
+  file: direction_families.yaml
+  match_tolerance_A: 0.03
+
+analysis:
+  directions:
+    count: 1000
+    low_frequency_cutoff_THz: 2.0
+    inverse_frequency_floor_THz: 0.1
+  family_spectra: true
+
+# Both path and mesh use the same fatband columns. Omit modes entirely if the
+# spectral tensor and frequency balls are all that is needed.
+modes:
+  - name: freqball_band_modes
+    kind: band
+    npoints: 101
+    band_connection: true
+  - name: freqball_mesh_modes
+    kind: mesh
+    mesh: [21, 21, 21]
+    mesh_symmetry: true
+    gamma_center: true
+
+output:
+  tensor: ../freqball.h5
+  directory: ../freqball-analysis
+  format: csv

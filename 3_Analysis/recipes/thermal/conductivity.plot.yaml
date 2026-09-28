@@ -1,0 +1,18 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  ppms:
+    path: ../../thermal-analysis/ppms_measurements.csv
+panels:
+  - id: conductivity
+    axes:
+      x: {label: Temperature (K)}
+      y: {label: '$\kappa$ (W m$^{-1}$ K$^{-1}$)'}
+    legend: {frameon: false}
+    layers:
+      - type: scatter
+        data: ppms
+        mapping: {x: temperature_K, y: thermal_conductivity_W_mK}
+        options: {size: 12}
+output: {name: thermal-conductivity, directory: ../../plots, formats: [pdf]}

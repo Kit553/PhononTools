@@ -1,0 +1,23 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  summary:
+    path: ../../bonding-analysis/bond_summary.csv
+    filters:
+      - {column: population, op: eq, value: COHP}
+      - {column: spin, op: eq, value: sum}
+    transforms:
+      - {op: scale, column: integrated_mean, factor: -1, output: minus_ICOHP_mean}
+panels:
+  - id: icohp
+    axes:
+      x: {label: Run}
+      y: {label: Mean $-$ICOHP per contact (eV)}
+    legend: {frameon: false}
+    layers:
+      - type: bar
+        data: summary
+        mapping: {x: run, y: minus_ICOHP_mean, group: interaction}
+        options: {width: 0.78, linewidth: 0.6}
+output: {name: icohp-substitution, directory: ../../plots, formats: [pdf]}

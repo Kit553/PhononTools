@@ -1,0 +1,20 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  bands: {path: ../../analysis/band_modes.csv}
+panels:
+  - id: dispersion
+    axes:
+      x: {label: Wave vector}
+      y: {label: Frequency (THz)}
+    legend: false
+    colorbar: {label: Na participation}
+    layers:
+      - type: colored-line
+        data: bands
+        mapping: {x: distance, y: frequency_THz, color: Na_participation, group: trace}
+        options: {cmap: plasma, vmin: 0, vmax: 1, linewidth: 1.5}
+      - {type: reference, options: {axis: y, value: 0, linestyle: '--'}}
+output: {name: phonon-participation, directory: ../../plots, formats: [pdf]}
+

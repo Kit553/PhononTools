@@ -1,0 +1,33 @@
+# Starting template for nonmagnetic bulk PBEsol, not converged parameters.
+SYSTEM = gamma-dfpt
+NWRITE = 2
+PREC = Accurate
+ENCUT = 540           # Placeholder in eV; replace after the cutoff scan.
+GGA = PS
+LASPH = .TRUE.
+ADDGRID = .TRUE.
+LREAL = .FALSE.       # Reciprocal-space reference for force comparisons.
+
+ISTART = 0
+ICHARG = 2
+ALGO = Normal
+EDIFF = 1E-08         # Tight starting reference; test attainable accuracy.
+NELM = 100
+
+IBRION = 8
+NSW = 1
+ISIF = 2
+ISMEAR = 0
+SIGMA = 0.04          # Starting Gaussian width; test with the k mesh.
+
+# CPU/MPI starting point; benchmark for the chosen ranks and method.
+# See ../../../../00_Common/00_SettingUp/VASP/benchmarking.md; omit NPAR when using NCORE.
+KPAR = 1
+NCORE = 1            # Conservative response baseline; verify build support before tuning.
+LCHARG = .FALSE.
+LWAVE = .FALSE.
+
+LEPSILON = .FALSE.
+
+# NSIM=18 / NCORE=18 are trials for large metallic systems on 36-core nodes,
+# not general defaults. MAXMEM is not a global VASP memory limit.

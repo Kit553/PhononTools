@@ -1,0 +1,19 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  modes:
+    path: ../../phono3py-analysis/mesh_modes.csv
+    filters: [{column: temperature_K, op: eq, value: 300}]
+panels:
+  - id: pp
+    axes:
+      x: {label: Frequency (THz)}
+      y: {label: "Averaged interaction strength (eV$^2$)", scale: log}
+    legend: false
+    layers:
+      - type: scatter
+        data: modes
+        mapping: {x: frequency_THz, y: ave_pp_eV2}
+        options: {size: 7, alpha: 0.45, linewidth: 0}
+output: {name: average-pp, directory: ../../plots, formats: [pdf]}

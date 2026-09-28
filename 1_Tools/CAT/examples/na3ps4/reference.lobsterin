@@ -1,0 +1,54 @@
+COHPstartEnergy -20
+COHPendEnergy    15
+basisSet pbeVaspFit2015
+basisFunctions Na 2p 3s
+basisFunctions P  3s 3p
+basisFunctions Sb 5s 5p
+basisFunctions S  3s 3p
+basisFunctions Se 4s 4p
+saveProjectionToFile
+writeBasisFunctions
+cohpGenerator from 1.8 to 2.4 type P  type S orbitalWise
+cohpGenerator from 2.2 to 2.7 type Sb type S orbitalWise
+cohpGenerator from 2.4 to 3.6 type Na type S orbitalWise 
+cohpGenerator from 2.0 to 2.4 type P  type Se orbitalWise 
+cohpGenerator from 2.4 to 2.7 type Sb type Se orbitalWise
+cohpGenerator from 2.6 to 3.7 type Na type Se orbitalWise
+
+cohpBetween atom 1 atom 3 cell 0 -1 -1 orbitalWise
+cohpBetween atom 1 atom 4 cell -1 0 -1 orbitalWise
+cohpBetween atom 2 atom 3 cell 1 0 -1 orbitalWise
+cohpBetween atom 2 atom 4 cell 0 1 -1 orbitalWise
+cohpBetween atom 1 atom 2 cell -1 -1 0 orbitalWise
+cohpBetween atom 3 atom 4 cell -1 1 0 orbitalWise
+cohpBetween atom 5 atom 7 orbitalWise
+cohpBetween atom 5 atom 8 orbitalWise
+cohpBetween atom 6 atom 7 orbitalWise
+cohpBetween atom 6 atom 8 orbitalWise
+cohpBetween atom 5 atom 6 orbitalWise
+cohpBetween atom 7 atom 8 orbitalWise
+
+cohpBetween atom 1 atom 5 cell 0 -1 0 orbitalWise
+cohpBetween atom 2 atom 6 orbitalWise
+cohpBetween atom 1 atom 5 orbitalWise
+cohpBetween atom 2 atom 6 cell 0 1 0 orbitalWise
+cohpBetween atom 3 atom 8 cell -1 0 0 orbitalWise
+cohpBetween atom 3 atom 8 orbitalWise
+cohpBetween atom 4 atom 7 orbitalWise
+cohpBetween atom 4 atom 7 cell 1 0 0 orbitalWise
+cohpBetween atom 1 atom 7 cell 0 0 -1 orbitalWise
+cohpBetween atom 1 atom 7 orbitalWise
+cohpBetween atom 2 atom 8 cell 0 0 -1 orbitalWise
+cohpBetween atom 2 atom 8 orbitalWise
+cohpBetween atom 3 atom 5 orbitalWise
+cohpBetween atom 3 atom 5 cell 0 0 1 orbitalWise
+cohpBetween atom 4 atom 6 orbitalWise
+cohpBetween atom 4 atom 6 cell 0 0 1 orbitalWise
+cohpBetween atom 1 atom 6 cell -1 0 0 orbitalWise
+cohpBetween atom 1 atom 6 orbitalWise
+cohpBetween atom 2 atom 5 orbitalWise
+cohpBetween atom 2 atom 5 cell 1 0 0 orbitalWise
+cohpBetween atom 4 atom 8 cell 0 -1 0 orbitalWise
+cohpBetween atom 4 atom 8 orbitalWise
+cohpBetween atom 3 atom 7 orbitalWise
+cohpBetween atom 3 atom 7 cell 0 1 0 orbitalWise

@@ -1,0 +1,24 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  field: {path: ../../data/field.csv}
+panels:
+  - id: main
+    axes:
+      x: {label: x (nm)}
+      y: {label: y (nm)}
+      square_axes: true
+    colorbar: {label: Intensity (a.u.), shrink: 0.82}
+    legend: false
+    layers:
+      - type: heatmap
+        data: field
+        mapping: {x: x, y: y, z: z}
+        options: {cmap: magma, rasterized: true, colorbar: true}
+      - type: contour
+        data: field
+        mapping: {x: x, y: y, z: z}
+        options: {levels: [0.2, 0.5, 0.8], colors: white, linewidth: 0.65}
+output: {name: field-map, directory: .., formats: [pdf], preview_dpi: 180, final_dpi: 600}
+metadata: {Title: Scalar field example, Author: CATPlot}

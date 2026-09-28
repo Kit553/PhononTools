@@ -1,0 +1,19 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  kappa:
+    path: ../../phono3py-analysis/thermal_conductivity.csv
+    filters: [{column: channel, op: eq, value: total}]
+panels:
+  - id: kappa
+    axes:
+      x: {label: Temperature (K)}
+      y: {label: "Thermal conductivity (W m$^{-1}$ K$^{-1}$)"}
+    legend: {frameon: false}
+    layers:
+      - type: line
+        data: kappa
+        mapping: {x: temperature_K, y: kappa_iso_W_mK, group: boundary_label}
+        options: {linewidth: 1.5}
+output: {name: kappa-temperature, directory: ../../plots, formats: [pdf]}

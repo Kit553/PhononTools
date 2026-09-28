@@ -1,0 +1,22 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  dos:
+    path: ../../bonding-analysis/electronic_dos.csv
+    filters:
+      - {column: run, op: eq, value: '.'}
+      - {column: scope, op: eq, value: element}
+      - {column: spin, op: eq, value: up}
+panels:
+  - id: dos
+    axes:
+      x: {label: 'Energy relative to $E_F$ (eV)'}
+      y: {label: 'Element DOS, spin up (states/eV)'}
+    legend: {frameon: false}
+    layers:
+      - type: line
+        data: dos
+        mapping: {x: energy_eV, y: DOS, group: element}
+      - {type: reference, options: {axis: x, value: 0, linestyle: '--'}}
+output: {name: dos, directory: ../../plots, formats: [pdf]}

@@ -1,0 +1,18 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  displacements:
+    path: ../../structure-comparison/site_displacements.csv
+panels:
+  - id: displacements
+    axes:
+      x: {label: Reference site index}
+      y: {label: Internal displacement (\AA)}
+    legend: {frameon: false}
+    layers:
+      - type: bar
+        data: displacements
+        mapping: {x: reference_site, y: displacement_A, group: species}
+        options: {width: 0.8, linewidth: 0.5}
+output: {name: structure-displacements, directory: ../../plots, formats: [pdf]}

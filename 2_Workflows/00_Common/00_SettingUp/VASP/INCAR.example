@@ -1,0 +1,27 @@
+  SYSTEM  = VASPCALC
+  NWRITE  =      2
+  PREC    = Accurate
+  KPAR    = 1
+  NCORE   = 1       # Four-rank small-cell trial; benchmark before increasing.
+
+  ENCUT   = 520  
+  GGA     = PS
+
+  LASPH   = .TRUE.
+  ADDGRID = .TRUE.
+  
+  EDIFF   =  1E-08
+  ALGO    =     Normal
+  NELM    =    100
+  NELMIN  =      5
+  NELMDL  =     -5
+
+  LCHARG  = .FALSE.
+  LWAVE   = .FALSE.
+
+  NSW     = 0
+  IBRION  =     -1
+  ISIF    = 2
+
+  ISMEAR  = 0
+  SIGMA = 0.04

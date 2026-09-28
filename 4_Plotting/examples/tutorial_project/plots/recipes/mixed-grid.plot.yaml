@@ -1,0 +1,34 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout:
+  type: grid
+  rows: 1
+  columns: 2
+  cell_edge_mm: 72
+data:
+  categories: {path: ../../data/categories.csv}
+  field: {path: ../../data/field.csv}
+panels:
+  - id: distribution
+    axes:
+      panel_label: a
+      x: {label: Method}
+      y: {label: Measured value}
+    legend: false
+    layers:
+      - {type: violin, data: categories, mapping: {x: method, y: value}, options: {color: '#CBC4E1'}}
+      - {type: strip, data: categories, mapping: {x: method, y: value}, options: {color: '#332288', seed: 7}}
+  - id: surface
+    projection: 3d
+    axes:
+      panel_label: b
+      x: {label: x}
+      y: {label: y}
+      z: {label: z}
+      view: {elev: 25, azim: -55}
+    legend: false
+    colorbar: {shrink: 0.62, pad: 0.08}
+    layers:
+      - {type: surface, data: field, mapping: {x: x, y: y, z: z}, options: {cmap: viridis, colorbar: true}}
+output: {name: mixed-grid, directory: .., formats: [pdf], preview_dpi: 180, final_dpi: 600}
+metadata: {Title: Mixed 2D and 3D grid, Author: CATPlot}

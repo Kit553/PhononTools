@@ -1,0 +1,10 @@
+# Optional PhonoVis scene used by `cat-structure compare ... --view --scene ...`.
+scale: 1.0
+repeat: [1, 1, 1]
+show_labels: true
+show_axes: true
+show_cell: true
+hide_below: 0.02
+bonds:
+  - {elements: [P, S], cutoff_A: 3.0}
+polyhedra: []

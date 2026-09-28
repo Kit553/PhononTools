@@ -1,0 +1,25 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  bonds:
+    path: ../../bonding-analysis/bond_integrals.csv
+    filters:
+      - {column: population, op: eq, value: COHP}
+      - {column: run, op: eq, value: '.'}
+      - {column: spin, op: eq, value: sum}
+      - {column: orbital, op: eq, value: total}
+    transforms:
+      - {op: scale, column: integrated_value, factor: -1, output: minus_ICOHP}
+panels:
+  - id: bonds
+    axes:
+      x: {label: 'Bond length (Å)'}
+      y: {label: '$-$ICOHP (eV)'}
+    legend: {frameon: false}
+    layers:
+      - type: scatter
+        data: bonds
+        mapping: {x: length_A, y: minus_ICOHP, group: interaction}
+        options: {size: 18}
+output: {name: bond-length, directory: ../../plots, formats: [pdf]}

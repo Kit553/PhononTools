@@ -1,0 +1,13 @@
+method,value,batch
+A,1.10,one
+A,1.25,two
+A,0.98,three
+A,1.18,four
+B,1.48,one
+B,1.62,two
+B,1.41,three
+B,1.55,four
+C,0.82,one
+C,0.94,two
+C,0.76,three
+C,0.88,four

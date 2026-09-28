@@ -1,0 +1,28 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  bands:
+    path: ../../bonding-analysis/electronic_bands.csv
+    filters:
+      - {column: run, op: eq, value: '.'}
+      - {column: spin, op: eq, value: up}
+panels:
+  - id: bands
+    axes:
+      x: {label: 'k-path distance'}
+      y: {label: 'Energy relative to $E_F$ (eV)'}
+    legend: false
+    layers:
+      - type: line
+        data: bands
+        mapping: {x: distance, y: energy_eV, group: trace}
+        options: {sort: false, color: '#888888', linewidth: 0.6}
+      # Uncomment and replace P1_3p_weight with a column in your exported table.
+      # Point sizes are rescaled over the selected data, not absolute weights.
+      # - type: scatter
+      #   data: bands
+      #   mapping: {x: distance, y: energy_eV, size: P1_3p_weight}
+      #   options: {color: '#332288', size_min: 0, size_max: 35}
+      - {type: reference, options: {axis: y, value: 0, linestyle: '--'}}
+output: {name: fatbands, directory: ../../plots, formats: [pdf]}

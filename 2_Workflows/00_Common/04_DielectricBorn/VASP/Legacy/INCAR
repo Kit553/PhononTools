@@ -1,0 +1,27 @@
+  SYSTEM = VASPCALC  # name of calculation
+
+  NWRITE =      2    # how much will be written to the file OUTCAR
+  PREC   = Accurate  # precision
+  ENCUT  =    520    # cutoff energy for the plane-wave-basis set in eV
+  GGA = PS
+
+# Electronic Relaxation
+  EDIFF  =  1E-08    # stopping-criterion for ELM
+  ALGO  =     Normal # electronic minimisation algorithm; if possible fast
+  NELM   =    100    # max. number of electronic iterations
+  NELMIN =      5    # require at least 3 electronic iterations per ionic step
+  NELMDL =     -5    # number of non-selfconsistent steps at the beginning
+
+  LCHARG = .FALSE.   # determines whether the charge densities are written
+  LWAVE  = .FALSE.   # determines whether the wavefunctions are written to the WAVECAR file
+
+# Ionic relaxation
+  EDIFFG =     -1E-03 # convergence criterion for ions
+  NSW = 0             # Static Run!
+  IBRION =     -1     # determines how the ions are updated and moved; if possible 1
+  ISIF = 3            # degrees-of-freedom allowed; depends on calculation sometimes 4 or 8
+  IWAVPR =  1         # how orbitals and/or charge densities are extrapolated from one ionic configuration to the next
+  LEPSILON = .TRUE.   # This Tag calculates BORN effective charges
+
+  ISMEAR = 0        # Change this to the relevant smearing method or the one you like best :)
+  SIGMA = 0.04      # width of the smearing in eV

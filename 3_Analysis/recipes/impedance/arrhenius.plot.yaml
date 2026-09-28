@@ -1,0 +1,24 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  resistance:
+    path: ../../impedance-analysis/impedance_resistance.csv
+panels:
+  - id: arrhenius
+    axes:
+      x: {label: '$1000/T$ (K$^{-1}$)'}
+      y: {label: '$\ln(\sigma T)$'}
+    legend: {frameon: false}
+    layers:
+      - type: scatter
+        data: resistance
+        mapping:
+          {x: inverse_temperature_1000_K, y: ln_conductivity_temperature, group: resistance_kind}
+        options: {size: 12}
+      - type: line
+        data: resistance
+        mapping:
+          {x: inverse_temperature_1000_K, y: fit_ln_conductivity_temperature, group: resistance_kind}
+        options: {linewidth: 1.2}
+output: {name: impedance-arrhenius, directory: ../../plots, formats: [pdf]}

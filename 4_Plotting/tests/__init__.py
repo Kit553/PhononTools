@@ -1,0 +1,2 @@
+"""CATPlot test suite."""
+

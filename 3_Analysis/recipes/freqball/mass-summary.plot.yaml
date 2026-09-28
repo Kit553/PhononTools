@@ -1,0 +1,19 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  summary:
+    path: ../../freqball-mass-analysis/freqball_mass_summary.csv
+    filters: [{column: equivalence_group, op: eq, value: 0}]
+panels:
+  - id: mass-summary
+    axes:
+      x: {label: Assigned mass (u)}
+      y: {label: Average frequency (THz)}
+    legend: {frameon: false}
+    layers:
+      - type: line
+        data: summary
+        mapping: {x: mass_u, y: average_frequency_THz, group: selection}
+        options: {linewidth: 1.5, marker: o, markersize: 3.5}
+output: {name: freqball-mass-summary, directory: ../../plots, formats: [pdf]}

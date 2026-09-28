@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+build/
+dist/
+*.egg-info/
+
+# Generated panels; recipes and data remain tracked.
+plots/draft/
+plots/final/
+examples/**/plots/draft/
+examples/**/plots/final/
+output/
+tmp/

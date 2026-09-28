@@ -1,0 +1,19 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  jdos:
+    path: ../../phono3py-analysis/jdos_mesh.csv
+    filters: [{column: temperature_K, op: eq, value: 300}]
+panels:
+  - id: jdos
+    axes:
+      x: {label: Frequency (THz)}
+      y: {label: "Joint density of states (THz$^{-1}$)"}
+    legend: {frameon: false}
+    layers:
+      - type: line
+        data: jdos
+        mapping: {x: frequency_THz, y: jdos_per_THz, group: channel}
+        options: {linewidth: 1.5}
+output: {name: jdos, directory: ../../plots, formats: [pdf]}

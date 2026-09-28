@@ -1,0 +1,21 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  spectra:
+    path: ../../freqball-mass-analysis/freqball_mass_spectra.csv
+    filters:
+      - {column: equivalence_group, op: eq, value: 0}
+      - {column: selection, op: eq, value: mobile_total}
+panels:
+  - id: mass-spectra
+    axes:
+      x: {label: Frequency (THz)}
+      y: {label: "Projected DOS (THz$^{-1}$)"}
+    legend: {frameon: false}
+    layers:
+      - type: line
+        data: spectra
+        mapping: {x: frequency_THz, y: pdos_per_THz, group: mass_trace}
+        options: {linewidth: 1.2}
+output: {name: freqball-mass-spectra, directory: ../../plots, formats: [pdf]}

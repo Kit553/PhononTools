@@ -1,0 +1,28 @@
+# Illustrative C/H polymer configuration: adapt basis functions and both cutoffs.
+# Include every bridging species needed to reconstruct the full bonded chain.
+system:
+  structure: POSCAR
+  StartE: -20
+  EndeE: 15
+  basisSet: pbeVaspFit2015
+  basisFunctions:
+    C: 2s 2p
+    H: 1s
+  save: false
+  write: false
+
+framework:
+  centers: {types: [C]}
+  ligands: {types: [C, H]}
+  distance: [0, 1.8]
+  interactions: [bonds, intra, inter]
+  orbitalWise: true
+  inter:
+    selection: nearest
+    cutoff: 4.5
+    tolerance: 0.03
+    orbitalWise: true
+
+# Explicit requests preserve component/site selection; type generators do not.
+Generator: []
+Atom: []

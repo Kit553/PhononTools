@@ -1,0 +1,26 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  curves:
+    path: ../../bonding-analysis/bond_curve_summary.csv
+    filters:
+      - {column: population, op: eq, value: COHP}
+      # Use '.' for a calculation directly at system.path, or its relative subfolder.
+      - {column: run, op: eq, value: '.'}
+      - {column: spin, op: eq, value: sum}
+    transforms:
+      - {op: scale, column: value_mean, factor: -1, output: minus_COHP}
+panels:
+  - id: cohp
+    axes:
+      x: {label: Energy relative to $E_F$ (eV)}
+      y: {label: $-$COHP}
+    legend: {frameon: false}
+    layers:
+      - type: line
+        data: curves
+        mapping: {x: energy_eV, y: minus_COHP, group: interaction}
+        options: {linewidth: 1.0}
+      - {type: reference, options: {axis: x, value: 0, linestyle: '--'}}
+output: {name: cohp-energy, directory: ../../plots, formats: [pdf]}

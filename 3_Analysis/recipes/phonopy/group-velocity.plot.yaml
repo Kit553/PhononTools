@@ -1,0 +1,18 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  modes: {path: ../../analysis/mesh_modes.csv}
+panels:
+  - id: velocity
+    axes:
+      x: {label: Frequency (THz)}
+      y: {label: Group velocity (native Phonopy unit)}
+    legend: false
+    layers:
+      - type: scatter
+        data: modes
+        mapping: {x: frequency_THz, y: group_velocity}
+        options: {color: '#332288', size: 7, alpha: 0.55}
+output: {name: phonon-group-velocity, directory: ../../plots, formats: [pdf]}
+

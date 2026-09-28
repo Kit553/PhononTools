@@ -1,0 +1,19 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  bands: {path: ../../analysis/band_modes.csv}
+panels:
+  - id: dispersion
+    axes:
+      x: {label: Wave vector}
+      y: {label: Frequency (THz)}
+    legend: false
+    layers:
+      - type: line
+        data: bands
+        mapping: {x: distance, y: frequency_THz, group: trace}
+        options: {color: '#222222', linewidth: 0.85}
+      - {type: reference, options: {axis: y, value: 0, linestyle: '--'}}
+output: {name: phonon-dispersion, directory: ../../plots, formats: [pdf]}
+

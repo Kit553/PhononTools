@@ -1,0 +1,25 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  charges:
+    path: ../../bonding-analysis/charges.csv
+    filters:
+      - {column: run, op: eq, value: '.'}
+panels:
+  - id: charges
+    axes:
+      x: {label: 'Site index (zero-based)'}
+      y: {label: 'Charge (e)'}
+    legend: {frameon: false}
+    layers:
+      - type: scatter
+        data: charges
+        mapping: {x: site, y: mulliken_charge_e}
+        options: {label: Mulliken, marker: o, color: '#332288', size: 18}
+      - type: scatter
+        data: charges
+        mapping: {x: site, y: loewdin_charge_e}
+        options: {label: Löwdin, marker: s, color: '#CC6677', size: 18}
+      - {type: reference, options: {axis: y, value: 0, linestyle: '--'}}
+output: {name: charges, directory: ../../plots, formats: [pdf]}

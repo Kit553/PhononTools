@@ -1,0 +1,16 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  dos: {path: ../../analysis/dos.csv}
+panels:
+  - id: dos
+    axes:
+      x: {label: Frequency (THz)}
+      y: {label: "DOS (states THz$^{-1}$ cell$^{-1}$)"}
+    legend: false
+    layers:
+      - {type: area, data: dos, mapping: {x: frequency_THz, y: total_DOS}, options: {alpha: 0.22}}
+      - {type: line, data: dos, mapping: {x: frequency_THz, y: total_DOS}}
+      - {type: reference, options: {axis: x, value: 0, linestyle: '--'}}
+output: {name: phonon-dos, directory: ../../plots, formats: [pdf]}

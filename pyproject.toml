@@ -1,0 +1,77 @@
+[build-system]
+requires = ["setuptools>=80", "setuptools-scm>=9"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cat-tooling"
+dynamic = ["version"]
+description = "CAT — Computational Analysis Toolbox for materials research"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "h5py>=3.11",
+  "numpy>=2.0",
+  "pandas>=2.2",
+  "pyarrow>=18",
+  "phono3py>=4.4",
+  "phonopy>=4.4",
+  "PyYAML>=6.0",
+  "scipy>=1.14",
+  "spglib>=2.6",
+]
+
+[project.optional-dependencies]
+cloud = ["pyvista>=0.46"]
+bonding = ["lobsterpy>=0.6.1", "pymatgen>=2025.1"]
+families = ["pymatgen>=2025.1"]
+mpi = ["mpi4py>=4.0"]
+structure = ["ase>=3.26", "pymatgen>=2025.1"]
+visualization = [
+  "matplotlib>=3.9",
+  "pillow>=11",
+  "pymatgen>=2025.1",
+  "pyvista>=0.46",
+]
+
+[dependency-groups]
+dev = ["ruff>=0.14"]
+
+[project.scripts]
+cat-tools = "cat_utilities.cli:main"
+cat-prepare = "cat_prepare.cli:main"
+cat-diffraction = "cat_tools.diffraction.workflow:main"
+cat-freqball = "cat_tools.freqball.workflow:main"
+cat-freqball-bvpa = "cat_tools.freqball.bvpa:main"
+cat-freqball-families = "cat_tools.freqball.family_builder:main"
+cat-freqball-mass-scan = "cat_tools.freqball.mass_workflow:main"
+cat-freqball-view = "cat_tools.freqball.viewer:main"
+cat-bonding = "cat_tools.bonding.workflow:main"
+cat-phono3py = "cat_tools.phono3py.workflow:main"
+cat-phono3py-cloud = "cat_tools.phono3py.cloud:main"
+cat-phonopy = "cat_tools.phonopy.workflow:main"
+cat-phonovis = "cat_tools.phonovis.workflow:main"
+cat-structure = "cat_tools.structure.workflow:main"
+cat-thermal = "cat_tools.thermal.workflow:main"
+cat-impedance = "cat_tools.impedance.workflow:main"
+
+[tool.setuptools.package-dir]
+cat_tools = "3_Analysis/src/cat_tools"
+cat_prepare = "1_Tools/CAT/cat_prepare"
+cat_shared = "1_Tools/CAT/cat_shared"
+cat_utilities = "1_Tools/CAT/cat_utilities"
+
+[tool.setuptools.packages.find]
+where = ["1_Tools/CAT", "3_Analysis/src"]
+include = ["cat_tools*", "cat_prepare*", "cat_shared*", "cat_utilities*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+"cat_utilities.vasp" = ["*.sh"]
+"cat_utilities.phono3py" = ["*.sh"]
+
+[tool.setuptools_scm]
+fallback_version = "0.0.dev0"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

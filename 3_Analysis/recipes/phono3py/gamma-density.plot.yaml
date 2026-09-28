@@ -1,0 +1,20 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  density:
+    path: ../../phono3py-analysis/gamma_density.csv
+    filters: [{column: temperature_K, op: eq, value: 300}]
+panels:
+  - id: density
+    axes:
+      x: {label: Frequency (THz)}
+      y: {label: Linewidth $\Gamma$ (THz), scale: log}
+    legend: false
+    colorbar: {label: BZ-weighted probability density}
+    layers:
+      - type: heatmap
+        data: density
+        mapping: {x: frequency_THz, y: value, z: probability_density}
+        options: {cmap: magma, norm: log, rasterized: true}
+output: {name: gamma-density, directory: ../../plots, formats: [pdf]}

@@ -1,0 +1,19 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  cumulative:
+    path: ../../phono3py-analysis/kappa_accum_frequency.csv
+    filters: [{column: temperature_K, op: eq, value: 300}]
+panels:
+  - id: cumulative
+    axes:
+      x: {label: Frequency (THz)}
+      y: {label: "Cumulative thermal conductivity (W m$^{-1}$ K$^{-1}$)"}
+    legend: {frameon: false}
+    layers:
+      - type: line
+        data: cumulative
+        mapping: {x: coordinate, y: value_cumulative, group: dataset}
+        options: {linewidth: 1.5}
+output: {name: kappa-cumulative, directory: ../../plots, formats: [pdf]}

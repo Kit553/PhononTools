@@ -1,0 +1,20 @@
+datasets:
+  - system: Na3PS4
+    files:
+      - ../data/Na3PS4-ParameterExport.txt
+      - ../data/Na3PS4-InformationExport.txt
+      - ../data/Na3PS4-SpectraExport.txt
+  - system: Na3PSe4
+    files:
+      # This attached file is a parameter export despite its misleading filename.
+      - ../data/Na3PSe4-InformationExport_TwoProcesses.txt
+      - ../data/Na3PSe4-InformationExport_TwoProcess.txt
+      - ../data/Na3PSe4-SpectraExport_TwoProcesses.txt
+
+arrhenius:
+  enabled: true
+  temperature_range_K: [null, null]
+
+output:
+  directory: impedance-analysis
+  format: csv

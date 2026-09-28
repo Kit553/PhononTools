@@ -1,0 +1,93 @@
+# Paths are relative to this file. Omit sections and views you do not need.
+system:
+  path: ../example_phono3py_calculation
+  name: example
+  phono3py_yaml: phono3py.yaml
+  # Omit kappa to discover complete kappa-m*.hdf5 files automatically.
+  kappa:
+    - kappa-m212121.hdf5
+    - kappa-m212121-bmfp10.hdf5
+  gruneisen: gruneisen.yaml
+  jdos: jdos-m212121-g*-t300.dat
+  pp: pp-m212121-g*.hdf5
+  ir_grid_points: ir_grid_points.yaml
+  grid_addresses: grid_address-m212121.hdf5
+
+output:
+  directory: ../phono3py-analysis
+  format: csv
+
+mesh:
+  # Large temperature tensors are sliced in HDF5; only these snapshots are exported.
+  temperatures: [100, 300, 600]
+  harmonic:
+    # Reuses PhonoPyTools with phono3py.yaml + fc2.hdf5; no second implementation.
+    force_constants: fc2.hdf5
+    # Remove this key for calculations without non-analytical corrections.
+    born: BORN
+    projections:
+      elements: true
+  joins:
+    # FreqBall uses the same periodic q-vector and zero-based band identity.
+    - path: ../freqball-analysis/freqball_mesh_modes.csv
+      columns: [conduction_direction_weight]
+      require_complete: true
+  views:
+    # A profile is the BZ-weighted mean/median/interquartile range in each bin.
+    - name: gamma_profile
+      kind: profile
+      value: gamma_THz
+      bins: {start: 0, stop: 15, width: 0.1}
+    - name: gamma_density
+      kind: density
+      value: gamma_THz
+      frequency_bins: {start: 0, stop: 15, width: 0.1}
+      value_bins: {start: 1.0e-5, stop: 1, count: 100, scale: log}
+    - name: kappa_accum_frequency
+      kind: accumulation
+      value: mode_kappa_iso_W_mK
+      coordinate: frequency_THz
+      bins: {start: 0, stop: 15, width: 0.05}
+    - name: kappa_accum_mfp
+      kind: accumulation
+      value: mode_kappa_iso_W_mK
+      coordinate: mean_free_path_A
+      bins: {start: 0.1, stop: 1.0e6, count: 120, scale: log}
+
+transport: true
+
+jdos:
+  export_points: false
+  mesh_average: true
+  require_complete: true
+
+# Gruneisen supports a true arbitrary band path. Other interaction quantities use
+# exact mesh addresses; an even mesh is normally needed to include 1/2 boundaries.
+grid_path: null
+# grid_path:
+#   exact: true
+#   paths:
+#     - [[0, 0, 0], [0.5, 0, 0]]
+#     - [[0.5, 0, 0], [0.5, 0.5, 0]]
+#   labels: [GAMMA, X, M]
+
+# Optional visual spectral function on the exact mesh path. This deliberately emits
+# a RuntimeWarning: independent Lorentzians are only a qualitative representation,
+# especially where adjacent linewidths overlap.
+lorentzian: null
+# lorentzian:
+#   name: lorentzian_band
+#   frequency_range_THz: [0, 15]
+#   frequency_points: 800
+#   minimum_gamma_THz: 1.0e-4
+
+# Pair-resolved Wigner coherence can be very large and is never exported implicitly.
+mode_pairs: null
+# mode_pairs:
+#   temperature: 300
+
+# Full triplet/band PP tensors are only flattened when this section is enabled.
+interactions: null
+# interactions:
+#   bands: {i: [0, 1, 2]}
+#   min_pp_eV2: 1.0e-12

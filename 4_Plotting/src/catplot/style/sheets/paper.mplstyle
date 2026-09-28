@@ -1,0 +1,35 @@
+# Final-size publication profile: exact 85 mm square default canvas.
+
+figure.figsize: 3.3464566929, 3.3464566929
+figure.dpi: 120
+
+font.size: 8.0
+axes.titlesize: 9.0
+axes.titleweight: normal
+axes.titlepad: 5.0
+axes.labelsize: 9.0
+axes.labelpad: 3.0
+axes.linewidth: 0.8
+
+lines.linewidth: 1.15
+lines.markersize: 4.2
+lines.markeredgewidth: 0.75
+patch.linewidth: 0.8
+
+xtick.labelsize: 7.5
+ytick.labelsize: 7.5
+xtick.major.size: 3.5
+ytick.major.size: 3.5
+xtick.major.width: 0.8
+ytick.major.width: 0.8
+xtick.major.pad: 2.5
+ytick.major.pad: 2.5
+xtick.minor.size: 2.0
+ytick.minor.size: 2.0
+xtick.minor.width: 0.6
+ytick.minor.width: 0.6
+
+legend.fontsize: 7.5
+grid.linewidth: 0.5
+grid.alpha: 0.35
+

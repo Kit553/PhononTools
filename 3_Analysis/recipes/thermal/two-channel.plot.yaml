@@ -1,0 +1,36 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  observations:
+    path: ../../thermal-analysis/thermal_two_channel.csv
+    filters:
+      - {column: series, op: eq, value: measurement}
+  curve:
+    path: ../../thermal-analysis/thermal_two_channel.csv
+    filters:
+      - {column: series, op: eq, value: curve}
+panels:
+  - id: two-channel
+    axes:
+      x: {label: Temperature (K)}
+      y: {label: '$\kappa$ (W m$^{-1}$ K$^{-1}$)'}
+    legend: {frameon: false}
+    layers:
+      - type: scatter
+        data: observations
+        mapping: {x: temperature_K, y: observed_W_mK}
+        options: {size: 14, label: experiment}
+      - type: line
+        data: curve
+        mapping: {x: temperature_K, y: fit_total_W_mK}
+        options: {linewidth: 1.8, label: total}
+      - type: line
+        data: curve
+        mapping: {x: temperature_K, y: fit_propagon_W_mK}
+        options: {linewidth: 1.2, linestyle: '--', label: propagon}
+      - type: line
+        data: curve
+        mapping: {x: temperature_K, y: fit_diffuson_W_mK}
+        options: {linewidth: 1.2, linestyle: ':', label: diffuson}
+output: {name: thermal-two-channel, directory: ../../plots, formats: [pdf]}

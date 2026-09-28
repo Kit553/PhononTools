@@ -1,0 +1,21 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  gamma: {path: ../../phono3py-analysis/gamma_profile.csv}
+panels:
+  - id: gamma
+    axes:
+      x: {label: Frequency (THz)}
+      y: {label: Linewidth $\Gamma$ (THz), scale: log}
+    legend: {frameon: false}
+    layers:
+      - type: band
+        data: gamma
+        mapping: {x: frequency_THz, lower: value_q25, upper: value_q75, group: temperature_K}
+        options: {alpha: 0.16}
+      - type: line
+        data: gamma
+        mapping: {x: frequency_THz, y: value_mean, group: temperature_K}
+        options: {linewidth: 1.4}
+output: {name: gamma-temperature, directory: ../../plots, formats: [pdf]}

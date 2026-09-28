@@ -1,0 +1,17 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  spectra: {path: ../../freqball-analysis/freqball_family_spectra.csv}
+panels:
+  - id: spectra
+    axes:
+      x: {label: Frequency (THz)}
+      y: {label: 'Directional PDOS (THz$^{-1}$)'}
+    legend: true
+    layers:
+      - type: line
+        data: spectra
+        mapping: {x: frequency_THz, y: pdos_per_THz, group: trace}
+        options: {linewidth: 1.5}
+output: {name: freqball-family-spectra, directory: ../../plots, formats: [pdf]}

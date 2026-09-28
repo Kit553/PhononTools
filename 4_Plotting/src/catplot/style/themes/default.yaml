@@ -1,0 +1,25 @@
+name: default
+description: Muted indigo-led series cycle for a white background.
+
+series:
+  - "#332288"
+  - "#CC6677"
+  - "#117733"
+  - "#DDCC77"
+  - "#88CCEE"
+  - "#882255"
+  - "#44AA99"
+  - "#AA4499"
+  - "#777777"
+
+semantic:
+  primary: "#332288"
+  secondary: "#CC6677"
+  accent: "#44AA99"
+  experiment: "#111111"
+  calculation: "#332288"
+  reference: "#777777"
+  uncertainty: "#CBC4E1"
+  positive: "#117733"
+  negative: "#CC6677"
+  neutral: "#777777"

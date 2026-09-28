@@ -1,0 +1,70 @@
+# CATPlot base policy. Plot recipes must not override these casually.
+
+figure.facecolor: white
+figure.edgecolor: white
+figure.autolayout: False
+figure.constrained_layout.use: True
+figure.constrained_layout.h_pad: 0.035
+figure.constrained_layout.w_pad: 0.035
+figure.constrained_layout.hspace: 0.025
+figure.constrained_layout.wspace: 0.025
+
+savefig.facecolor: white
+savefig.edgecolor: white
+savefig.transparent: False
+savefig.bbox: standard
+savefig.pad_inches: 0
+savefig.dpi: 600
+
+font.family: sans-serif
+font.sans-serif: Arial, Helvetica, Nimbus Sans, Liberation Sans, DejaVu Sans
+font.style: normal
+font.weight: normal
+text.usetex: False
+mathtext.fontset: dejavusans
+mathtext.default: regular
+
+text.color: 0.10
+axes.facecolor: white
+axes.edgecolor: 0.10
+axes.labelcolor: 0.10
+axes.titlecolor: 0.10
+axes.axisbelow: True
+axes.grid: False
+axes.spines.left: True
+axes.spines.bottom: True
+axes.spines.top: True
+axes.spines.right: True
+axes.unicode_minus: True
+axes.formatter.use_mathtext: True
+axes.formatter.limits: -3, 4
+axes.formatter.useoffset: True
+
+xtick.color: 0.10
+ytick.color: 0.10
+xtick.direction: in
+ytick.direction: in
+xtick.top: True
+ytick.right: True
+xtick.labeltop: False
+ytick.labelright: False
+xtick.minor.visible: False
+ytick.minor.visible: False
+
+legend.frameon: False
+legend.fancybox: False
+legend.handlelength: 1.5
+legend.handletextpad: 0.45
+legend.columnspacing: 1.0
+legend.labelspacing: 0.35
+legend.borderaxespad: 0.4
+
+errorbar.capsize: 2.0
+patch.force_edgecolor: False
+hatch.linewidth: 0.6
+
+pdf.fonttype: 42
+pdf.compression: 6
+ps.fonttype: 42
+svg.fonttype: none
+

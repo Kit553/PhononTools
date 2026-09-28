@@ -1,0 +1,20 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: stack, direction: vertical, cell_edge_mm: 62, share_x: true}
+data:
+  thermal: {path: ../../analysis/thermal_properties.csv}
+panels:
+  - id: cv
+    axes:
+      y: {label: "$C_V$ (J K$^{-1}$ mol$^{-1}$)"}
+    legend: false
+    layers:
+      - {type: line, data: thermal, mapping: {x: temperature_K, y: heat_capacity_J_K_mol}}
+  - id: entropy
+    axes:
+      x: {label: Temperature (K)}
+      y: {label: "Entropy (J K$^{-1}$ mol$^{-1}$)"}
+    legend: false
+    layers:
+      - {type: line, data: thermal, mapping: {x: temperature_K, y: entropy_J_K_mol}}
+output: {name: harmonic-thermal-properties, directory: ../../plots, formats: [pdf]}

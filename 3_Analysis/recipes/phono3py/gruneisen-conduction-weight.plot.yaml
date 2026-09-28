@@ -1,0 +1,21 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  modes:
+    path: ../../phono3py-analysis/mesh_modes.csv
+    filters: [{column: temperature_K, op: eq, value: 300}]
+panels:
+  - id: gruneisen
+    axes:
+      x: {label: Frequency (THz)}
+      y: {label: Mode Grüneisen parameter}
+    legend: false
+    colorbar: {label: Conduction-direction weight}
+    layers:
+      - type: scatter
+        data: modes
+        mapping: {x: frequency_THz, y: gruneisen, color: conduction_direction_weight}
+        options: {cmap: magma, vmin: 0, vmax: 1, size: 7, alpha: 0.55, linewidth: 0}
+      - {type: reference, options: {axis: y, value: 0, linestyle: '--'}}
+output: {name: gruneisen-conduction-weight, directory: ../../plots, formats: [pdf]}

@@ -1,0 +1,20 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  spectra:
+    path: ../../impedance-analysis/impedance_spectra.csv
+    transforms:
+      - {op: scale, column: z_imaginary_ohm, factor: -1, output: minus_z_imaginary_ohm}
+panels:
+  - id: nyquist
+    axes:
+      x: {label: '$Z''$ ($\Omega$)'}
+      y: {label: '$-Z''''$ ($\Omega$)'}
+    legend: {frameon: false}
+    layers:
+      - type: line
+        data: spectra
+        mapping: {x: z_real_ohm, y: minus_z_imaginary_ohm, group: series}
+        options: {linewidth: 1.0}
+output: {name: impedance-nyquist, directory: ../../plots, formats: [pdf]}

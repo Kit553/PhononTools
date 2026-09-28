@@ -1,0 +1,45 @@
+# BondingTools discovers the files that actually exist and writes only the
+# corresponding canonical tables. Paths are relative to this YAML.
+system:
+  path: ../example_lobster_calculation
+  name: Na3PnX4
+  recursive: true
+
+extraction:
+  populations: [COHP, COBI, COOP]
+  spin_mode: summed
+  orbitals: true
+  energy_range_eV: [-20, 8]
+  spilling_warning_percent: 5
+
+interactions:
+  element_groups:
+    mobile: [Na]
+    pn: [P, As, Sb]
+    x: [S, Se, Cl]
+  atom_index_groups: {}
+  rules:
+    - {name: Pn-X, groups: [pn, x]}
+    - {name: Na-X, groups: [mobile, x]}
+    - {name: X-X, groups: [x, x]}
+
+# FATBAND output is exported when FATBAND_*, KPOINTS, a structure, and either
+# vasprun.xml/a COXXCAR Fermi level are present. Set efermi_eV only if neither is.
+bands:
+  enabled: true
+  # efermi_eV: 2.345
+
+# This independently constructs LobsterPy Analysis objects. The resulting table is
+# diagnostic_only and is never used to create the canonical plotting tables.
+benchmark:
+  enabled: true
+  populations: [COHP, COBI, COOP]
+  cutoff: 0.0
+  noise_cutoff: 1.0e-8
+  which_bonds: all
+  absolute_tolerance: 1.0e-5
+  relative_tolerance: 1.0e-4
+
+output:
+  directory: ../bonding-analysis
+  format: csv

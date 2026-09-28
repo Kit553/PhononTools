@@ -1,0 +1,35 @@
+schema: 1
+style:
+  profile: paper
+  theme: default
+layout:
+  type: single
+  edge_mm: 85
+data:
+  transport:
+    path: ../../data/transport.csv
+panels:
+  - id: main
+    axes:
+      x:
+        label: Temperature (K)
+        limits: [240, 510]
+        ticks: {step: 50, minor: 1}
+      y:
+        label: Conductivity (S cm$^{-1}$)
+      grid: {alpha: 0.15, linewidth: 0.5}
+    legend: {frameon: false}
+    layers:
+      - type: line
+        data: transport
+        mapping: {x: temperature, y: conductivity, group: compound}
+        options: {marker: o, markersize: 3.5}
+output:
+  name: transport-line
+  directory: ..
+  formats: [pdf]
+  preview_dpi: 180
+  final_dpi: 600
+metadata:
+  Title: Transport example
+  Author: CATPlot

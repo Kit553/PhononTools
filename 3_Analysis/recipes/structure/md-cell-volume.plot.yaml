@@ -1,0 +1,18 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  cells:
+    path: ../../structure-trajectory/structure_cells.csv
+panels:
+  - id: volume
+    axes:
+      x: {label: Time (fs)}
+      y: {label: Cell volume (\AA$^3$)}
+    legend: {frameon: false}
+    layers:
+      - type: line
+        data: cells
+        mapping: {x: time_fs, y: volume_A3, group: system}
+        options: {linewidth: 1.0}
+output: {name: md-cell-volume, directory: ../../plots, formats: [pdf]}

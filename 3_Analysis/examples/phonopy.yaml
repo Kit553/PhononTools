@@ -1,0 +1,75 @@
+# Paths are relative to this file. A section set to null is not run.
+system:
+  path: ../example_calculation
+  name: example
+  phonopy_yaml: phonopy_disp.yaml
+  force_sets: FORCE_SETS
+  born: BORN
+
+output:
+  directory: ../analysis
+  format: csv
+
+mesh:
+  numbers: [21, 21, 21]
+  group_velocities: true
+  projections:
+    elements: true
+    symmetry_sites: false
+    directions:
+      x: [1, 0, 0]
+      y: [0, 1, 0]
+      z: [0, 0, 1]
+    custom:
+      - name: Na_ab
+        elements: [Na]
+        direction: [1, 1, 0]
+
+band:
+  # Omit paths to use the current SeeK-path convention.
+  npoints: 101
+  group_velocities: true
+  projections:
+    elements: true
+
+qpoints: null
+
+dos:
+  sigma: 0.05
+  tetrahedron: false
+  projections:
+    elements: true
+    symmetry_sites: true
+
+thermal_properties:
+  t_min: 0
+  t_max: 1000
+  t_step: 10
+
+thermal_displacements: null
+
+thermal_matrices:
+  t_min: 0
+  t_max: 1000
+  t_step: 10
+  freq_min: 0.1
+  cif_temperatures: [300]
+
+# Coherent one-phonon INS. Supply values explicitly; no private constants table.
+neutron: null
+# neutron:
+#   qpoints: [[0, 0, 0], [0.5, 0, 0]]
+#   temperature_K: 300
+#   basis: unitcell
+#   scattering_lengths_A: {Na: 3.63, Cl: 9.577}
+
+descriptors:
+  averaged:
+    low_frequency_cutoff_THz: 2.0
+    min_frequency_THz: 1.0e-6
+    inverse_square_floor_THz: 0.1
+  group_velocity: true
+  sound_velocity:
+    q_min: 1.0e-6
+    q_max: 0.18
+    native_to_m_per_s: 100.0  # VASP: 1 Angstrom THz = 100 m/s
