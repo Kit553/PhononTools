@@ -1,14 +1,20 @@
 """Read FreqBall scan configurations and output locations."""
 
 from __future__ import annotations
+
 from pathlib import Path
 from typing import Any
+
 import pandas as pd
 import yaml
+
+from .freqball_config import normalize_config
 
 
 def _load(path: Path) -> dict[str, Any]:
     document = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    if isinstance(document, dict):
+        document = normalize_config(document)
     if not isinstance(document, dict) or not isinstance(document.get("system"), dict):
         raise TypeError("The base FreqBall configuration needs a system mapping")
     return document
@@ -42,4 +48,7 @@ def configured_families(scan: str | Path) -> Path | None:
     config = root / str(pd.read_csv(table).iloc[0]["config_file"])
     document = _load(config)
     value = document.get("families", {}).get("file")
-    return None if not value else Path(value).expanduser().resolve()
+    if not value:
+        return None
+    path = Path(value).expanduser()
+    return (path if path.is_absolute() else config.parent / path).resolve()

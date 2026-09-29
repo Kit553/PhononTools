@@ -102,9 +102,13 @@ def load_families(
     document = yaml.safe_load(source.read_text(encoding="utf-8")) or {}
     if int(document.get("schema_version", -1)) != 1:
         raise ValueError(f"Unsupported direction-family schema in {source}")
-    if str(document.get("coordinate_system", "fractional")).lower() != "fractional":
+    if str(document.get("coordinate_system", "fractional")).lower() not in {
+        "fractional",
+        "frac",
+        "reduced",
+    }:
         raise ValueError("Direction-family vectors must use fractional coordinates")
-    stored_lattice = np.asarray(document.get("lattice"), dtype=float)
+    stored_lattice = np.asarray(document.get("lattice", lattice), dtype=float)
     if stored_lattice.shape != (3, 3) or not np.allclose(stored_lattice, lattice, atol=1e-5):
         raise ValueError("Direction-family lattice differs from the primitive lattice")
     available = list(document.get("atoms", []))

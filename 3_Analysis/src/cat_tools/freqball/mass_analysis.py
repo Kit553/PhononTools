@@ -9,7 +9,6 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
 from cat_shared.artifacts import TableArtifact
 
 from .analysis import descriptor_artifact, family_spectra_artifact, spectral_descriptors
@@ -47,11 +46,7 @@ class MassAnalysisOptions:
 
 def _mass(result: TensorResult, species: str) -> float:
     symbols = result.structure_symbols or result.symbols
-    masses = (
-        result.structure_masses_u
-        if result.structure_masses_u is not None
-        else result.masses_u
-    )
+    masses = result.structure_masses_u if result.structure_masses_u is not None else result.masses_u
     selected = np.asarray(masses, dtype=float)[np.asarray(symbols) == species]
     if not len(selected):
         raise ValueError(f"{result.system}: no {species} atoms are stored in the tensor")
@@ -80,12 +75,18 @@ def load_mass_points(
     selected.sort(key=lambda point: point.mass_u)
     if len({point.mass_u for point in selected}) != len(selected):
         raise ValueError("The mass scan contains duplicate assigned masses")
+    if not selected:
+        raise ValueError("No mass points supplied")
     reference = selected[0].result
     for point in selected[1:]:
         current = point.result
         if (
             current.system != reference.system
             or current.mesh != reference.mesh
+            or not np.isclose(current.sigma_THz, reference.sigma_THz)
+            or current.metadata.get("gamma_center") != reference.metadata.get("gamma_center")
+            or current.metadata.get("input", {}).get("files")
+            != reference.metadata.get("input", {}).get("files")
             or current.symbols != reference.symbols
             or current.structure_symbols != reference.structure_symbols
             or not np.array_equal(current.primitive_indices, reference.primitive_indices)
@@ -100,6 +101,20 @@ def load_mass_points(
             or not np.allclose(current.frequency_THz, reference.frequency_THz)
         ):
             raise ValueError(f"{point.path}: tensor is not commensurate with the first mass point")
+        symbols = np.asarray(current.structure_symbols or current.symbols)
+        other = symbols != species
+        current_masses = (
+            current.structure_masses_u
+            if current.structure_masses_u is not None
+            else current.masses_u
+        )
+        reference_masses = (
+            reference.structure_masses_u
+            if reference.structure_masses_u is not None
+            else reference.masses_u
+        )
+        if not np.allclose(current_masses[other], reference_masses[other]):
+            raise ValueError(f"{point.path}: masses of species other than {species} changed")
     return tuple(selected)
 
 
@@ -148,7 +163,9 @@ def _overview_spectra(point: MassPoint, species: str, options: MassAnalysisOptio
                         "selection": selection,
                         "trace": trace,
                         "mass_trace": f"{point.mass_u:g}u:{trace}",
-                        "selected_direction_count": counts.get((group, selection), 3 * len(spectra)),
+                        "selected_direction_count": counts.get(
+                            (group, selection), 3 * len(spectra)
+                        ),
                         "frequency_index": np.arange(len(frequency)),
                         "frequency_THz": frequency,
                         "pdos_per_THz": values,
@@ -179,7 +196,9 @@ def mass_scan_artifacts(
             )
         )
         family = _tag(family_spectra_artifact(point.result, point.families).data, point, species)
-        family["mass_trace"] = family["mass_u"].map(lambda value: f"{value:g}u") + ":" + family["trace"]
+        family["mass_trace"] = (
+            family["mass_u"].map(lambda value: f"{value:g}u") + ":" + family["trace"]
+        )
         families.append(family)
         spectra.append(_overview_spectra(point, species, settings))
     if not points:

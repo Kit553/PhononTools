@@ -8,15 +8,15 @@ import numpy as np
 def normalize_rows(vectors: np.ndarray) -> np.ndarray:
     values = np.atleast_2d(np.asarray(vectors, dtype=float))
     norms = np.linalg.norm(values, axis=1)
-    if np.any(norms <= 1e-14):
+    if values.shape[1] != 3 or not np.isfinite(values).all() or np.any(norms <= 1e-14):
         raise ValueError("Direction vectors must be non-zero")
     return values / norms[:, None]
 
 
 def fibonacci_sphere(count: int) -> np.ndarray:
     """Approximately uniform deterministic Cartesian unit vectors."""
-    if count < 4:
-        raise ValueError("A frequency ball needs at least four directions")
+    if count < 2:
+        raise ValueError("Directional sampling needs at least two directions")
     index = np.arange(count, dtype=float)
     y = 1.0 - 2.0 * index / (count - 1)
     radius = np.sqrt(np.clip(1.0 - y * y, 0.0, None))

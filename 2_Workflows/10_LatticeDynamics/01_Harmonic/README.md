@@ -18,5 +18,6 @@ phonon q-mesh separately. A dense post-processing mesh cannot repair short-range
 force constants from an insufficient supercell. Use consistent cell/atom mapping, masses, NAC and symmetrization settings
 when comparing results.
 
-Directional DOS/FreqBall, fatbands and mode mapping are outside this baseline pass.
-Their existing material is retained for later work.
+Continue with the [FreqBall workflow](02_DirectionalDOS/README.md) for directional
+DOS, frequency balls, conduction fatbands and artificial-mass scans using these
+harmonic force inputs.

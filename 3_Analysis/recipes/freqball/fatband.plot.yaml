@@ -11,6 +11,10 @@ panels:
     legend: false
     colorbar: {label: Conduction minus tetrahedral fraction}
     layers:
+      - type: line
+        data: modes
+        mapping: {x: distance, y: frequency_THz, group: trace}
+        options: {color: "0.75", linewidth: 0.4}
       - type: scatter
         data: modes
         mapping:

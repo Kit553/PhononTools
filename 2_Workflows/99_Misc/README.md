@@ -15,4 +15,6 @@ then run `cat-freqball freqball.yaml`.
 The launcher belongs to preparation; the path parsing, direction construction, and
 spectral interpretation belong to analysis. See the
 [structure documentation](../../3_Analysis/docs/structure.md) and
-[FreqBall documentation](../../3_Analysis/docs/freqball.md).
+[FreqBall reference](../../3_Analysis/docs/freqball.md). Continue with the separate
+[FreqBall workflow](../10_LatticeDynamics/01_Harmonic/02_DirectionalDOS/README.md)
+for calculation, fatbands and mass scans.

@@ -3,17 +3,23 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import multiprocessing
+import subprocess
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from functools import partial
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 import yaml
+from cat_prepare.mass_scan import add_setup_arguments, run_setup
+from cat_shared.artifacts import TableArtifact, write_artifacts
+from cat_shared.mass_scan import configured_families, tensor_paths
 
 from cat_tools import __version__
-from cat_shared.artifacts import write_artifacts
 
 from .mass_analysis import MassAnalysisOptions, load_mass_points, mass_scan_artifacts
-from cat_prepare.mass_scan import add_setup_arguments, run_setup
-from cat_shared.mass_scan import configured_families, tensor_paths
 from .viewer import show_ball
 
 
@@ -27,6 +33,55 @@ def _scan_species(root: Path, explicit: str | None) -> str:
     return str(species)
 
 
+def run_jobs(scan: str | Path, *, workers: int = 1) -> list[Path]:
+    """Execute generated jobs locally with bounded concurrency and per-point logs."""
+    if workers < 1:
+        raise ValueError("workers must be positive")
+    root = Path(scan).expanduser().resolve()
+    jobs = pd.read_csv(root / "freqball_mass_jobs.csv")
+    scripts = [(root / str(value)).resolve() for value in jobs["job_file"]]
+    for script in scripts:
+        if not script.is_relative_to(root) or not script.is_file():
+            raise ValueError(f"Missing or external mass job: {script}")
+
+    def execute(script):
+        log = script.parent / "run.log"
+        with log.open("w", encoding="utf-8") as handle:
+            try:
+                process = subprocess.run(
+                    ["bash", str(script)],
+                    cwd=script.parent,
+                    stdout=handle,
+                    stderr=subprocess.STDOUT,
+                    check=False,
+                )
+                code = process.returncode
+            except OSError as exc:
+                handle.write(str(exc))
+                code = 127
+        return {
+            "job_file": str(script.relative_to(root)),
+            "returncode": code,
+            "log_file": str(log.relative_to(root)),
+        }
+
+    status_path = root / "freqball_mass_status.csv"
+    # Mark every job unfinished before launching: an interrupted rerun must not
+    # leave a previous success table authorizing collection of stale tensors.
+    pd.DataFrame({"job_file": jobs["job_file"], "returncode": -1}).to_csv(status_path, index=False)
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        statuses = list(pool.map(execute, scripts))
+    pd.DataFrame(statuses).to_csv(status_path, index=False)
+    failed = [row for row in statuses if row["returncode"]]
+    if failed:
+        raise RuntimeError(f"{len(failed)} mass jobs failed; see {status_path}")
+    return [status_path, *(root / row["log_file"] for row in statuses)]
+
+
+def _point_artifacts(point, *, species, options):
+    return mass_scan_artifacts([point], species, options)
+
+
 def run_collect(
     scan: str | Path,
     output: str | Path,
@@ -36,14 +91,57 @@ def run_collect(
     require_complete: bool = True,
     table_format: str = "csv",
     options: MassAnalysisOptions | None = None,
+    workers: int = 1,
 ) -> list[Path]:
+    if workers < 1:
+        raise ValueError("workers must be positive")
     root = Path(scan).expanduser().resolve()
+    status = root / "freqball_mass_status.csv"
+    if status.is_file() and (pd.read_csv(status)["returncode"] != 0).any():
+        raise ValueError("Scan has failed jobs; inspect run.log and rerun before collecting")
     species = _scan_species(root, species)
     family_path = families or configured_families(root)
     paths = tensor_paths(root, require_complete=require_complete)
     points = load_mass_points(paths, species, family_path)
+    job_table = root / "freqball_mass_jobs.csv"
+    if job_table.is_file():
+        jobs = pd.read_csv(job_table)
+        expected = {
+            (root / row.tensor_file).resolve(): float(row.mass_u) for row in jobs.itertuples()
+        }
+        configs = {
+            (root / row.tensor_file).resolve(): root / row.config_file for row in jobs.itertuples()
+        }
+        for point in points:
+            saved_hash = point.result.metadata.get("configuration_sha256")
+            if (
+                saved_hash
+                and saved_hash != hashlib.sha256(configs[point.path].read_bytes()).hexdigest()
+            ):
+                raise ValueError(f"{point.path}: point configuration changed since computation")
+            if not np.isclose(point.mass_u, expected[point.path], rtol=0, atol=1e-8):
+                raise ValueError(f"{point.path}: stored mass differs from the scan job table")
+    if workers == 1:
+        artifacts = mass_scan_artifacts(points, species, options)
+    else:
+        with ProcessPoolExecutor(
+            max_workers=workers, mp_context=multiprocessing.get_context("spawn")
+        ) as pool:
+            groups = list(
+                pool.map(partial(_point_artifacts, species=species, options=options), points)
+            )
+        artifacts = [
+            TableArtifact(
+                first.name,
+                pd.concat([group[i].data for group in groups], ignore_index=True),
+                first.keys,
+                first.units,
+                first.metadata,
+            )
+            for i, first in enumerate(groups[0])
+        ]
     return write_artifacts(
-        mass_scan_artifacts(points, species, options),
+        artifacts,
         output,
         table_format=table_format,
         run_metadata={
@@ -119,6 +217,10 @@ def build_parser() -> argparse.ArgumentParser:
     setup = commands.add_parser("setup", help="Generate one independent workflow per mass")
     add_setup_arguments(setup)
 
+    run = commands.add_parser("run", help="Execute generated jobs locally with bounded concurrency")
+    run.add_argument("scan", type=Path)
+    run.add_argument("--workers", type=int, default=1)
+
     collect = commands.add_parser("collect", help="Create canonical cross-mass tables")
     collect.add_argument("scan", type=Path)
     collect.add_argument("-o", "--output", type=Path)
@@ -126,6 +228,7 @@ def build_parser() -> argparse.ArgumentParser:
     collect.add_argument("--families", type=Path)
     collect.add_argument("--allow-missing", action="store_true")
     collect.add_argument("--format", choices=("csv", "parquet"), default="csv")
+    collect.add_argument("--workers", type=int, default=1)
     collect.add_argument("--directions", type=int, default=1000)
     collect.add_argument("--conduction-threshold", type=float, default=0.95)
     collect.add_argument("--tetrahedral-threshold", type=float, default=0.95)
@@ -153,8 +256,14 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = build_parser().parse_args()
+    from .parallel import context
+
+    if context()[2] > 1:
+        raise ValueError("Run mass-scan commands once; use --workers for local concurrency")
     if args.action == "setup":
         written = run_setup(args)
+    elif args.action == "run":
+        written = run_jobs(args.scan, workers=args.workers)
     elif args.action == "collect":
         options = MassAnalysisOptions(
             directions=args.directions,
@@ -171,6 +280,7 @@ def main() -> None:
             require_complete=not args.allow_missing,
             table_format=args.format,
             options=options,
+            workers=args.workers,
         )
     else:
         written = run_render(

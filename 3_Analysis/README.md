@@ -97,7 +97,8 @@ cat-prepare mass-scan examples/freqball.yaml -o mass-scan \
 cat-freqball-mass-scan collect mass-scan -o freqball-mass-analysis
 ```
 
-See [`docs/freqball.md`](docs/freqball.md) for the schema, family-preparation commands,
+Follow the separate [FreqBall workflow](../2_Workflows/10_LatticeDynamics/01_Harmonic/02_DirectionalDOS/README.md)
+for execution. See [`docs/freqball.md`](docs/freqball.md) for the schema, family-preparation commands,
 MPI calculation, fatband definitions, and the CATPlot recipes in
 [`recipes/freqball`](recipes/freqball).
 

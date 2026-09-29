@@ -39,7 +39,9 @@ modes:
   - name: freqball_mesh_modes
     kind: mesh
     mesh: [21, 21, 21]
-    mesh_symmetry: true
+    mesh_symmetry: false
+    time_reversal: false
+    qpoint_chunk: 64
     gamma_center: true
 
 output:

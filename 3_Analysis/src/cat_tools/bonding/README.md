@@ -1,22 +1,13 @@
 # Bonding analysis with CAT
 
-`cat-bonding` reads completed LOBSTER calculations and exports CSV or Parquet tables
-for COHP, COBI, COOP, charges, DOS and electronic bands. It can classify contacts
-from chemistry or periodic structure topology, check requested interactions against
-the output, and compare integrated values with LobsterPy. [CATPlot](../../../../4_Plotting/README.md)
-turns the exported tables into figures.
+`cat-bonding` reads completed LOBSTER calculations and exports CSV or Parquet tables for COHP, COBI, COOP, charges, DOS and electronic bands. It can classify contacts from chemistry or periodic structure topology, check requested interactions against the output, and compare integrated values with LobsterPy. [CATPlot](../../../../4_Plotting/README.md) turns the exported tables into figures.
 
-Start with [one calculation](#start-with-one-calculation), then
-[plot the results](#plot-with-catplot). The remaining sections describe
-[inputs](#input-discovery), [configuration](#configuration-reference),
-[classification](#classifying-interactions), [outputs](#output-tables-and-conventions),
-[checks](#checking-the-results), [LobsterPy](#optional-lobsterpy-comparison),
-and the [Python API](#python-api-and-module-map).
+Start with [one calculation](#start-with-one-calculation), then [plot the results](#plot-with-catplot). The remaining sections describe
+[inputs](#input-discovery), [configuration](#configuration-reference), [classification](#classifying-interactions), [outputs](#output-tables-and-conventions), [checks](#checking-the-results), [LobsterPy](#optional-lobsterpy-comparison), and the [Python API](#python-api-and-module-map).
 
 ## Install
 
-Use Python 3.12 or newer. From the PhononTools repository root, in your chosen
-virtual environment:
+Use Python 3.12 or newer. From the PhononTools repository root, in your chosen virtual environment:
 
 ```bash
 python -m pip install -e '.[bonding]' -e ./4_Plotting
@@ -24,17 +15,11 @@ cat-bonding --help
 catplot --help
 ```
 
-The `bonding` extra installs Pymatgen for parsing and LobsterPy for the optional
-comparison. CATPlot is the local package in `4_Plotting`; no external plotting
-download is needed. Its Python import and primary command are both `catplot`.
+The `bonding` extra installs Pymatgen for parsing and LobsterPy for the optional comparison. CATPlot is the local package in `4_Plotting`; no external plotting download is needed. Its Python import and primary command are both `catplot`.
 
-For an existing uv setup, use `uv sync --extra bonding`, activate `.venv`, then
-`uv pip install -e ./4_Plotting`. A later `uv sync` may remove the separately
-installed plotting package; reinstall it if needed. CSV needs no extra I/O engine;
-CAT's dependencies already include PyArrow for Parquet.
+For an existing uv setup, use `uv sync --extra bonding`, activate `.venv`, then `uv pip install -e ./4_Plotting`. A later `uv sync` may remove the separately installed plotting package; reinstall it if needed. CSV needs no extra I/O engine; CAT's dependencies already include PyArrow for Parquet.
 
-These commands analyze existing output. Preparing and running VASP/LOBSTER is
-covered by the [LOBSTER input configuration guide](../../../../1_Tools/README.md#lobster-configuration-and-framework-detection).
+These commands analyze existing output. Preparing and running VASP/LOBSTER is covered by the [LOBSTER input configuration guide](../../../../1_Tools/README.md#lobster-configuration-and-framework-detection).
 
 ## Start with one calculation
 

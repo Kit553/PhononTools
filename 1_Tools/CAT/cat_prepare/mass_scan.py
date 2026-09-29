@@ -3,17 +3,17 @@
 from __future__ import annotations
 
 import hashlib
+import math
 import shlex
 from collections.abc import Sequence
-from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 import yaml
-
 from cat_shared.artifacts import TableArtifact, write_artifacts
+from cat_shared.freqball_config import anchor_inputs
 from cat_shared.mass_scan import _load
 
 
@@ -44,7 +44,7 @@ def mass_values(
         selected = [start + index * (stop - start) / (points - 1) for index in range(points)]
     else:
         selected = [float(value) for value in values or ()]
-    if not selected or any(value <= 0 for value in selected):
+    if not selected or any(not math.isfinite(value) or value <= 0 for value in selected):
         raise ValueError("Masses must be non-empty and positive")
     if len(set(selected)) != len(selected):
         raise ValueError("Mass scan values must be unique")
@@ -58,22 +58,12 @@ def _absolute(base: Path, value: str | Path) -> str:
 
 def _portable_config(base_config: Path, species: str, mass: float) -> dict[str, Any]:
     """Copy a workflow while anchoring its external inputs to the source YAML."""
-    document = deepcopy(_load(base_config))
-    base = base_config.parent
+    document = anchor_inputs(_load(base_config), base_config.parent)
     system = document["system"]
-    system["path"] = _absolute(base, system.get("path", "."))
     existing = system.get("masses", {})
     if existing and (not isinstance(existing, dict) or "primitive" in existing):
         raise ValueError("Mass scans require element-based system.masses overrides")
     system["masses"] = {**dict(existing), species: float(mass)}
-    families = document.get("families")
-    if isinstance(families, dict) and families.get("file"):
-        families["file"] = _absolute(base, families["file"])
-    modes = document.get("modes") or []
-    modes = [modes] if isinstance(modes, dict) else modes
-    for mode in modes:
-        if isinstance(mode, dict) and mode.get("from_table"):
-            mode["from_table"] = _absolute(base, mode["from_table"])
     document["output"] = {
         **dict(document.get("output", {})),
         "tensor": "freqball.h5",

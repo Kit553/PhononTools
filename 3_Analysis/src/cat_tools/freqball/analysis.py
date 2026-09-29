@@ -6,7 +6,6 @@ from collections import defaultdict
 
 import numpy as np
 import pandas as pd
-
 from cat_shared.artifacts import TableArtifact
 
 from .families import FamilySet, direction_grid
@@ -30,6 +29,10 @@ def spectral_descriptors(
     """Calculate moments once; no cutoff-dependent values are stored in HDF5."""
     frequency = np.asarray(frequency, dtype=float)
     spectra = np.asarray(spectra, dtype=float)
+    if not np.isfinite(inverse_frequency_floor) or inverse_frequency_floor <= 0:
+        raise ValueError("Inverse-frequency floor must be finite and positive")
+    if not np.isfinite(low_frequency_cutoff) or low_frequency_cutoff < 0:
+        raise ValueError("Low-frequency cutoff must be finite and non-negative")
     total = _integral(spectra, frequency)
 
     def divide(numerator: np.ndarray, denominator: np.ndarray) -> np.ndarray:
@@ -94,6 +97,15 @@ def descriptor_artifact(
         )
         conduction = np.asarray(grid["conduction_alignment"], dtype=float)
         tetrahedral = np.asarray(grid["tetrahedral_alignment"], dtype=float)
+        alignment = {}
+        for category in ("conduction", "tetrahedral"):
+            refs = atom.vectors(category=category)
+            dots = np.clip(abs(cartesian @ refs.T), 0, 1)
+            alignment[f"best_{category}_reference"] = (
+                np.argmax(dots, axis=1) if len(refs) else np.full(len(cartesian), -1)
+            )
+            values = conduction if category == "conduction" else tetrahedral
+            alignment[f"theta_{category}_deg"] = np.degrees(np.arccos(np.sqrt(values)))
         rows.append(
             pd.DataFrame(
                 {
@@ -116,6 +128,8 @@ def descriptor_artifact(
                     "conduction_alignment": conduction,
                     "tetrahedral_alignment": tetrahedral,
                     "direction_score": conduction - tetrahedral,
+                    "alignment_strength": np.fmax(conduction, tetrahedral),
+                    **alignment,
                     **metrics,
                 }
             )
@@ -126,6 +140,14 @@ def descriptor_artifact(
         for column in data
         if column.endswith(("_THz", "_THz2"))
     }
+    units.update(
+        {
+            "theta_conduction_deg": "degree",
+            "theta_tetrahedral_deg": "degree",
+            "inverse_frequency_weight": "THz^-2",
+            "inverse_frequency_fraction": "THz^-2",
+        }
+    )
     return TableArtifact(
         "freqball_directions",
         data,

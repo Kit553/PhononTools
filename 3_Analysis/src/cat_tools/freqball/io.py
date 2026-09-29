@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -53,7 +55,7 @@ def _strings(values: tuple[str, ...]) -> np.ndarray:
     return np.asarray(values, dtype=h5py.string_dtype("utf-8"))
 
 
-def write_tensor(result: TensorResult, path: str | Path) -> Path:
+def _write_tensor(result: TensorResult, path: str | Path) -> Path:
     """Write the only raw FreqBall output; descriptors are deliberately absent."""
     result.validate()
     target = Path(path).expanduser().resolve()
@@ -104,6 +106,28 @@ def write_tensor(result: TensorResult, path: str | Path) -> Path:
     return target
 
 
+def write_tensor(result: TensorResult, path: str | Path, *, spectra_dtype="float64") -> Path:
+    """Publish a complete tensor atomically, preserving existing results on failure."""
+    from dataclasses import replace
+
+    aliases = {"single": "float32", "double": "float64"}
+    dtype = np.dtype(aliases.get(spectra_dtype, spectra_dtype))
+    if dtype not in (np.dtype("float32"), np.dtype("float64")):
+        raise ValueError("spectra_dtype must be float32 or float64")
+    result = replace(result, tensor=result.tensor.astype(dtype))
+    result.validate()
+    target = Path(path).expanduser().resolve()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary = tempfile.mkstemp(prefix=f".{target.name}.", dir=target.parent)
+    os.close(descriptor)
+    try:
+        _write_tensor(result, temporary)
+        os.replace(temporary, target)
+    finally:
+        Path(temporary).unlink(missing_ok=True)
+    return target
+
+
 def _decode(values: np.ndarray) -> tuple[str, ...]:
     return tuple(value.decode() if isinstance(value, bytes) else str(value) for value in values)
 
@@ -118,7 +142,7 @@ def read_tensor(path: str | Path) -> TensorResult:
         result = TensorResult(
             system=str(handle.attrs["system"]),
             frequency_THz=np.asarray(handle["spectrum/frequency_THz"], dtype=float),
-            tensor=np.asarray(handle["spectrum/tensor"], dtype=float),
+            tensor=np.asarray(handle["spectrum/tensor"]),
             primitive_indices=np.asarray(handle["atoms/primitive_index"], dtype=int),
             symbols=_decode(np.asarray(handle["atoms/symbol"])),
             positions=np.asarray(handle["atoms/fractional_position"], dtype=float),

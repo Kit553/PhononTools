@@ -1,0 +1,28 @@
+schema: 1
+style: {profile: paper, theme: default}
+layout: {type: single, edge_mm: 85}
+data:
+  modes: {path: analysis/freqball_band_modes.csv}
+panels:
+  - id: fatband
+    axes:
+      x: {label: Wave vector}
+      y: {label: Frequency (THz)}
+    legend: false
+    colorbar: {label: Conduction minus tetrahedral fraction}
+    layers:
+      - type: line
+        data: modes
+        mapping: {x: distance, y: frequency_THz, group: trace}
+        options: {color: "0.75", linewidth: 0.4}
+      - type: scatter
+        data: modes
+        mapping:
+          x: distance
+          y: frequency_THz
+          color: direction_score
+          size: mobile_participation
+          group: trace
+        options: {cmap: coolwarm, vmin: -1, vmax: 1, size_min: 0.5, size_max: 18, alpha: 0.75, linewidth: 0}
+      - {type: reference, options: {axis: y, value: 0, linestyle: '--'}}
+output: {name: freqball-fatband, directory: plots, formats: [pdf]}

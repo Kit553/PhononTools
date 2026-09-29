@@ -7,7 +7,7 @@ inside their owning package: they implement its command, rather than a cluster p
 | Area | Procedure |
 | --- | --- |
 | [00_Common](00_Common/README.md) | Setup, convergence, relaxation, static references and dielectric/Born response |
-| [10_LatticeDynamics](10_LatticeDynamics/README.md) | Baseline harmonic Phonopy/VASP and DFPT workflows; existing specialized notes |
+| [10_LatticeDynamics](10_LatticeDynamics/README.md) | Harmonic Phonopy/VASP and DFPT, FreqBall, conduction fatbands and mass scans |
 | [20_ElectronicStructure](20_ElectronicStructure/README.md) | LOBSTER preparation and bonding analysis |
 | [99_Misc](99_Misc/README.md) | SoftBV/BVPA to directional phonon analysis |
 
