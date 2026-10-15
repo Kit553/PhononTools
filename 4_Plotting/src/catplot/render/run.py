@@ -34,10 +34,7 @@ def render_to_files(recipe, recipe_path, *, final=False, command=None):
         output = target / f"{recipe.output.name}.{file_format.lower()}"
         files.append(save_figure(rendered.figure, output, dpi=dpi, metadata=metadata))
     if final:
-        # The safeguarded recipe lives in a different directory than the
-        # working recipe. Rebase relative sources so the copied recipe remains
-        # directly renderable instead of silently pointing into the final
-        # folder.
+        # Rebase relative data paths for the copied recipe in the final output directory.
         portable_recipe = deepcopy(recipe)
         for source in portable_recipe.data.values():
             source_path = Path(source.path)

@@ -23,6 +23,6 @@ SIGMA = 0.04          # Starting Gaussian width; test with the k mesh.
 # CPU/MPI starting point; benchmark for the chosen ranks and method.
 # See ../../../../00_Common/00_SettingUp/VASP/benchmarking.md; omit NPAR when using NCORE.
 KPAR = 1
-NCORE = 3            # Pilot for 18 MPI ranks; benchmark the actual supercell.
+NCORE = 4            # Pilot for 16 MPI ranks; benchmark the actual supercell.
 LCHARG = .FALSE.
 LWAVE = .FALSE.

@@ -1,0 +1,22 @@
+# Genuine atomic SQS. Cutoffs and cell size need convergence for your system.
+structure: Na3PS4.cif
+output: sqs-configurations
+id_prefix: sqs-cub
+methods: [sqs]
+supercells: [[2, 2, 2]]
+pair_cutoff_A: 7.5
+seed: 42
+sublattices:
+  - name: Pn
+    elements: [P]
+    states: [P, Sb]
+    fractions: {P: 0.5, Sb: 0.5}
+  - name: X
+    elements: [S]
+    states: [S, Se]
+    fractions: {S: 0.5, Se: 0.5}
+sqs:
+  cutoffs_A: [7.5, 4.0]  # Pair and triplet cluster cutoffs, respectively.
+  steps: 10000
+  repeats: 3
+selection: {method: all}

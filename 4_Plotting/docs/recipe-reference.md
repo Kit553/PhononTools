@@ -26,9 +26,7 @@ data:
       - {op: scale, column: y, output: y_milli, factor: 1000}
 ```
 
-`path` is interpreted relative to the recipe. `format` is normally inferred
-from a known extension. Filters and transforms execute in listed order after
-loading.
+`path` is interpreted relative to the recipe. `format` is normally inferred from a known extension. Filters and transforms execute in listed order after loading.
 
 ## Panel
 
@@ -41,9 +39,7 @@ loading.
   layers: []
 ```
 
-Panel IDs must be unique. Projection is `2d` or `3d`. `legend` and `colorbar`
-may be `false`, `true`, or a mapping passed to Matplotlib after CATPlot has
-collected the appropriate artists.
+Panel IDs must be unique. Projection is `2d` or `3d`. `legend` and `colorbar` may be `false`, `true`, or a mapping passed to Matplotlib after CATPlot has collected the appropriate artists.
 
 ## Layer
 
@@ -56,10 +52,7 @@ collected the appropriate artists.
   visible: true
 ```
 
-`type` selects the renderer. `mapping` values name columns; some roles accept a
-list. `options` are validated against the renderer's `PlotSpec`. `axis` is
-`left` or `right`. A layer may be hidden without deleting its specification.
-Annotation layers such as `reference` and `span` need neither data nor mapping.
+`type` selects the renderer. `mapping` values name columns; some roles accept a list. `options` are validated against the renderer's `PlotSpec`. `axis` is `left` or `right`. A layer may be hidden without deleting its specification. Annotation layers such as `reference` and `span` need neither data nor mapping.
 
 ## Axes
 
@@ -80,8 +73,7 @@ axes:
   view: {elev: 25, azim: -55, roll: 0}
 ```
 
-Supported scales are `linear`, `log`, `symlog`, and `logit`. Tick locators use
-one of `values`, `step`, or `max_count`. `z` and `view` apply to 3D axes.
+Supported scales are `linear`, `log`, `symlog`, and `logit`. Tick locators use one of `values`, `step`, or `max_count`. `z` and `view` apply to 3D axes.
 
 ## Layout
 
@@ -104,8 +96,7 @@ layout:
   mosaic: [[overview, overview], [a, b]]
 ```
 
-Stacks accept `ratios`; grids accept `width_ratios` and `height_ratios`.
-`share_x` and `share_y` share limits and remove redundant labels.
+Stacks accept `ratios`; grids accept `width_ratios` and `height_ratios`. `share_x` and `share_y` share limits and remove redundant labels.
 
 ## Output
 
@@ -118,6 +109,4 @@ output:
   final_dpi: 600
 ```
 
-PDF is mandatory. PNG and SVG may be added, but PDF remains the Affinity
-handoff. The directory is recipe-relative. A safeguarded recipe sets its own
-directory to `.` so any later test render remains inside the safeguard folder.
+PDF is mandatory. PNG and SVG may be added, but PDF remains the Affinity handoff. The directory is recipe-relative. A safeguarded recipe sets its own directory to `.` so any later test render remains inside the safeguard folder.

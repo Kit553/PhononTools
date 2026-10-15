@@ -296,7 +296,7 @@ def convert_output(
     return write_conduction_path(data, output), data, problems
 
 
-def main() -> None:
+def main(argv=None) -> None:
     parser = argparse.ArgumentParser(description="SoftBV/BVPA to canonical conduction-path YAML")
     parser.add_argument("input", type=Path, help="BVPA_summary.txt or its output directory")
     parser.add_argument("-o", "--output", type=Path, default=Path("conduction_path.yaml"))
@@ -304,7 +304,7 @@ def main() -> None:
     parser.add_argument("--events", type=Path)
     parser.add_argument("--coordinate-tolerance", type=float, default=2e-3)
     parser.add_argument("--strict", action="store_true")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     try:
         target, data, problems = convert_output(
             args.input,

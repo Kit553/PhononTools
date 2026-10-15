@@ -8,6 +8,8 @@ import sys
 from importlib import import_module
 from pathlib import Path
 
+from cat_shared.version import __version__
+
 # Each implementation retains its own parser and public scientific functions.
 COMMANDS = {
     "vasp": {
@@ -29,8 +31,10 @@ COMMANDS = {
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="cat-tools", description=__doc__)
+    parser.add_argument("--version", action="version", version=f"CAT {__version__}")
     groups = parser.add_subparsers(dest="group", required=True)
     groups.add_parser("prepare", help="Structure conversion, LOBSTER, BVPA, and mass scans")
+    groups.add_parser("ordering", help="Occupational configurations, SQS, selection and mixing hulls")
     for group, commands in COMMANDS.items():
         group_parser = groups.add_parser(group, help=f"{group} utilities")
         actions = group_parser.add_subparsers(dest="action", required=True)
@@ -41,6 +45,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] == "ordering":
+        from cat_prepare.ordering.workflow import main as ordering
+
+        return ordering(argv[1:])
     if argv and argv[0] == "prepare":
         from cat_prepare.cli import main as prepare
 

@@ -6,8 +6,7 @@
 
 **Disclaimer:** It is extremely important for this workflow that the structure you supplied is dynamically stable under DFT conditions i.e. no negative frequencies exist. If that is not the case the obtained thermal conductivity will not be reliable **!**
 
-**Folder Setup:**
-Your working directory should contain the following files:
+**Folder Setup:** Your working directory should contain the following files:
 - `POSCAR` &rarr; final relaxed structure of your system
 - `POTCAR` &rarr; corresponding potentials file
 - 

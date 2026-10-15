@@ -153,6 +153,11 @@ Environment defaults:
   SLURM_QOS
 
 Notes:
+  * JDOS runs each requested temperature in a separate phono3py invocation.
+    This avoids the multi-temperature output bug in phono3py 2.7.0.
+    Temperature ranges are expanded by CAT for JDOS.
+  * Calculation output is appended to the sampling log and mirrored to Slurm.
+    Set PHONO3PY_PYTHON if the module's Python is not named python.
   * phono3py >= 4 removed --wigner. Wigner mode uses --tt wte and therefore
     requires the external phono3py-wte plugin.
   * phono3py >= 4 enables NAC automatically when BORN/nac_params are present.
@@ -314,6 +319,7 @@ scattering_event_class=""
 
 read_fc2=true
 read_fc3=true
+[[ "$mode" == jdos ]] && read_fc3=false
 primitive_axes=AUTO
 nac_mode=default
 
@@ -699,6 +705,42 @@ if [[ "$temperature_style" == range ]]; then
     done
 fi
 
+# Do not pass multiple JDOS temperatures to the native writer: phono3py 2.7.0
+# computes them all but returns after writing only the first temperature.
+jdos_temperatures=()
+if [[ "$mode" == jdos ]]; then
+    for arg in "${extra_ph3_args[@]}"; do
+        case "$arg" in
+            --ts|--ts=*|--tmin|--tmin=*|--tmax|--tmax=*|--tstep|--tstep=*)
+                die "use the sampler's temperature options for JDOS, not --ph3-arg."
+                ;;
+        esac
+    done
+    temperature_values=$(python3 - "$temperature_style" "$temperatures" "$tmin" "$tmax" "$tstep" <<'TEMPERATURES'
+from decimal import Decimal, InvalidOperation
+import sys
+try:
+    if sys.argv[1] == 'range':
+        lo, hi, step = map(Decimal, sys.argv[3:6])
+        if not all(v.is_finite() for v in (lo, hi, step)) or lo < 0 or hi < lo or step <= 0:
+            raise ValueError('require 0 <= tmin <= tmax and tstep > 0')
+        count = int((hi - lo) // step) + 1
+        if count > 100000:
+            raise ValueError('temperature range is too large')
+        values = [lo + i * step for i in range(count)]
+    else:
+        values = [Decimal(v) for v in sys.argv[2].split()]
+    if not values or any(not v.is_finite() or v < 0 for v in values):
+        raise ValueError('temperatures must be finite and nonnegative')
+    for value in dict.fromkeys(values):
+        print(format(value, 'f'))
+except (ValueError, InvalidOperation) as exc:
+    sys.exit(f'Invalid JDOS temperatures: {exc}')
+TEMPERATURES
+    ) || die "could not expand JDOS temperatures."
+    mapfile -t jdos_temperatures <<< "$temperature_values"
+fi
+
 if [[ -n "$freq_pitch" && "$num_freq_points_set" == true ]]; then
     die "--freq-pitch and --num-freq-points are mutually exclusive."
 fi
@@ -767,7 +809,11 @@ done
 
 gps=()
 
-if [[ -n "$gp_file" ]]; then
+if [[ "$mode" == gruneisen ]]; then
+    # Native Gruneisen ignores --gp; batching would race on gruneisen.hdf5.
+    gps=(0)
+    warn "gruneisen calculates the full mesh in one job; grid-point selection is not used."
+elif [[ -n "$gp_file" ]]; then
     [[ -f "$gp_file" ]] || die "grid-point file not found: $gp_file"
 
     mapfile -t gps < <(
@@ -849,7 +895,9 @@ esac
 
 property_args=()
 
-if [[ "$temperature_style" == explicit && -n "$temperatures" &&
+if [[ "$mode" == jdos ]]; then
+    : # Added individually by the generated job below.
+elif [[ "$temperature_style" == explicit && -n "$temperatures" &&
       "$mode" != gruneisen && "$mode" != stp ]]; then
     property_args+=("--ts=$temperatures")
 elif [[ "$temperature_style" == range ]]; then
@@ -933,13 +981,19 @@ for ((start=0; start<total_gps; start+=n_gp)); do
         "${common_args[@]}"
         "${mode_args[@]}"
         "${property_args[@]}"
-        "--gp=$gp_for_job"
     )
+    [[ "$mode" == gruneisen ]] || batch_args+=("--gp=$gp_for_job")
 
     if [[ "$dry_run" == true ]]; then
         printf 'Job %-4d GP %-18s -> %s\n' \
             "$job_nr" "$first_gp-$last_gp" "$script_name"
-        printf '  phono3py %s\n' "$(shell_join "${batch_args[@]}")"
+        if [[ "$mode" == jdos ]]; then
+            for temperature in "${jdos_temperatures[@]}"; do
+                printf '  phono3py %s\n' "$(shell_join "${batch_args[@]}" "--ts=$temperature")"
+            done
+        else
+            printf '  phono3py %s\n' "$(shell_join "${batch_args[@]}")"
+        fi
         ((job_nr += 1))
         continue
     fi
@@ -965,6 +1019,7 @@ for ((start=0; start<total_gps; start+=n_gp)); do
         [[ -n "$qos" ]] && printf '#SBATCH --qos=%s\n' "$qos"
         echo
         echo 'set -Eeuo pipefail'
+        echo 'trap '\''status=$?; printf "ERROR: exit %s at line %s: %s\n" "$status" "$LINENO" "$BASH_COMMAND" >&2; exit "$status"'\'' ERR'
         echo
         if [[ "$load_modules" == true ]]; then
             printf 'module load %s\n' "$module_stack"
@@ -979,7 +1034,7 @@ command -v phono3py >/dev/null 2>&1 || {
     exit 127
 }
 
-ph3_version=$(phono3py --version 2>&1 | awk 'match($0, /[0-9]+([.][0-9]+)+/) {print substr($0, RSTART, RLENGTH); exit}')
+ph3_version=$("${PHONO3PY_PYTHON:-python}" -c 'import phono3py; print(phono3py.__version__)')
 ph3_major=${ph3_version%%.*}
 
 if [[ -z "$ph3_version" || ! "$ph3_major" =~ ^[0-9]+$ ]]; then
@@ -1036,12 +1091,60 @@ JOBNONAC
         done
         echo ')'
         echo
+        cat <<'MODERN_FC_IO'
+# Version 4 reads force-constant files by default and removed --fc2/--fc3.
+if ((ph3_major >= 4)); then
+    filtered_args=()
+    for arg in "${args[@]}"; do
+        case "$arg" in
+            --fc2|--fc3) ;;
+            *) filtered_args+=("$arg") ;;
+        esac
+    done
+    args=("${filtered_args[@]}")
+fi
+MODERN_FC_IO
+        if [[ "$read_fc2" == false ]]; then
+            echo 'if ((ph3_major >= 4)); then version_args+=(--no-read-fc2); fi'
+        fi
+        if [[ "$read_fc3" == false ]]; then
+            echo 'if ((ph3_major >= 4)); then version_args+=(--no-read-fc3); fi'
+        fi
+        if [[ "$mode" == jdos ]]; then
+            cat <<'JDOS_FC2_ONLY'
+# In 4.4.0, _produce_force_constants erroneously requires FC3 for JDOS.
+# read_gamma exempts that check. The JDOS branch exits before any gamma I/O;
+# the spectrum still uses only FC2. Keep this workaround version-specific.
+if [[ "$ph3_version" == 4.4.0 ]]; then
+    version_args+=(--read-gamma)
+fi
+JDOS_FC2_ONLY
+        fi
         printf 'printf "Grid points: %%s\\n" %q\n' "$gp_for_job"
-        echo 'printf "Command: phono3py"'
-        echo 'printf " %q" "${args[@]}" "${version_args[@]}"'
-        echo 'printf "\n"'
-        echo
-        printf 'phono3py "${args[@]}" "${version_args[@]}" > %q 2>&1\n' "$output_name"
+        printf 'calculation_log=%q\n' "$output_name"
+        cat <<'RUN_PHONO3PY'
+export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-1}
+export OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+run_phono3py() {
+    printf 'Started: %s\n' "$(date -Is)"
+    printf 'Command: phono3py'
+    printf ' %q' "${args[@]}" "${version_args[@]}" "$@"
+    printf '\n'
+    phono3py "${args[@]}" "${version_args[@]}" "$@"
+    printf 'Finished: %s\n' "$(date -Is)"
+}
+RUN_PHONO3PY
+        if [[ "$mode" == jdos ]]; then
+            printf 'temperatures=(%s)\n' "$(shell_join "${jdos_temperatures[@]}")"
+            cat <<'RUN_JDOS'
+# One temperature per invocation is intentional, including on newer versions.
+for temperature in "${temperatures[@]}"; do
+    run_phono3py "--ts=$temperature" 2>&1 | tee -a -- "$calculation_log"
+done
+RUN_JDOS
+        else
+            echo 'run_phono3py 2>&1 | tee -a -- "$calculation_log"'
+        fi
     } > "$tmp_script"
 
     chmod +x "$tmp_script"

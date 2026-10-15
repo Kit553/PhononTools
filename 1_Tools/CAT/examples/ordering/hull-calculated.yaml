@@ -1,0 +1,9 @@
+# Run collect after relaxations and consistent NSW=0 static calculations.
+# These IDs correspond to the first four endpoint configurations from atomic.yaml.
+mode: mixing
+output: calculated-hull
+energies: atomic-energies.json
+terminal_ids: [atomic-cub-00001, atomic-cub-00002, atomic-cub-00003, atomic-cub-00004]
+# Multiple branches can be combined using unique id_prefix values:
+# energies: [atomic-energies.json, motif-energies.json, tetragonal-energies.json]
+# For an edited energies.template.csv, also specify manifest: PATH/manifest.json.

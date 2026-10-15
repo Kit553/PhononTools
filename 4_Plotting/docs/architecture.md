@@ -1,8 +1,6 @@
 # CATPlot architecture
 
-CATPlot separates scientific intent from Matplotlib implementation details.
-Data mappings and plot options live in recipes; visual policy lives in styles;
-individual renderer modules draw one coherent kind of mark.
+CATPlot separates scientific intent from Matplotlib implementation details. Data mappings and plot options live in recipes; visual policy lives in styles; individual renderer modules draw one coherent kind of mark.
 
 ```mermaid
 flowchart TD
@@ -30,17 +28,11 @@ The dependency direction is intentionally one-way:
 6. The render pipeline coordinates those pieces.
 7. Recipe and CLI layers translate user intent into pipeline inputs.
 
-Lower layers must never import the CLI, recipe loader, or render pipeline. This
-prevents circular imports and keeps a single plot module understandable by
-itself.
+Lower layers must never import the CLI, recipe loader, or render pipeline. This prevents circular imports and keeps a single plot module understandable by itself.
 
 ## Plot modules versus combinations
 
-A module represents one drawing primitive, not every possible combination.
-For example, several y columns are several uses of the line renderer; a right
-y-axis changes the target axes; categorical markers are resolved by the marker
-encoding layer. This prevents files such as
-`multiple_colored_lines_with_category_markers.py`.
+A module represents one drawing primitive, not every possible combination. For example, several y columns are several uses of the line renderer; a right y-axis changes the target axes; categorical markers are resolved by the marker encoding layer. This prevents files such as `multiple_colored_lines_with_category_markers.py`.
 
 Every renderer is described by a `PlotSpec` and returns a `PlotResult`:
 
@@ -59,7 +51,5 @@ def draw(*, ax, data, mapping, options, context):
     return PlotResult(artists=(line,))
 ```
 
-The same specification will later generate CLI flags, validate YAML, and feed
-documentation. A new plot type should therefore require one renderer file and
-one focused test, not edits throughout the backend.
+The same specification will later generate CLI flags, validate YAML, and feed documentation. A new plot type should therefore require one renderer file and one focused test, not edits throughout the backend.
 

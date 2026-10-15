@@ -6,10 +6,10 @@
 
 - Python 3.12 or newer for the installed CAT toolbox. Install it from the repository root, not from this folder.
 - Bash 4 or newer and standard Linux utilities for the shell-based VASP and Phono3Py commands.
-- Your own VASP potential library for POTCAR generation; it is not included in the repository.
+- Your own VASP potential library for `POTCAR` generation; it is not included in the repository.
 - Slurm `sbatch` for submission and `sacct` for accounting data. Log scanning works without a live scheduler.
 - The correct module environment on the nodes that execute generated Phono3Py jobs, use `caterpillar search <module_name>` when unsure.
-- Running scripts locally requires installation of the respective python packages; see reqs.txt for a list to use with `pip`.
+- Install Python dependencies from the repository-level `pyproject.toml` and `uv.lock`; optional features use the documented extras.
 - The `structure` extra for Pymatgen/ASE structure conversion; Windows SoftBV/BVPA and WSL for the BVPA launcher.
 
 **Folder Setup:**
@@ -28,7 +28,7 @@ From your repository checkout:
 
 ```bash
 cd /path/to/PhononTools
-uv sync --extra structure
+uv sync --locked --extra structure
 source .venv/bin/activate
 cat-tools --help
 ```
@@ -39,7 +39,7 @@ Alternatively, install into an existing Python environment:
 python -m pip install -e '.[structure]'
 ```
 
-The single repository-level installation also provides the analysis commands in [3_Analysis](../3_Analysis/README.md). Add the `bonding`, `visualization`, or `mpi` extras as needed for those tasks; MPI also needs a working system MPI runtime e.g. `MPI4Py`.
+The single repository-level installation also provides the analysis commands in [3_Analysis](../3_Analysis/README.md). Add the `ordering`, `bonding`, `visualization`, or `mpi` extras as needed for those tasks; MPI also needs a working system MPI runtime e.g. `MPI4Py`.
 
 `cat-tools` groups related commands. `cat-prepare` remains available as a shorter equivalent of `cat-tools prepare`. Help is availabe from:
 
@@ -73,12 +73,13 @@ The former VASP and Phono3Py implementations are archived in [legacy](legacy/REA
 | `cat-tools vasp converge` | Prepare a parameter convergence scan. | Creates directories and **submits by default**; use `--no-submit` for generation only, replaces `CovGen.sh`. |
 | `cat-tools vasp check` | Summarize convergence results. | Prints a report; queries accounting when available, replaces `ConvCheck.sh`. |
 | `cat-tools vasp restart` | Archive outputs and use the latest structure. | Writes `.sN` backups and updates `POSCAR`, unless `--backup-only`, replaces `varc`. |
-| `cat-tools vasp relaxation` | Export recorded OUTCAR ionic steps. | Writes extxyz, VMD files, step summaries and optional GIF. |
+| `cat-tools vasp relaxation` | Export recorded `OUTCAR` ionic steps. | Writes extxyz, VMD files, step summaries and optional GIF. |
 | `cat-tools vasp compare` | Compare periodic structures. | Prints a report; optionally writes a CSV. |
 | `cat-tools vasp rescale` | Apply homogeneous lattice strains. | Writes a structure unless `--dry-run`; replacement requires `--force`. |
 | `cat-tools phono3py sample` | Batch selected grid points into jobs. | Writes job scripts; submission requires `--submit`. |
 | `cat-tools phono3py audit` | Check outputs and prepare recovery/collection. | Writes audit reports; can generate rerun/collection scripts and submit with `--submit`. |
 | `slurm_scan` | Classify slurm logs and resource usage. | Prints a report; `--failed` writes a directory list. |
+| `cat-tools ordering ...` | Generate configurations, collect static energies and build mixing/full hulls. | Writes fresh output directories/files; never runs VASP or submits jobs. See the [ordering reference](CAT/ordering/README.md). |
 | `cat-tools prepare ...` | Convert structures; prepare LOBSTER, BVPA, and mass scans. | Depends on the subcommand, described below. |
 
 Every command supports `--help` :).
@@ -89,7 +90,7 @@ Every command supports `--help` :).
 
 ### `potcar` — potential selection
 
-**Purpose:** Assemble a POTCAR in POSCAR species order, with a record of the selected potential directories. Newer version of the `apgu` command.
+**Purpose:** Assemble a `POTCAR` in `POSCAR` species order, with a record of the selected potential directories. Newer version of the `apgu` command.
 
 **Usage:** `cat-tools vasp potcar`
 
@@ -100,7 +101,7 @@ cat-tools vasp potcar --sources
 cat-tools vasp potcar --verbose
 ```
 
-The command reads element symbols from line 6 of a VASP 5+ POSCAR. It prompts for the potential library and, where several variants exist, the variant for each element. GW potentials are excluded. The available library subdirectories are `PAW_PBE_64`, `PAW_LDA_64`, `PAW_PBE_54`, `PAW_LDA_54`, `USPP_GGA`, `USPP_LDA`, and `PAW_PW91`. The `POTCAR` is the authoritative source of elements identity, when making changes be sure to check your `POTCAR`s.
+The command reads element symbols from line 6 of a VASP 5+ `POSCAR`. It prompts for the potential library and, where several variants exist, the variant for each element. GW potentials are excluded. The available library subdirectories are `PAW_PBE_64`, `PAW_LDA_64`, `PAW_PBE_54`, `PAW_LDA_54`, `USPP_GGA`, `USPP_LDA`, and `PAW_PW91`. The `POTCAR` is the authoritative source of elements identity, when making changes be sure to check your `POTCAR`s.
 
 | Environment variable | Default | Purpose |
 |:---------------------|:--------|:--------|
@@ -123,13 +124,13 @@ cat-tools vasp kpoints                 # POSCAR, density 50
 cat-tools vasp kpoints CONTCAR 60
 ```
 
-Each mesh dimension is the rounded product of the density and reciprocal-vector length, without the `2π` factor, with a minimum of one. `KPOINTS` is written in the current directory and an existing file is replaced. This helper expects a single positive POSCAR scale factor; use a normalized structure if the input uses another scaling convention.
+Each mesh dimension is the rounded product of the density and reciprocal-vector length, without the `2π` factor, with a minimum of one. `KPOINTS` is written in the current directory and an existing file is replaced. This helper expects a single positive `POSCAR` scale factor; use a normalized structure if the input uses another scaling convention.
 
 ---
 
 ### `converge` — convergence job generation
 
-**Purpose:** Create a directory per parameter value, copy the input set, adjust the INCAR or KPOINTS, and optionally submit the jobs. Newer version of the `ConvGen` command.
+**Purpose:** Create a directory per parameter value, copy the input set, adjust the `INCAR` or `KPOINTS`, and optionally submit the jobs. Newer version of the `ConvGen` command.
 
 **Usage:** `cat-tools vasp converge AXIS (--man VALUES... | --range LOW HIGH STEP) [OPTIONS]`
 
@@ -145,15 +146,15 @@ cat-tools vasp converge --ediffg --man -0.03 -0.02 -0.01 --calc ions --no-submit
 | Option | Meaning |
 |:-------|:--------|
 | `--encut`, `--kpoints`, `--ediff`, `--ediffg`, `--sigma`, `--nbands` | Select one scan axis. |
-| `--man VALUES...` | Explicit values; ENCUT values are absolute eV. |
-| `--range LOW HIGH STEP` | Inclusive range; for ENCUT, values multiply the largest POTCAR ENMAX. |
+| `--man VALUES...` | Explicit values; `ENCUT` values are absolute eV. |
+| `--range LOW HIGH STEP` | Inclusive range; for `ENCUT`, values multiply the largest `POTCAR` ENMAX. |
 | `--calc static\|ions\|full\|keep` | Set the relaxation mode; default `static`. `keep` preserves supplied relaxation tags. |
-| `--set TAG=VALUE` | Additional INCAR override; may be repeated. |
+| `--set TAG=VALUE` | Additional `INCAR` override; may be repeated. |
 | `--prefix PREFIX` | Override the automatic directory prefix, useful in combination with the `check` function. |
 | `--no-submit` | Generate only. Without this flag, each job is submitted using `sbatch`. |
 | `-v`, `--verbose` | Print setup and submission details. |
 
-K-point scan values are reciprocal densities, not literal mesh dimensions. An EDIFFG scan needs an ionic relaxation mode. Existing scan directories are rejected. Each directory receives `.convgen_meta`; submitted jobs also get `.convgen_jobid` for accounting lookup. Generation/submission is sequential, so earlier directories may exist if a later step fails. Adjust slurm ressources in the `submit.sh` beforehand.
+K-point scan values are reciprocal densities, not literal mesh dimensions. An `EDIFFG` scan needs an ionic relaxation mode. Existing scan directories are rejected. Each directory receives `.convgen_meta`; submitted jobs also get `.convgen_jobid` for accounting lookup. Generation/submission is sequential, so earlier directories may exist if a later step fails. Adjust slurm ressources in the `submit.sh` beforehand.
 
 ---
 
@@ -171,15 +172,15 @@ cat-tools vasp check --prefix EDIFFG --relax ref
 cat-tools vasp check --prefix EDIFFG --relax ref reference_directory
 ```
 
-`diff` compares each POSCAR with its CONTCAR. `abs` reports final cell parameters. `ref` compares final structures with the strictest setting or with the supplied reference directory. Without a relaxation option, the command reports static convergence results. `--verbose` adds details.
+`diff` compares each `POSCAR` with its `CONTCAR`. `abs` reports final cell parameters. `ref` compares final structures with the strictest setting or with the supplied reference directory. Without a relaxation option, the command reports static convergence results. `--verbose` adds details.
 
-The checker uses the generator's metadata and VASP output. If job IDs and `sacct` are available, it includes accounting data; otherwise it uses OUTCAR timing where possible. It does not run or resubmit failed calculations.
+The checker uses the generator's metadata and VASP output. If job IDs and `sacct` are available, it includes accounting data; otherwise it uses `OUTCAR` timing where possible. It does not run or resubmit failed calculations.
 
 ---
 
 ### `restart` — archive and prepare a restart
 
-**Purpose:** Preserve current VASP output and copy the latest CONTCAR to POSCAR. Newer version of the `varc` command.
+**Purpose:** Preserve current VASP output and copy the latest `CONTCAR` to `POSCAR`. Newer version of the `varc` command.
 
 **Usage:** `cat-tools vasp restart [OPTIONS] [DIRECTORY]`
 
@@ -189,9 +190,9 @@ cat-tools vasp restart /path/to/interrupted_run
 cat-tools vasp restart --finished-only
 ```
 
-Stop the calculation before using this command: it does not query the scheduler. Interrupted runs are accepted when CONTCAR is usable. `--finished-only` requires normal termination in OUTCAR; `--backup-only` leaves POSCAR unchanged; `--force` accepts an unusually short, non-empty CONTCAR, this can lead to unexpected behavior by VASP.
+Stop the calculation before using this command: it does not query the scheduler. Interrupted runs are accepted when `CONTCAR` is usable. `--finished-only` requires normal termination in `OUTCAR`; `--backup-only` leaves `POSCAR` unchanged; `--force` accepts an unusually short, non-empty `CONTCAR`, this can lead to unexpected behavior by VASP.
 
-Existing `OUTCAR`, `CONTCAR`, `vasprun.xml`, `out_VASP`, and `out` files are copied to a common `.sN` suffix. The original POSCAR is saved as `POSCAR_init` if that file does not exist. If all current outputs already match a backup, the command exits successfully without creating another backup or changing POSCAR. Does not submit a restart job.
+Existing `OUTCAR`, `CONTCAR`, `vasprun.xml`, `out_VASP`, and `out` files are copied to a common `.sN` suffix. The original `POSCAR` is saved as `POSCAR_init` if that file does not exist. If all current outputs already match a backup, the command exits successfully without creating another backup or changing `POSCAR`. Does not submit a restart job.
 
 ---
 
@@ -203,7 +204,7 @@ cat-phonovis trajectory relaxation-view/relaxation.extxyz
 vmd -e relaxation-view/relaxation.vmd
 ```
 
-Export complete OUTCAR position/force blocks with their current cells. With no input argument, join local `OUTCAR.sN` numerically followed by `OUTCAR`; if neither exists, discover numbered `relax_N` directories. Explicit files or directories are also accepted; specifying just `OUTCAR` selects only that file. Local archives/current OUTCAR take precedence over numbered child directories. Joined frames retain global/local step numbers and source segments; duplicate boundary geometries are kept. A matching POSCAR beside OUTCAR supplies species/order; override with `--poscar PATH`. `--stride N` keeps every Nth frame plus the last. Writes extxyz (full cell and forces), VMD XYZ/loader, and `steps.csv` (step, maximum force, volume); `--gif` adds a PhonoVis animation. Existing outputs are replaced. Requires the `structure` extra; GIF/viewing also needs `visualization`.
+Export complete `OUTCAR` position/force blocks with their current cells. With no input argument, join local `OUTCAR.sN` numerically followed by `OUTCAR`; if neither exists, discover numbered `relax_N` directories. Explicit files or directories are also accepted; specifying just `OUTCAR` selects only that file. Local archives/current `OUTCAR` take precedence over numbered child directories. Joined frames retain global/local step numbers and source segments; duplicate boundary geometries are kept. A matching `POSCAR` beside `OUTCAR` supplies species/order; override with `--poscar PATH`. `--stride N` keeps every Nth frame plus the last. Writes extxyz (full cell and forces), VMD XYZ/loader, and `steps.csv` (step, maximum force, volume); `--gif` adds a PhonoVis animation. Existing outputs are replaced. Requires the `structure` extra; GIF/viewing also needs `visualization`.
 
 The trajectory is recorded optimization progress, not a phonon oscillation or physical-time simulation. Incomplete final blocks are skipped with a warning. See the [relaxation workflow](../2_Workflows/00_Common/02_Relaxation/VASP/README.md#4-submit-and-monitor) for usage and interpretation.
 
@@ -211,7 +212,7 @@ The trajectory is recorded optimization progress, not a phonon oscillation or ph
 
 ### `compare` — periodic structural comparison
 
-**Purpose:** Report lattice changes and same-species atomic displacements between two POSCAR/CONTCAR files.
+**Purpose:** Report lattice changes and same-species atomic displacements between two `POSCAR`/`CONTCAR` files.
 
 **Usage:** `cat-tools vasp compare REFERENCE OTHER [OPTIONS]`
 
@@ -261,10 +262,15 @@ VASP 4/5 species layouts, Direct/Cartesian coordinates, selective-dynamics flags
 ```bash
 cat-tools phono3py sample rta 21 21 21 10 --isotope --write-gamma
 cat-tools phono3py sample jdos 21 21 21 10 --ts "300" --num-freq-points 600
+cat-tools phono3py sample jdos 21 21 21 3 --ts "1 100 300 600 1000" --num-freq-points 601
 cat-tools phono3py sample ise 21 21 21 5 --gp-file missing_gps.txt --dry-run
 ```
 
 Modes are `rta`, `wigner`, `lbte`, `jdos`, `spf`, `ise`, `rse`, `gruneisen`, and `stp`. `N_GP` is the number of grid points per job. Explicit grid points take precedence over `--gp-file`, which takes precedence over `ir_grid_points.yaml`. Indices are validated and deduplicated.
+
+For **JDOS**, each generated job invokes Phono3Py once per requested temperature, sequentially within its grid-point batch. This is the default on all runtime versions: Phono3Py 2.7.0 calculates multiple temperatures but its writer saves only the first. CAT also expands `--tmin/--tmax/--tstep` into individual JDOS temperatures and reads FC2 without requiring FC3 by default. Use the sampler's temperature options rather than forwarding them through `--ph3-arg`.
+
+For **Grüneisen**, CAT generates exactly one full-mesh job. Native Phono3Py ignores grid-point selection for this calculation; batching it would cause multiple jobs to overwrite `gruneisen.hdf5`. `N_GP` remains a positional argument but grid-point selections are not used in this mode.
 
 | Option | Meaning |
 |:-------|:--------|
@@ -281,6 +287,8 @@ Modes are `rta`, `wigner`, `lbte`, `jdos`, `spf`, `ise`, `rse`, `gruneisen`, and
 Jobs default to `generated_jobs`, partition `long`, and a 48-hour wall time. Memory defaults depend on mode. The inherited module default is `palma/2023a foss/2023a phono3py/2.7.0`; select the stack appropriate or use `--no-module`. Resource defaults can also be supplied through the environment variables listed by `--help`.
 
 Generated jobs check the installed Phono3Py version when they run. Wigner and NAC arguments are adjusted by the script; its Phono3Py 4 Wigner route expects the external `phono3py-wte` plugin. Check your chosen runtime's supported options before executing a generated job, be careful about potential mismatches between your local and the HPC version of Phono3Py.
+
+The version probe imports Phono3Py with the module's `python`, avoiding the native `--version` pipeline. Set `PHONO3PY_PYTHON` to that interpreter's path when necessary. It must match the `phono3py` executable used by the job. Commands, start/finish timestamps, stdout and stderr are appended to the sampling log and mirrored to the Slurm log. A failed calculation stops the job with a nonzero status, including when output is piped through `tee`. Existing generated jobs are not automatically changed by a CAT upgrade. For Phono3Py 4, CAT also adapts force-constant I/O: the removed `--fc2/--fc3` flags are omitted, while `--no-fc2/--no-fc3` use `--no-read-fc2/--no-read-fc3`. Phono3Py 4.4.0 has a further CLI check that incorrectly requires FC3 for JDOS. For that exact version, CAT adds `--read-gamma` to bypass the unrelated FC3 requirement. The native JDOS branch exits before any gamma-file I/O; no linewidth files are read. A real FC2-only JDOS integration test covers this workaround. Use the same runtime version when continuing a scientific dataset.
 
 ---
 
@@ -303,6 +311,8 @@ The command writes `qmesh_eval_MODE.csv`, `missing_gps.txt`, `invalid_gps.txt`, 
 | Option | Meaning |
 |:-------|:--------|
 | `--root DIR`, `--ir-grid FILE`, `--match REGEX` | Select the calculation, expected grid, and matching output files. |
+| `--recursive` | Include nested output directories; use a narrowly selected root to avoid mixing runs. |
+| `--num-freq-points N` | For JDOS, require exactly N frequency rows in each file. |
 | `--shallow` | Check HDF5 existence/size without inspecting its contents. |
 | `--rerun N_GP` | Generate jobs for missing/invalid points using the bundled sampler. |
 | `--sampler EXECUTABLE` | Override the bundled sampler. |
@@ -312,6 +322,26 @@ The command writes `qmesh_eval_MODE.csv`, `missing_gps.txt`, `invalid_gps.txt`, 
 | `--dry-run` | Suppress job-script writes/execution/submission; audit reports are still written. |
 
 RTA/Wigner, LBTE, and `pp` modes have collection steps; the other modes do not. Complete datasets generate collection jobs by default where applicable. An incomplete dataset returns status `2`, including with `--no-collect`; completed datasets return `0`. Invocation or processing errors also return a non-zero status.
+
+JDOS checks three finite columns, a strictly increasing frequency axis, and coverage of the requested temperatures. With `--recursive`, duplicate filenames are reported as ambiguous. Provide the original `--ts` and `--num-freq-points` for a complete check. These checks establish file integrity, not which `BORN` tensors generated the results.
+
+JDOS recovery preserves completed temperatures. For example, if the original multi-temperature job saved only 1 K:
+
+```bash
+cat-tools phono3py audit jdos 21 21 21 \
+  --ts "1 100 300 600 1000" --num-freq-points 601 \
+  --rerun 3 --job-dir jobs_jdos_recovery \
+  --nac --pa "1 0 0 0 1 0 0 0 1" \
+  --ph3-arg=phono3py_disp.yaml \
+  --cpus 4 --mem 16G --time 24:00:00 \
+  --module "palma/2023a foss/2023a phono3py/2.7.0"
+```
+
+This writes `rerun_gps_t*.txt` and generates jobs in `jobs_jdos_recovery/t*/` only for missing or invalid temperatures. The audit still returns `2` until those jobs finish. Add `--submit` to submit them; otherwise inspect the scripts and submit manually. The sampler receives the audit's module, resource, job-directory and raw-argument settings. Do not start recovery for grid points still being written by another job.
+
+RTA/Wigner collection creates a fresh `collection/MODE_bmfp_LENGTHum/` directory (or uses `--tag` in place of MODE), retaining native `kappa-m*.hdf5` filenames inside it. Only audited per-GP checkpoints are linked; an old aggregate kappa file in the scan root cannot override them. Text inputs are copied, so writing a summary YAML cannot alter the source input. Existing collection directories are refused even when `--overwrite` replaces a generated job script.
+
+`--bmfp` selects the boundary length **for collection**. The intrinsic `gamma` and isotope rates are reusable across lengths; their original boundary metadata need not match. For example, repeat `audit wigner --bmfp 0.1`, `--bmfp 0.5`, `--bmfp 1`, `--bmfp 2`, and `--bmfp 4` against the same corrected checkpoints, with identical mesh, temperatures, force constants and NAC settings.
 
 ---
 
@@ -384,22 +414,9 @@ Reusable Python interfaces and the package layout are described in [CAT/README.m
 cat-prepare structure perturb POSCAR POSCAR.perturbed --amplitude 0.02 --seed 42
 ```
 
-Each mobile atom moves exactly `--amplitude` Å (default 0.02) in a random direction,
-uniform within its allowed Cartesian subspace. This is a displacement length, not
-a per-component standard deviation. VASP selective-dynamics flags constrain direct
-coordinates, including in skew cells; fully fixed atoms stay fixed. An entirely
-fixed structure is rejected. The cell, species order and site properties are retained
-in memory; output formats may not support all properties. POSCAR retains selective
-dynamics. Coordinates are not wrapped or symmetry-standardized.
+Each mobile atom moves exactly `--amplitude` Å (default 0.02) in a random direction, uniform within its allowed Cartesian subspace. This is a displacement length, not a per-component standard deviation. VASP selective-dynamics flags constrain direct coordinates, including in skew cells; fully fixed atoms stay fixed. An entirely fixed structure is rejected. The cell, species order and site properties are retained in memory; output formats may not support all properties. `POSCAR` retains selective dynamics. Coordinates are not wrapped or symmetry-standardized.
 
-Use a non-negative `--seed` to reproduce a realization; omitting it gives a fresh
-random realization. `--input-format` and `--output-format` override format detection.
-Install the `structure` extra. The command writes only the requested structure and
-does not submit jobs or modify INCAR. Existing outputs require `--force`, and the
-input cannot be overwritten. Inspect distances before running a relaxation: there
-is no minimum-distance rejection. This prepares a new relaxation geometry, not an
-MD restart with preserved velocity/predictor history. See the
-[relaxation workflow](../2_Workflows/00_Common/02_Relaxation/VASP/README.md).
+Use a non-negative `--seed` to reproduce a realization; omitting it gives a fresh random realization. `--input-format` and `--output-format` override format detection. Install the `structure` extra. The command writes only the requested structure and does not submit jobs or modify `INCAR`. Existing outputs require `--force`, and the input cannot be overwritten. Inspect distances before running a relaxation: there is no minimum-distance rejection. This prepares a new relaxation geometry, not an MD restart with preserved velocity/predictor history. See the [relaxation workflow](../2_Workflows/00_Common/02_Relaxation/VASP/README.md).
 
 ## LOBSTER Configuration and Framework Detection
 
@@ -410,7 +427,7 @@ cat-prepare topology POSCAR --config seed.yaml -o config.yaml
 cat-prepare lobsterin --config config.yaml -o lobsterin
 ```
 
-The first command uses POSCAR coordinates and periodic boundary conditions to find selected bonds, derive distances, and write atom numbers and cell translations. Review the generated YAML, then run the second command to render it. You can also write a complete config by hand and run only `lobsterin`.
+The first command uses `POSCAR` coordinates and periodic boundary conditions to find selected bonds, derive distances, and write atom numbers and cell translations. Review the generated YAML, then run the second command to render it. You can also write a complete config by hand and run only `lobsterin`.
 
 ```yaml
 system:
@@ -443,17 +460,17 @@ cohpGenerator from 1.8 to 2.4 type P type S orbitalWise cohpBetween atom 1 atom 
 
 | Setting | Meaning |
 | --- | --- |
-| `system.structure` | POSCAR/CONTCAR path relative to the YAML; defaults to `POSCAR`. A positional structure argument overrides it. |
+| `system.structure` | `POSCAR`/`CONTCAR` path relative to the YAML; defaults to `POSCAR`. A positional structure argument overrides it. |
 | `system.StartE`, `system.EndeE` | COHP energy window in eV; defaults to -20 and 15. `EndE` is also accepted. |
 | `system.basisSet` | Required LOBSTER basis-set name. |
-| `system.basisFunctions` | Required mapping with exactly one orbital string per element type in POSCAR, including atoms outside the framework. Choose these to match your potentials. |
+| `system.basisFunctions` | Required mapping with exactly one orbital string per element type in `POSCAR`, including atoms outside the framework. Choose these to match your potentials. |
 | `system.save` | Emit `saveProjectionToFile` when true; default false. |
 | `system.write` | Emit `writeBasisFunctions` when true; default false. |
 | `system.cohp`, `coop`, `cobi`, `dos` | Optional booleans; false emits the corresponding skip keyword. Default true. |
 | `Generator` | List of type-pair requests. Each entry has `types: [A, B]`, optional `distance: [min, max]` in angstrom, and optional `orbitalWise` (default false). |
 | `Atom` | List of explicit requests. Each has `atoms: [i, j]`, optional `cell: [a, b, c]` (default zero), and optional `orbitalWise` (default false). |
 
-Atom numbers are **1-based POSCAR indices**. `cell` translates the second atom relative to the first, in integer lattice vectors. A generated `Atom.distance` records the reconstructed distance in angstrom and is checked against POSCAR when rendering, so changed structures require regenerating the configuration.
+Atom numbers are **1-based `POSCAR` indices**. `cell` translates the second atom relative to the first, in integer lattice vectors. A generated `Atom.distance` records the reconstructed distance in angstrom and is checked against `POSCAR` when rendering, so changed structures require regenerating the configuration.
 
 To derive contacts automatically, add an explicit `framework` section to the seed:
 
@@ -468,14 +485,11 @@ framework:
   interactions: [bonds, intra]
 ```
 
-`types` and `atoms` select their union when both are supplied. Both center and ligand selections must be nonempty. The required distance window defines what counts as a center–ligand bond. Optional `coordination` keeps the nearest N ligands within it and fails if too few exist; near-tied extra neighbors produce a warning.
-This supports different coordination numbers without assuming tetrahedra.
+`types` and `atoms` select their union when both are supplied. Both center and ligand selections must be nonempty. The required distance window defines what counts as a center–ligand bond. Optional `coordination` keeps the nearest N ligands within it and fails if too few exist; near-tied extra neighbors produce a warning. This supports different coordination numbers without assuming tetrahedra.
 
-`bonds` adds center–ligand requests; `intra` adds ligand–ligand pairs sharing a center, including pairs across cell boundaries. These are the default selections. The helper also identifies connected bonded components and distinguishes finite polyanions from periodic networks; this information is saved in the LOBSTER sidecar. Connectivity follows your supplied bond criteria, not an inferred oxidation state.
-It does not automatically request every pair in a connected network or between separate polyanions.
+`bonds` adds center–ligand requests; `intra` adds ligand–ligand pairs sharing a center, including pairs across cell boundaries. These are the default selections. The helper also identifies connected bonded components and distinguishes finite polyanions from periodic networks; this information is saved in the LOBSTER sidecar. Connectivity follows your supplied bond criteria, not an inferred oxidation state. It does not automatically request every pair in a connected network or between separate polyanions.
 
-If a `Generator` entry omits `distance`, the helper derives its range from matching selected center–ligand bonds, expanding both ends by `padding` angstrom (default 0.05). Without matching framework bonds, provide the range explicitly. Type-based LOBSTER generators apply to **all pairs of those types in that range**, including sites outside your framework selection. For strictly site-specific requests, use `Generator: []`; topology then writes explicit `Atom` entries for selected contacts.
-Contacts already covered by a generator or an explicit request are not added again.
+If a `Generator` entry omits `distance`, the helper derives its range from matching selected center–ligand bonds, expanding both ends by `padding` angstrom (default 0.05). Without matching framework bonds, provide the range explicitly. Type-based LOBSTER generators apply to **all pairs of those types in that range**, including sites outside your framework selection. For strictly site-specific requests, use `Generator: []`; topology then writes explicit `Atom` entries for selected contacts. Contacts already covered by a generator or an explicit request are not added again.
 
 The renderer uses the listed `Generator` and `Atom` requests; it does not silently add contacts from `framework`. The old chemistry-specific defaults and generation flags have been replaced by this YAML interface. Analysis continues to use the shared topology code and the generated `lobsterin.bonding.json` sidecar.
 
@@ -518,8 +532,7 @@ For finite molecules, a periodic image is a separate component instance. For a p
 
 For periodic chains or sheets, equivalent component pairs related by bonded repeat translations are grouped together when finding the minimum. Reversed contacts and exact duplicate requests are removed; tied contacts remain separate atom requests. Use `selection: all` when you want longer inter-chain contacts as well as the nearest.
 
-**Polymer example:** centers and ligands may overlap in element type, so a carbon backbone can be selected with `centers: {types: [C]}` and `ligands: {types: [C, H]}`. See [the polymer seed](CAT/examples/lobsterin.polymer.seed.yaml).
-Adapt the bond window to your system and include all species needed to represent its connectivity. Selecting only a fragment of a chain, or omitting a bridging species, can split one physical molecule into separate detected components.
+**Polymer example:** centers and ligands may overlap in element type, so a carbon backbone can be selected with `centers: {types: [C]}` and `ligands: {types: [C, H]}`. See [the polymer seed](CAT/examples/lobsterin.polymer.seed.yaml). Adapt the bond window to your system and include all species needed to represent its connectivity. Selecting only a fragment of a chain, or omitting a bridging species, can split one physical molecule into separate detected components.
 
 The generated `Atom` rows contain the selected indices, periodic cells, measured distances, and orbital flags. For strict component-specific requests, keep `Generator: []`: a type-based generator can additionally request contacts within a component. Existing explicit requests are preserved; topology does not delete them. Generate a fresh config from the seed when changing selection criteria, then render that config. Rendering alone does not regenerate its contact list.
 

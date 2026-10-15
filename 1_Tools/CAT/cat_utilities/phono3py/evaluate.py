@@ -104,11 +104,9 @@ import shutil
 import subprocess
 import sys
 import tempfile
-
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, NoReturn, Sequence
-
 
 HDF5_MODES = {
     "rta",
@@ -232,6 +230,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
             "this regular expression"
         ),
     )
+    parser.add_argument("--recursive", action="store_true", help="Also audit nested output directories")
 
     parser.add_argument(
         "--ts",
@@ -241,6 +240,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--bmfp",
         type=float,
+        help="Boundary length for collection in micrometres; intrinsic gamma is reusable",
     )
 
     parser.add_argument(
@@ -612,6 +612,17 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
             "is only valid for ise"
         )
 
+    if args.num_freq_points is not None and args.num_freq_points < 2:
+        parser.error("--num-freq-points must be at least 2")
+    if args.bmfp is not None and (not math.isfinite(args.bmfp) or args.bmfp <= 0):
+        parser.error("--bmfp must be finite and positive")
+    try:
+        temperatures = parse_float_list(args.ts)
+    except ValueError:
+        parser.error("--ts must contain numbers")
+    if any(not math.isfinite(t) or t < 0 for t in temperatures):
+        parser.error("--ts temperatures must be finite and nonnegative")
+
     return args
 
 
@@ -950,6 +961,7 @@ def find_output_files(
     mode: str,
     tag: str,
     match_re: re.Pattern[str] | None,
+    recursive: bool = False,
 ) -> dict[int, list[Path]]:
     result: dict[
         int,
@@ -965,7 +977,7 @@ def find_output_files(
         tag,
     ):
         for path in sorted(
-            root.glob(pattern)
+            (root.rglob(pattern) if recursive else root.glob(pattern))
         ):
             if path in seen:
                 continue
@@ -1235,44 +1247,11 @@ def validate_hdf5(
                         temperatures,
                     )
 
-                if (
-                    args.bmfp
-                    is not None
-                ):
-                    if (
-                        "boundary_mfp"
-                        not in handle
-                    ):
-                        return FileCheck(
-                            path,
-                            False,
-                            "missing:boundary_mfp",
-                            temperatures,
-                        )
-
-                    value = float(
-                        np.asarray(
-                            handle[
-                                "boundary_mfp"
-                            ][()]
-                        ).ravel()[0]
-                    )
-
-                    if not math.isclose(
-                        value,
-                        args.bmfp,
-                        rel_tol=1e-8,
-                        abs_tol=1e-10,
-                    ):
-                        return FileCheck(
-                            path,
-                            False,
-                            (
-                                "wrong_bmfp:"
-                                f"{value}"
-                            ),
-                            temperatures,
-                        )
+                # Intrinsic gamma can be reused at a new boundary length. Phono3Py 2.7 checkpoints may omit boundary_mfp.
+                if args.isotope:
+                    ok, reason = dataset_ok(handle, "gamma_isotope", np)
+                    if not ok:
+                        return FileCheck(path, False, reason, temperatures)
 
             elif mode == "pp":
                 required = (
@@ -1540,6 +1519,8 @@ def validate_file(
     expected_temperatures: Sequence[float],
     args: argparse.Namespace,
 ) -> FileCheck:
+    if mode == "jdos":
+        return validate_jdos_file(path, args.num_freq_points)
     if (
         path.suffix.lower()
         in {
@@ -1558,6 +1539,34 @@ def validate_file(
     return validate_text_file(
         path
     )
+
+
+def validate_jdos_file(path: Path, expected_rows: int | None = None) -> FileCheck:
+    """Reject truncated or malformed spectra without requiring numpy."""
+    temperatures = ()
+    temperature = temperature_from_filename(path)
+    if temperature is not None:
+        temperatures = (temperature,)
+    rows = 0
+    previous = None
+    try:
+        with path.open() as stream:
+            for line in stream:
+                fields = line.split("#", 1)[0].split()
+                if not fields:
+                    continue
+                values = [float(token) for token in fields]
+                if len(values) != 3 or not all(math.isfinite(v) for v in values):
+                    return FileCheck(path, False, "invalid_jdos_columns", temperatures)
+                if previous is not None and values[0] <= previous:
+                    return FileCheck(path, False, "nonincreasing_frequency", temperatures)
+                previous = values[0]
+                rows += 1
+    except (OSError, ValueError) as exc:
+        return FileCheck(path, False, f"cannot_read_jdos:{exc}", temperatures)
+    if rows < 2 or (expected_rows is not None and rows != expected_rows):
+        return FileCheck(path, False, f"wrong_frequency_rows:{rows}", temperatures)
+    return FileCheck(path, True, f"ok:{rows}_rows", temperatures)
 
 
 def find_gamma_detail_files(
@@ -1758,6 +1767,7 @@ def audit(
             args.mode,
             tag,
             match_re,
+            recursive=args.recursive,
         )
     )
 
@@ -1834,6 +1844,18 @@ def audit(
             for check in checks
             if check.ok
         ]
+
+        if args.mode == "jdos" and any(not check.ok for check in checks):
+            results.append(GPResult(gp, "INVALID", ";".join(
+                sorted({check.reason for check in checks if not check.ok})
+            ), checks, detail_checks))
+            continue
+
+        if args.mode == "jdos":
+            identities = [(check.temperatures, check.path.name) for check in checks]
+            if len(identities) != len(set(identities)):
+                results.append(GPResult(gp, "INVALID", "duplicate_jdos_files", checks, detail_checks))
+                continue
 
         if not valid:
             reason = ";".join(
@@ -2236,12 +2258,10 @@ def slurm_header(
             '"${SLURM_CPUS_PER_TASK:-1}"'
         ),
         (
-            'export OPENBLAS_NUM_THREADS='
-            '"${SLURM_CPUS_PER_TASK:-1}"'
+            'export OPENBLAS_NUM_THREADS=1'
         ),
         (
-            'export MKL_NUM_THREADS='
-            '"${SLURM_CPUS_PER_TASK:-1}"'
+            'export MKL_NUM_THREADS=1'
         ),
         "",
     ]
@@ -2435,131 +2455,87 @@ def write_job_script(
 
 
 def normal_phono3py_job_body(
-    command: list[str],
-    output_file: str,
+    command: list[str], output_file: str, *, wigner: bool = False,
 ) -> list[str]:
-    arguments = command[
-        1:
+    """Generate a portable runtime command without invoking native --version."""
+    arguments = [arg for arg in command[1:] if arg not in {"--nac", "--nonac"}]
+    lines = [
+        'command -v phono3py >/dev/null 2>&1 || { echo "phono3py not found" >&2; exit 127; }',
+        'ph3_version=$("${PHONO3PY_PYTHON:-python}" -c \'import phono3py; print(phono3py.__version__)\')',
+        'ph3_major=${ph3_version%%.*}',
+        '[[ "$ph3_major" =~ ^[0-9]+$ ]] || { echo "Cannot determine phono3py version" >&2; exit 1; }',
+        f"ph3_args=({shell_join(arguments)})",
+        'if ((ph3_major >= 4)); then',
+        '    filtered_args=()',
+        '    for arg in "${ph3_args[@]}"; do',
+        '        case "$arg" in --fc2|--fc3) ;; *) filtered_args+=("$arg");; esac',
+        '    done',
+        '    ph3_args=("${filtered_args[@]}")',
+        'fi',
     ]
-
-    return [
-        (
-            "ph3_args=("
-            f"{shell_join(arguments)}"
-            ")"
-        ),
-
-        (
-            'printf "Command: phono3py"'
-        ),
-
-        (
-            'printf " %q" '
-            '"${ph3_args[@]}"'
-        ),
-
-        (
-            'printf "\\n"'
-        ),
-
-        (
-            'phono3py '
-            '"${ph3_args[@]}" '
-            f'> {shlex.quote(output_file)} '
-            "2>&1"
-        ),
+    if "--nac" in command:
+        lines += ['if ((ph3_major < 4)); then ph3_args+=(--nac); fi']
+    if "--nonac" in command:
+        lines += ['if ((ph3_major >= 4)); then ph3_args+=(--nonac); fi']
+    if wigner:
+        lines += [
+            'if ((ph3_major >= 4)); then ph3_args+=(--tt wte); else ph3_args+=(--wigner); fi',
+        ]
+    lines += [
+        '{',
+        'printf "Started: %s\\n" "$(date -Is)"',
+        'printf "Command: phono3py"',
+        'printf " %q" "${ph3_args[@]}"',
+        'printf "\\n"',
+        'phono3py "${ph3_args[@]}"',
+        'printf "Finished: %s\\n" "$(date -Is)"',
+        f'}} 2>&1 | tee -a -- {shlex.quote(output_file)}',
     ]
+    return lines
 
 
-def wigner_job_body(
-    base_arguments: list[str],
-    output_file: str,
+def wigner_job_body(base_arguments: list[str], output_file: str) -> list[str]:
+    return normal_phono3py_job_body(["phono3py", *base_arguments], output_file, wigner=True)
+
+
+def gamma_collection_directory(
+    root: Path, results: Sequence[GPResult], tag: str, args: argparse.Namespace,
 ) -> list[str]:
-    return [
-        (
-            "command -v phono3py "
-            ">/dev/null 2>&1 || { "
-            'echo "phono3py not found" >&2; '
-            "exit 127; "
-            "}"
-        ),
-
-        (
-            "ph3_version=$("
-            "phono3py --version 2>&1 | "
-            "awk "
-            "'match($0, "
-            "/[0-9]+([.][0-9]+)+/) "
-            "{"
-            "print substr("
-            "$0, "
-            "RSTART, "
-            "RLENGTH"
-            "); "
-            "exit"
-            "}'"
-            ")"
-        ),
-
-        (
-            'ph3_major=${ph3_version%%.*}'
-        ),
-
-        (
-            '[[ "$ph3_major" =~ '
-            '^[0-9]+$ ]] || { '
-            'echo "Cannot determine '
-            'phono3py version" >&2; '
-            "exit 1; "
-            "}"
-        ),
-
-        (
-            "base_args=("
-            f"{shell_join(base_arguments)}"
-            ")"
-        ),
-
-        "version_args=()",
-
-        (
-            "if ((ph3_major >= 4)); then"
-        ),
-
-        (
-            "    version_args+=(--tt wte)"
-        ),
-
-        "else",
-
-        (
-            "    version_args+=(--wigner)"
-        ),
-
-        "fi",
-
-        (
-            'printf "Command: phono3py"'
-        ),
-
-        (
-            'printf " %q" '
-            '"${base_args[@]}" '
-            '"${version_args[@]}"'
-        ),
-
-        (
-            'printf "\\n"'
-        ),
-
-        (
-            'phono3py '
-            '"${base_args[@]}" '
-            '"${version_args[@]}" '
-            f'> {shlex.quote(output_file)} '
-            "2>&1"
-        ),
+    """Read only audited GP files, preventing stale aggregate gamma reuse."""
+    directory = root / "collection" / tag
+    lines = [
+        f"mkdir -p -- {shlex.quote(str(directory.parent))}",
+        f"mkdir -- {shlex.quote(str(directory))}",
+        f"cd -- {shlex.quote(str(directory))}",
     ]
+    # Copy text inputs because phono3py writes its summary YAML on completion.
+    # Force constants and per-GP checkpoints are only read and may be large.
+    inputs = {"BORN", "POSCAR", "fc2.hdf5", "fc3.hdf5", "phono3py_disp.yaml",
+              "phono3py.yaml", "phono3py_params.yaml", "ir_grid_points.yaml"}
+    inputs.update(p.name for p in root.glob("phonon-m*.hdf5"))
+    for argument in args.ph3_arg:
+        candidate = Path(argument)
+        if not candidate.is_absolute() and (root / candidate).is_file():
+            if candidate.parent != Path("."):
+                die("relative input paths in --ph3-arg must be in the calculation root; use an absolute path otherwise")
+            inputs.add(argument)
+    for name in sorted(inputs):
+        source = shlex.quote(str(root / name))
+        operation = "ln -s" if name.endswith(".hdf5") else "cp -p"
+        lines.append(f"if [[ -f {source} ]]; then {operation} -- {source} {shlex.quote(name)}; fi")
+    checkpoints: dict[str, Path] = {}
+    for result in results:
+        for check in result.files:
+            if not check.ok:
+                continue
+            source = check.path.resolve()
+            name = check.path.name
+            if name in checkpoints and checkpoints[name] != source:
+                die(f"ambiguous checkpoint {name}; restrict the audit with --match")
+            checkpoints[name] = source
+    for name, source in sorted(checkpoints.items()):
+        lines.append(f"ln -s -- {shlex.quote(str(source))} {shlex.quote(name)}")
+    return lines
 
 
 def temperature_label(
@@ -2619,108 +2595,23 @@ def generate_collection_jobs(
         Path
     ] = []
 
-    if args.mode == "rta":
-        tag = safe_tag(
-            args.tag
-            or "rta"
-        )
-
-        command = [
-            "phono3py",
-        ]
-
-        command += (
-            common_phono3py_args(
-                mesh,
-                args,
-            )
-        )
-
-        command += [
-            "--br",
-            "--read-gamma",
-        ]
-
-        command += (
-            transport_phono3py_args(
-                args
-            )
-        )
-
-        path = (
-            job_dir
-            / f"job_collect_{tag}.sh"
-        )
-
-        write_job_script(
-            path,
-            root,
-            args,
-            f"collect_{tag}",
-            normal_phono3py_job_body(
-                command,
-                f"collect_{tag}.out",
-            ),
-        )
-
-        return [
-            path,
-        ]
-
-    if args.mode == "wigner":
-        tag = safe_tag(
-            args.tag
-            or "wigner"
-        )
-
-        if (
-            args.bmfp
-            is not None
-            and args.tag is None
-        ):
-            tag += (
-                f"_bmfp"
-                f"{args.bmfp:g}"
-            )
-
-        base_arguments = (
-            common_phono3py_args(
-                mesh,
-                args,
-            )
-        )
-
-        base_arguments += [
-            "--br",
-            "--read-gamma",
-        ]
-
-        base_arguments += (
-            transport_phono3py_args(
-                args,
-                include_transport_type=False,
-            )
-        )
-
-        path = (
-            job_dir
-            / f"job_collect_{tag}.sh"
-        )
-
-        write_job_script(
-            path,
-            root,
-            args,
-            f"collect_{tag}",
-            wigner_job_body(
-                base_arguments,
-                f"collect_{tag}.out",
-            ),
-        )
-
-        return [
-            path,
-        ]
+    if args.mode in {"rta", "wigner"}:
+        tag = safe_tag(args.tag or args.mode)
+        if args.bmfp is not None:
+            tag += f"_bmfp_{temperature_label(args.bmfp)}um"
+        command = common_phono3py_args(mesh, args)
+        command += ["--br", "--read-gamma"]
+        command += transport_phono3py_args(args, include_transport_type=args.mode != "wigner")
+        # Explicit YAML prevents a previous summary from overriding the input.
+        if not any((root / arg).is_file() for arg in args.ph3_arg):
+            if (root / "phono3py_disp.yaml").is_file():
+                command.append("phono3py_disp.yaml")
+        body = gamma_collection_directory(root, results, tag, args)
+        body += normal_phono3py_job_body(["phono3py", *command], "collection.log",
+                                        wigner=args.mode == "wigner")
+        path = job_dir / f"job_collect_{tag}.sh"
+        write_job_script(path, root, args, f"collect_{tag}", body)
+        return [path]
 
     if args.mode == "lbte":
         temperatures = (
@@ -3120,10 +3011,20 @@ def build_rerun_command(
     for raw_argument in (
         args.ph3_arg
     ):
-        command += [
-            "--ph3-arg",
-            raw_argument,
-        ]
+        command.append(f"--ph3-arg={raw_argument}")
+
+    for option, value in [
+        ("--job-dir", args.job_dir), ("--partition", args.partition),
+        ("--time", args.time), ("--mem", args.mem), ("--cpus", args.cpus),
+        ("--nodes", args.nodes), ("--ntasks", args.ntasks),
+        ("--account", args.account), ("--qos", args.qos), ("--tag", args.tag),
+    ]:
+        if value is not None:
+            command += [option, str(value)]
+    if args.no_module:
+        command.append("--no-module")
+    else:
+        command += ["--module", args.module_stack]
 
     if args.overwrite:
         command.append(
@@ -3136,6 +3037,36 @@ def build_rerun_command(
         )
 
     return command
+
+
+def rerun_commands(
+    root: Path, mesh: tuple[int, int, int], results: Sequence[GPResult],
+    rerun_file: Path, args: argparse.Namespace,
+) -> list[list[str]]:
+    """Recover only missing/bad JDOS temperatures, retaining completed spectra."""
+    if args.mode != "jdos" or not args.ts:
+        return [build_rerun_command(root, mesh, rerun_file, args)]
+    commands = []
+    for temperature in dict.fromkeys(parse_float_list(args.ts)):
+        gps = []
+        for result in results:
+            matching = [check for check in result.files if not missing_temperatures(
+                check.temperatures, [temperature])]
+            if not matching or any(not check.ok for check in matching):
+                gps.append(result.gp)
+        if not gps:
+            continue
+        label = temperature_label(temperature)
+        path = rerun_file.with_name(f"{rerun_file.stem}_t{label}{rerun_file.suffix}")
+        write_number_list(path, gps)
+        per_temperature = argparse.Namespace(**vars(args))
+        per_temperature.ts = f"{temperature:g}"
+        per_temperature.tag = f"{args.tag or 'jdos'}_t{label}"
+        per_temperature.job_dir = str(Path(args.job_dir) / f"t{label}")
+        commands.append(build_rerun_command(root, mesh, path, per_temperature))
+    if not commands:
+        warn("No missing JDOS temperatures to rerun; resolve duplicate files using --root/--match.")
+    return commands
 
 
 def submit_jobs(
@@ -3471,31 +3402,11 @@ def main(argv: list[str] | None = None) -> int:
             args.rerun
             is not None
         ):
-            command = (
-                build_rerun_command(
-                    root,
-                    mesh,
-                    rerun_path,
-                    args,
-                )
-            )
-
-            print()
-            print(
-                "Rerun command:"
-            )
-
-            print(
-                f"  "
-                f"{shell_join(command)}"
-            )
-
-            if not args.dry_run:
-                subprocess.run(
-                    command,
-                    cwd=root,
-                    check=True,
-                )
+            for command in rerun_commands(root, mesh, results, rerun_path, args):
+                print("\nRerun command:")
+                print(f"  {shell_join(command)}")
+                if not args.dry_run:
+                    subprocess.run(command, cwd=root, check=True)
 
         if (
             args.mode

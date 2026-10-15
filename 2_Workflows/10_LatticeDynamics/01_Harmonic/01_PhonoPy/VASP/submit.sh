@@ -6,7 +6,7 @@
 #SBATCH --job-name=harmonic-forces
 #SBATCH --nodes=1
 #SBATCH --exclusive
-#SBATCH --ntasks-per-node=18
+#SBATCH --ntasks-per-node=16
 #SBATCH --cpus-per-task=1
 #SBATCH --hint=nomultithread
 #SBATCH --partition=normal

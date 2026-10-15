@@ -1,14 +1,24 @@
-# Paths are relative to this file. Compute writes one raw HDF5; analysis writes one
-# tidy table per distinct concept and a manifest.
+# Paths are relative to this file. Compute writes one raw HDF5; analysis writes one tidy table per distinct concept and a manifest.
 system:
   path: ../example_calculation
   name: example
   phonopy_yaml: phonopy_disp.yaml
   force_sets: FORCE_SETS
-  # born: BORN  # Enable only with compatible Born charges and dielectric tensor.
+  # born: BORN  # Enable only with symmetry compatible Born charges and dielectric tensor.
 
 atoms:
   elements: [Na]
+
+# One definition feeds named spectra, descriptors, and *_participation fatband columns. Selections are restricted to the atoms stored above. Bare vectors are Cartesian; fractional means a direct-lattice axis; miller means a plane normal.
+projections:
+  elements: true
+  sites: false
+  directions:
+    x: [1, 0, 0]
+    y: [0, 1, 0]
+    z: [0, 0, 1]
+    c_axis: {fractional: [0, 0, 1]}
+    ab_normal: {miller: [0, 0, 1]}
 
 spectrum:
   mesh: [21, 21, 21]
@@ -29,8 +39,7 @@ analysis:
     inverse_frequency_floor_THz: 0.1
   family_spectra: true
 
-# Both path and mesh use the same fatband columns. Omit modes entirely if the
-# spectral tensor and frequency balls are all that is needed.
+# Both path and mesh use the same fatband columns. Omit modes entirely if the spectral tensor and frequency balls are all that is needed.
 modes:
   - name: freqball_band_modes
     kind: band

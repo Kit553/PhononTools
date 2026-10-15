@@ -194,7 +194,7 @@ def show_ball(
     )
 
 
-def main() -> None:
+def main(argv=None) -> None:
     parser = argparse.ArgumentParser(description="Interactive and static frequency-ball viewer")
     parser.add_argument("tensor", type=Path)
     parser.add_argument("--families", type=Path)
@@ -211,7 +211,7 @@ def main() -> None:
     parser.add_argument("--gif", type=Path)
     parser.add_argument("--export-mesh", type=Path)
     parser.add_argument("--no-show", action="store_true")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     result = read_tensor(args.tensor)
     show_ball(
         result,

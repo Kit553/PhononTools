@@ -25,6 +25,7 @@ from .analysis import descriptor_artifact, family_spectra_artifact
 from .families import FamilySet, load_families
 from .io import TensorResult, read_tensor, write_tensor
 from .mode_workflow import mode_artifact
+from .named_projections import projection_artifacts, resolve_projections
 from .parallel import collectively, context
 from .tensor import compute_spectral_tensor
 
@@ -236,6 +237,12 @@ def run_workflow(
     def load():
         phonon, files = _load_phonon(config, base)
         selected = _selected_atoms(phonon, config.get("atoms", {}))
+        resolve_projections(
+            config.get("projections"),
+            symbols=phonon.primitive.symbols,
+            selected=selected,
+            lattice=phonon.primitive.cell,
+        )
         # Fail bad family mappings before the expensive calculation starts.
         _families_for_phonon(phonon, selected, config, base)
         return phonon, files, selected
@@ -281,6 +288,29 @@ def run_workflow(
     families = collectively(lambda: _families_for_result(result, config, base), comm)
     artifacts = _distributed_analysis(result, families, config.get("analysis") or {})
 
+    projections = collectively(
+        lambda: resolve_projections(
+            config.get("projections"),
+            symbols=result.structure_symbols or result.symbols,
+            selected=result.primitive_indices,
+            lattice=result.lattice,
+        ),
+        comm,
+    )
+
+    def named_analysis():
+        if rank != 0:
+            return []
+        settings = (config.get("analysis") or {}).get("directions") or {}
+        settings = settings if isinstance(settings, dict) else {}
+        return projection_artifacts(
+            result,
+            projections,
+            low_cutoff=float(settings.get("low_frequency_cutoff_THz", 2.0)),
+            inverse_floor=float(settings.get("inverse_frequency_floor_THz", 0.1)),
+        )
+
+    artifacts.extend(collectively(named_analysis, comm))
     modes = config.get("modes") or []
     modes = [modes] if isinstance(modes, dict) else list(modes)
     if modes:
@@ -315,6 +345,7 @@ def run_workflow(
                     system=files.name,
                     selected=selected,
                     families=mode_families,
+                    projections=projections,
                 ),
                 comm,
             )
@@ -342,7 +373,7 @@ def run_workflow(
     return written + tables
 
 
-def main() -> None:
+def main(argv=None) -> None:
     parser = argparse.ArgumentParser(description="Compute and analyze canonical FreqBall data")
     parser.add_argument("config", type=Path)
     parser.add_argument("--action", choices=("run", "compute", "analyze"), default="run")
@@ -354,7 +385,7 @@ def main() -> None:
         type=Path,
         help="Write normalized CAT YAML with anchored inputs, then exit",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     overrides = {}
     for symbol, raw in args.mass:
         if symbol in overrides:

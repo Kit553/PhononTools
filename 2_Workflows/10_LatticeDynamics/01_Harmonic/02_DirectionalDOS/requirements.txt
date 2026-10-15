@@ -7,5 +7,5 @@ PyYAML>=6.0
 scipy>=1.14
 spglib>=2.6
 matplotlib>=3.9
-# Optional: pymatgen (site finder), pyvista (3D viewer), mpi4py (MPI),
-# seekpath (automatic band paths), pyarrow (Parquet output).
+# Optional: pymatgen (site finder), pyvista (3D viewer), mpi4py (MPI), seekpath (automatic band paths), pyarrow (Parquet output).
+# These serve to give a barebones FreqBall implementation, pref use of the full package once its released

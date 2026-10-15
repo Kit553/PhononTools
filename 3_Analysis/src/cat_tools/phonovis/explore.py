@@ -240,7 +240,7 @@ def show_explorer(
     initial_band: int = 0,
     animation_interval_ms: int = 80,
 ) -> None:
-    """Open the clickable dashboard; keyboard controls are deliberately small."""
+    """Open the dispersion, DOS and animated-mode dashboard."""
     try:
         import matplotlib.pyplot as plt
     except ImportError as exc:

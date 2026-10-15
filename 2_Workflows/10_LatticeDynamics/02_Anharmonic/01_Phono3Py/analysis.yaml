@@ -1,0 +1,23 @@
+# Replace explicit paths with complete collection outputs; omit absent features.
+system:
+  path: scattering
+  name: example
+  phono3py_yaml: phono3py_disp.yaml
+  kappa:
+    - collection/corrected-rta_bmfp_1um/kappa-m212121-bmfp1.hdf5
+output:
+  directory: phono3py-analysis
+  format: csv
+mesh:
+  temperatures: [100, 300, 600]
+  views:
+    - name: gamma_profile
+      kind: profile
+      value: gamma_THz
+      bins: {start: 0, stop: 15, width: 0.1}
+    - name: kappa_accum_frequency
+      kind: accumulation
+      value: mode_kappa_iso_W_mK
+      coordinate: frequency_THz
+      bins: {start: 0, stop: 15, width: 0.05}
+transport: true

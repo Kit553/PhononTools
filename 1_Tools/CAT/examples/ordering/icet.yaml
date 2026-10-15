@@ -1,0 +1,18 @@
+# Enumerate distinct supercell shapes as well as occupations.
+structure: Na3PS4.cif
+output: enumerated-supercells
+id_prefix: icet-cub
+methods: [icet-enumerate]
+icet_sizes: [1, 2]
+max_enumerated: 10000
+max_candidates: 1000
+pair_cutoff_A: 7.5
+sublattices:
+  - name: tetrahedra
+    elements: [P]
+    motif: {neighbor_elements: [S], coordination: 4, cutoff_A: 2.7}
+    states:
+      PSe4: {center: P, neighbor: Se}
+      SbS4: {center: Sb, neighbor: S}
+    fractions: {PSe4: 0.5, SbS4: 0.5}
+selection: {method: diverse, per_composition: 12}

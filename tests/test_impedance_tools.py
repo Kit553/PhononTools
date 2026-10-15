@@ -34,7 +34,7 @@ class RelaxISTests(unittest.TestCase):
     def test_content_discovery_two_process_spectra_and_resistance(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            # Deliberately misleading names: discovery must inspect the marker.
+            # Misleading filenames test discovery by the file content marker.
             (root / "InformationExport_TwoProcesses.txt").write_text(PARAMETERS)
             (root / "ParameterExport.txt").write_text(INFORMATION)
             (root / "anything.txt").write_text(SPECTRUM)

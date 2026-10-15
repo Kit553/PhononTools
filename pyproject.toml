@@ -26,6 +26,7 @@ bonding = ["lobsterpy>=0.6.1", "pymatgen>=2025.1"]
 families = ["pymatgen>=2025.1"]
 mpi = ["mpi4py>=4.0"]
 structure = ["ase>=3.26", "pymatgen>=2025.1"]
+ordering = ["ase>=3.26", "pymatgen>=2025.1", "icet>=3.2,<5"]
 visualization = [
   "matplotlib>=3.9",
   "pillow>=11",
@@ -39,8 +40,9 @@ dev = ["ruff>=0.14"]
 [project.scripts]
 cat-tools = "cat_utilities.cli:main"
 cat-prepare = "cat_prepare.cli:main"
+cat-ordering = "cat_prepare.ordering.workflow:main"
 cat-diffraction = "cat_tools.diffraction.workflow:main"
-cat-freqball = "cat_tools.freqball.workflow:main"
+cat-freqball = "cat_tools.freqball.cli:main"
 cat-freqball-bvpa = "cat_tools.freqball.bvpa:main"
 cat-freqball-families = "cat_tools.freqball.family_builder:main"
 cat-freqball-mass-scan = "cat_tools.freqball.mass_workflow:main"
@@ -70,7 +72,7 @@ namespaces = false
 "cat_utilities.phono3py" = ["*.sh"]
 
 [tool.setuptools_scm]
-fallback_version = "0.0.dev0"
+fallback_version = "0.1.0"
 
 [tool.ruff]
 line-length = 100

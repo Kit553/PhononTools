@@ -58,7 +58,7 @@ def _strings(values: tuple[str, ...]) -> np.ndarray:
 
 
 def _write_tensor(result: TensorResult, path: str | Path) -> Path:
-    """Write the only raw FreqBall output; descriptors are deliberately absent."""
+    """Write the spectral tensor and input metadata to HDF5."""
     result.validate()
     target = Path(path).expanduser().resolve()
     target.parent.mkdir(parents=True, exist_ok=True)

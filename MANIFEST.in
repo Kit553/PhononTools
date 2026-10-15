@@ -1,12 +1,15 @@
-include README.md MIGRATION.md uv.lock
+include README.md CHANGELOG.md RELEASE.md ROADMAP.md uv.lock .python-version
 recursive-include 1_Tools/CAT *.py *.sh *.yaml
 recursive-include 1_Tools/CAT/examples *
 include 1_Tools/General/SlurmScan.py
 recursive-include 1_Tools *.md
 recursive-include 3_Analysis/src *.py
-recursive-include 2_Workflows *.md
+recursive-include 2_Workflows *.md *.py *.sh *.yaml *.conf *.template INCAR* KPOINTS*
+recursive-include 2_Workflows/10_LatticeDynamics/01_Harmonic/02_DirectionalDOS *.py *.sh *.txt *.yaml
+include 3_Analysis/scripts/sync_freqball_standalone.py
 recursive-include 3_Analysis *.md *.yaml
 recursive-include tests *.py
 prune 1_Tools/legacy
 prune 3_Analysis/legacy
+prune OLD_Workflows
 global-exclude __pycache__ *.py[cod]

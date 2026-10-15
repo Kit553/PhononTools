@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import sys
 
 import yaml
+from cat_shared.version import __version__
 
 from .lobsterin import add_lobsterin_arguments, run_lobsterin
 from .mass_scan import add_setup_arguments, run_setup
@@ -14,7 +16,9 @@ from .topology import add_topology_arguments, run_topology
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--version", action="version", version=f"CAT {__version__}")
     commands = parser.add_subparsers(dest="tool", required=True)
+    commands.add_parser("ordering", help="Generate ordering configurations and SQS; analyze hulls")
     structure = commands.add_parser("structure", help="Convert, perturb, or restore structures")
     add_structure_commands(structure.add_subparsers(dest="operation", required=True))
     add_bvpa_command(commands)
@@ -33,6 +37,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> None:
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] == "ordering":
+        from .ordering.workflow import main as ordering
+
+        ordering(argv[1:])
+        return
     parser = build_parser()
     args = parser.parse_args(argv)
     try:

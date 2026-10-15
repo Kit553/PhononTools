@@ -1,0 +1,24 @@
+# Intact PSe4 and SbS4 units: ordered, clustered, layered and sampled arrangements.
+structure: Na3PS4.cif
+output: motif-configurations
+id_prefix: motifs-cub
+methods: [enumerate, random, alternating, clustered, layered]
+supercells: [[2, 1, 1], [2, 2, 1]]
+pair_cutoff_A: 6.5  # First motif-center shell of this illustrative cubic cell.
+samples: 8
+pattern_steps: 500
+layer_axis: 2
+seed: 42
+max_raw: 10000
+sublattices:
+  - name: tetrahedra
+    elements: [P]
+    motif:
+      neighbor_elements: [S]
+      coordination: 4
+      cutoff_A: 2.7
+    states:
+      PSe4: {center: P, neighbor: Se}
+      SbS4: {center: Sb, neighbor: S}
+    fractions: {PSe4: 0.5, SbS4: 0.5}
+selection: {method: diverse, per_composition: 12}

@@ -1,18 +1,15 @@
 # Convergence record: <system / phase / purpose>
 
-Status: draft / provisional / validated / superseded
-Date: YYYY-MM-DD
-Author/contact:
-Related records / replacement:
+Status: draft / provisional / validated / superseded Date: YYYY-MM-DD Author/contact: Related records / replacement:
 
 ## Scope and reproducibility
 
 - Intended property and conditions (pressure, temperature, etc.):
 - Structure source, phase, composition, atom count, cell dimensions/volume:
-- Structure file or portable relative path; POSCAR SHA256:
+- Structure file or portable relative path; `POSCAR` SHA256:
 - VASP version/build and executable; CAT version or repository commit:
 - Functional, dispersion, spin/magnetic initialization, SOC, +U, charge:
-- PAW release and variants in POSCAR order; POTCAR SHA256; max ENMAX (eV):
+- PAW release and variants in `POSCAR` order; `POTCAR` SHA256; max ENMAX (eV):
 - Input/output archive location (and how another user can access it):
 - Geometry used for static tests, including any displacement or strain:
 - Restart policy; extra input files; physical model assumptions:
@@ -47,9 +44,9 @@ LASPH = <value>
 IBRION / NSW / ISIF / EDIFFG = <relaxation settings, if applicable>
 ```
 
-- KPOINTS: Gamma/Monkhorst-Pack, actual mesh, shift, CAT density if used:
+- `KPOINTS`: Gamma/Monkhorst-Pack, actual mesh, shift, CAT density if used:
 - Actual irreducible k-point count (NKPTS), NELECT, symmetry settings:
-- Other relevant INCAR tags / path to complete final INCAR:
+- Other relevant `INCAR` tags / path to complete final `INCAR`:
 - Supported structure/chemistry/volume range and known limitations:
 
 ## Machine and execution layout
@@ -57,7 +54,7 @@ IBRION / NSW / ISIF / EDIFFG = <relaxation settings, if applicable>
 - Cluster, partition, CPU/GPU model, memory per node:
 - Nodes, MPI ranks per node, threads per rank, requested memory:
 - Modules / compiler / MPI / executable:
-- NCORE, KPAR (or NPAR if deliberately used), actual NBANDS:
+- `NCORE`, `KPAR` (or `NPAR` if used), actual `NBANDS`:
 - Shared benchmark-table link (strongly recommended):
 - Cold start or restart; filesystem / output settings affecting timings:
 
@@ -80,7 +77,7 @@ Allocated core-hours = wall seconds × allocated CPU count / 3600; this differs 
 - Selected versus stricter settings on the same final geometry:
 - Reference values and measured differences (including target property):
 - Final relaxation force, stress, cell and restart checks:
-- Coupled checks (k mesh / SIGMA, ENCUT / cell, LREAL / ROPT):
+- Coupled checks (k mesh / `SIGMA`, `ENCUT` / cell, `LREAL` / ROPT):
 - Remaining property-specific convergence tests:
 - Suggested first tests for the next user, and cases needing a fresh scan:
 - Timing estimate applies to which system size, build and hardware:

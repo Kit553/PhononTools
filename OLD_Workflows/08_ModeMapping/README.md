@@ -114,8 +114,7 @@ which creates `ExtractTotalEnergies.csv` and `ModeMap.csv` containing the raw to
 ModeMap_PostProcessing.py
 ```
 
-This should yield the files `ModeMap_PostProcess_1DProfiles.csv` containing the 1D traces of the PES and `ModeMap_PostProcess_2DMap.csv`
-with the full potential energy map, ready to be plotted.
+This should yield the files `ModeMap_PostProcess_1DProfiles.csv` containing the 1D traces of the PES and `ModeMap_PostProcess_2DMap.csv` with the full potential energy map, ready to be plotted.
 
 ### 4. Plotting the PES:
 The way in which the two post-processed files are set up can be very annoying for plotting in Origin, instead create the plots and more Origin friendly output with the `PostPostProcess.py` script.

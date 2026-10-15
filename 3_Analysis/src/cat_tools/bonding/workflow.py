@@ -102,9 +102,7 @@ def _topology_config_from_interactions(
         return TopologyConfig.from_dict(values)
 
     if manifest:
-        # The sidecar is advisory configuration/provenance, never cached topology truth.
-        # Even if its structure hash is stale, its chemistry settings can seed a fresh
-        # reconstruction from the current POSCAR; the hash mismatch is reported separately.
+        # Rebuild topology from the current POSCAR using the sidecar chemistry settings; report a stale structure hash separately.
         return topology_config_from_manifest(manifest)
 
     groups = dict(interactions.get("element_groups", {}))

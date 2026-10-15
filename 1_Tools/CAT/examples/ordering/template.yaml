@@ -1,0 +1,24 @@
+# Editable starting point, not a runnable material example.
+# Replace ELEMENT_A/ELEMENT_B with real element symbols and choose the sites,
+# fractions, cell sizes and cutoffs for your study before running generate.
+structure: parent.vasp          # Relative to this YAML, or an absolute input path.
+id_prefix: batch01              # Unique across batches you will combine.
+methods: [enumerate]
+supercells: [[2, 1, 1]]          # Illustrative; every occupation count must be integral.
+pair_cutoff_A: 6.0              # Illustrative neighbor range in angstrom; inspect it.
+symprec: 0.00001
+max_raw: 10000                  # Abort rather than silently truncate enumeration.
+max_candidates: 1000
+seed: 42
+sublattices:
+  - name: sublattice_1
+    elements: [ELEMENT_A]       # Or use indices: [...] for zero-based parent sites.
+    states: [ELEMENT_A, ELEMENT_B]
+    fractions: {ELEMENT_A: 0.5, ELEMENT_B: 0.5}
+# Minimal binary scan: both endpoints and one intermediate composition.
+# Add/remove sublattices and composition points to define your actual space.
+compositions:
+  - {sublattice_1: {ELEMENT_A: 1.0, ELEMENT_B: 0.0}}
+  - {sublattice_1: {ELEMENT_A: 0.0, ELEMENT_B: 1.0}}
+  - {sublattice_1: {ELEMENT_A: 0.5, ELEMENT_B: 0.5}}
+selection: {method: all}

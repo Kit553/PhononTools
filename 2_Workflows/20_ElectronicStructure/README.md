@@ -1,22 +1,16 @@
-# LOBSTER preparation and analysis
+# Electronic structure and bonding
 
-Prepare `lobsterin` from the POSCAR used by the LOBSTER calculation:
+**Use:** Connect converged VASP electronic calculations to DOS/bands and wavefunction-based LOBSTER bonding analysis.
 
-```bash
-cat-prepare lobsterin POSCAR -o lobsterin
-```
+**Files:** [Bonding/LOBSTER workflow](01_BondingAnalysis/01_LOBSTER/README.md) · [Native VASP bands and DOS](02_BandsAndDOS/README.md) · [Static reference](../00_Common/03_StaticReference/README.md).
 
-Set basis functions, species, and interaction ranges for your chemistry using the
-generator's options or a YAML/JSON configuration. Keep the generated
-`lobsterin.bonding.json` beside the input: the analysis uses its topology and provenance.
+| Result | Calculation route | Analysis owner |
+| --- | --- | --- |
+| COHP/COBI/COOP, integrals, charges and LOBSTER DOS | Basis-compatible VASP `WAVECAR` → LOBSTER | `cat-bonding`, canonical tables and CATPlot |
+| LOBSTER orbital FATBAND | Suitable mesh/path VASP wavefunctions → LOBSTER FATBAND output | `cat-bonding`, electronic-band table and CATPlot |
+| Ordinary VASP band structure / DOS | Converged SCF density → separate path/dense-mesh calculation | Native VASP/Pymatgen workflow below; no dedicated CAT VASP-electronic exporter |
+| Relative energies / ordering hulls | Consistent relaxed static calculations | [Ordering workflow](../00_Common/05_Ordering/README.md) |
 
-Run your VASP/LOBSTER calculation with the appropriate external programs and job
-settings. Then adapt [bonding.yaml](../../3_Analysis/examples/bonding.yaml) to the
-result directory and run:
+Use the same physical model, potentials and site ordering through preparation, calculation and analysis. A phonon fatband from FreqBall represents vibrational motion; an electronic FATBAND represents orbital character of electronic states. They are distinct datasets despite sharing the word fatband.
 
-```bash
-cat-bonding bonding.yaml
-```
-
-The analysis exports interaction tables and validates the requested interactions
-against the available outputs. See [BondingTools](../../3_Analysis/docs/bonding.md).
+The maintained LOBSTER guide covers and corrects the old `05_Lobster` procedure, including preparation, projection quality, topology, orbital/spin analysis and advanced native outputs. Examples are starting templates, not converged settings.

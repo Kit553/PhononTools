@@ -77,7 +77,7 @@ def resolve_files(
 
 
 def load_phonon(files: PhononFiles, *, log_level: int = 0):
-    """Return the real `phonopy.Phonopy` object, not a second wrapper class."""
+    """Load force data and return a `phonopy.Phonopy` object."""
     import phonopy
 
     kwargs: dict[str, Any] = {

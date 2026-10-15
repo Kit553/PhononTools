@@ -50,7 +50,7 @@ status = main(["POSCAR", "--iso", "5", "--dry-run"])
 
 Argument errors and `--help` follow normal argparse behavior and may raise `SystemExit`. For numerical work, prefer the module's individual functions.
 
-The POSCAR comparison module retains the original bottleneck matching algorithm. It is intentionally distinct from `cat_tools.structure.compare`, which uses Pymatgen's structure matcher. Shared file representations live in `cat_shared`; command-specific algorithms remain with their commands.
+The `POSCAR` comparison module uses bottleneck matching to pair atomic sites. `cat_tools.structure.compare` uses Pymatgen's structure matcher. Both use the structure representations in `cat_shared`.
 
 ---
 
@@ -60,6 +60,7 @@ After installing the required extras, run from the repository root:
 
 ```bash
 python -m unittest discover -s tests -v
+uv lock --check
 cat-tools --help
 cat-tools vasp --help
 cat-tools phono3py --help
@@ -67,13 +68,14 @@ cat-tools phono3py --help
 
 Tests use temporary calculation fixtures and do not submit jobs. Shell resources must be retained in `pyproject.toml` package data and `MANIFEST.in` when adding a new shell command. Add dispatch entries in `cat_utilities/cli.py` and document the command's inputs, writes, overwrite behavior, and submission behavior in the parent README.
 
+`tests/test_phono3py_jobs.py` executes generated scripts against a fake native program that reproduces the 2.7 JDOS writer bug. It also checks error propagation, temperature recovery, runtime version handling, and isolation of conductivity collections. [The release procedure](../../RELEASE.md) covers a fresh locked environment and installation of the built wheel.
+
 This documentation was automatically generated based on the code using gen AI (GPT-6 Astra).
 
-LOBSTER configuration and the topology-to-YAML workflow are documented in the
-[Tools reference](../README.md#lobster-configuration-and-framework-detection).
-Framework roles and basis functions are supplied explicitly for each system.
+LOBSTER configuration and the topology-to-YAML workflow are documented in the [Tools reference](../README.md#lobster-configuration-and-framework-detection). Framework roles and basis functions are supplied explicitly for each system.
 
-The topology helper also supports nearest or all ligand contacts between connected
-components, distinguishing bonded polymer repeats from neighboring chains. See the
-[inter-component guide](../README.md#inter-polyanion-and-inter-chain-contacts) and
-[polymer seed](examples/lobsterin.polymer.seed.yaml).
+The topology helper also supports nearest or all ligand contacts between connected components, distinguishing bonded polymer repeats from neighboring chains. See the [inter-component guide](../README.md#inter-polyanion-and-inter-chain-contacts) and [polymer seed](examples/lobsterin.polymer.seed.yaml).
+
+Ordering generation, symmetry reduction, SQS, energy collection and hull schemas are documented in the [ordering reference](ordering/README.md). Follow the [numbered ordering workflow](../../2_Workflows/00_Common/05_Ordering/README.md) for a procedure using your own structures, directories and execution environment. The [JCH material inventory](ordering/JCH_INVENTORY.md) is kept beside that reference.
+
+Optional [VASP site notes](vasp-site-notes.md) and [benchmark case studies](examples/vasp-benchmarks/README.md) preserve concrete installation and material examples separately from the general workflows.

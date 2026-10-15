@@ -1,0 +1,16 @@
+system:
+  path: jdos
+  name: example
+  phono3py_yaml: phono3py_disp.yaml
+  jdos: jdos-m212121-g*-t*.dat
+  ir_grid_points: ir_grid_points.yaml
+output:
+  directory: jdos-analysis
+  format: csv
+mesh:
+  export: false
+transport: false
+jdos:
+  export_points: false
+  mesh_average: true
+  require_complete: true

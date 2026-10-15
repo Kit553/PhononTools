@@ -1,0 +1,18 @@
+# Example only: replace paths, q-point, band and coordinate range for your system.
+system:
+  path: ../harmonic
+  phonopy_yaml: phonopy_disp.yaml
+  force_sets: FORCE_SETS
+  # born: BORN
+repeat: [2, 2, 2]  # Mapping supercell relative to the phonon primitive cell.
+# nac_direction: [1, 0, 0]  # Optional explicit Gamma limit for polar systems.
+modes:
+  - qpoint: [0, 0, 0]
+    band: 3  # ZERO-based. Inspect the eigenvector first.
+    phase_deg: 0
+    values: [-1.0, -0.5, 0.0, 0.5, 1.0]  # sqrt(u) angstrom per mapping cell.
+  # Uncomment a second independent mode/phase for a 2D Cartesian product.
+  # - qpoint: [0, 0, 0]
+  #   band: 4
+  #   phase_deg: 0
+  #   values: [-1.0, -0.5, 0.0, 0.5, 1.0]

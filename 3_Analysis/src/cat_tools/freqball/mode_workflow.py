@@ -13,7 +13,9 @@ from .modes import directional_mode_artifact
 from .parallel import collectively, context
 
 
-def mode_artifact(phonon, config: Mapping, base: Path, *, system, selected, families):
+def mode_artifact(
+    phonon, config: Mapping, base: Path, *, system, selected, families, projections=()
+):
     comm, rank, size = context()
     kind = config["kind"]
     chunk = int(config.get("qpoint_chunk", 64))
@@ -97,8 +99,7 @@ def mode_artifact(phonon, config: Mapping, base: Path, *, system, selected, fami
         artifacts = []
         for segment, start, qpoints, offset in jobs[rank::size]:
             if kind == "band":
-                # Keep each segment intact: Phonopy handles branch tracking and
-                # the direction-dependent NAC limit at Gamma inside the segment.
+                # Process complete segments so Phonopy can track branches and the directional NAC limit at Gamma.
                 bands = phonon.run_band_structure(
                     [qpoints],
                     with_eigenvectors=True,
@@ -136,6 +137,7 @@ def mode_artifact(phonon, config: Mapping, base: Path, *, system, selected, fami
                 masses=phonon.primitive.masses,
                 selected_atoms=selected,
                 families=families,
+                projections=projections,
                 name=config.get("name"),
             )
             artifact.data["q_index"] += start

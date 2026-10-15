@@ -1,19 +1,21 @@
 # VASP Static Reference
 
-**Use:** Establish the fixed-geometry reference shared by subsequent calculations. Complete [convergence](../../01_Convergence/VASP/README.md) and
-[relaxation](../../02_Relaxation/VASP/README.md) first.
+**Use:** Calculate reference energies, forces and stress on an accepted geometry.
 
 **Files:** [INCAR.static](INCAR.static) · [submit.sh](submit.sh).
-The INCAR is a nonmagnetic bulk PBEsol starting example, with the same baseline as the relaxation template.
 
-## Prepare and run
+**Prerequisites:** Complete [convergence](../../01_Convergence/VASP/README.md) and [relaxation](../../02_Relaxation/VASP/README.md) first.
 
-From the parent of the accepted `relax_02` directory:
+The `INCAR` is a nonmagnetic bulk PBEsol starting example, with the same baseline as the relaxation template.
+
+## 1. Prepare the static inputs
+
+Start in a directory of your choice. Replace `/path/to/accepted-relaxation` with the run whose geometry you accepted; `static_01` is an example output name:
 
 ```bash
 mkdir static_01
-cp relax_02/CONTCAR static_01/POSCAR
-cp relax_02/{INCAR,POTCAR,KPOINTS,submit.sh} static_01/
+cp /path/to/accepted-relaxation/CONTCAR static_01/POSCAR
+cp /path/to/accepted-relaxation/{INCAR,POTCAR,KPOINTS,submit.sh} static_01/
 ```
 
 Edit the copied `INCAR`, retaining the converged electronic settings:
@@ -37,12 +39,16 @@ If you do not already have a reviewed scheduler script, copy [submit.sh](submit.
 
 The template disables both large optional files. Specialized workflows can require additional settings or their own SCF run; consult them before assuming this reference supplies every input.
 
+## 2. Execute the static calculation
+
+Use your local launcher or scheduler from `static_01`. For Slurm:
+
 ```bash
 cd static_01
 sbatch submit.sh
 ```
 
-## Check the result
+## 3. Check the result
 
 After completion, from the parent directory:
 
@@ -52,4 +58,4 @@ cat-tools vasp check --prefix static_ --verbose
 
 Check normal termination and electronic convergence, then compare final forces and stress against the relaxation's acceptance criteria. If you changed sampling or occupations and forces change materially, return to relaxation with appropriate settings. A scheduler `COMPLETED` state alone does not establish convergence!
 
-Do this after concluding your relaxation work, in contrast to earlier work, this will be the reference electronic setup to base further workflows e.g. [lattice dynamics](../../../10_LatticeDynamics/README.md), [electronic structure work](../../../20_ElectronicStructure/README.md) or [convex hull analysis].
+Carry this accepted reference into [lattice dynamics](../../../10_LatticeDynamics/README.md), [electronic structure](../../../20_ElectronicStructure/README.md), or [hull analysis](../../05_Ordering/README.md) as needed.

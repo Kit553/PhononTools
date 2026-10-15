@@ -358,7 +358,7 @@ def write_families(document: dict[str, Any], path: str | Path) -> Path:
     return target
 
 
-def main() -> None:
+def main(argv=None) -> None:
     parser = argparse.ArgumentParser(description="Build atom-local FreqBall direction families")
     parser.add_argument("structure", type=Path)
     parser.add_argument("--conduction-path", type=Path, required=True)
@@ -369,7 +369,7 @@ def main() -> None:
     parser.add_argument("--path-match-tolerance", type=float, default=0.25)
     parser.add_argument("--angle-tolerance", type=float, default=3.0)
     parser.add_argument("--symprec", type=float, default=1e-3)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     Structure, _ = _pymatgen()
     structure = Structure.from_file(args.structure)
     document, distances = build_families(

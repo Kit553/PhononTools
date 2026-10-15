@@ -52,7 +52,7 @@ class WorkflowTests(unittest.TestCase):
             page = PdfReader(folder / "check.pdf").pages[0]
             self.assertLess(abs(float(page.mediabox.width) - float(page.mediabox.height)), 0.01)
 
-            # The copied YAML is deliberately usable from its new directory.
+            # Render the copied YAML from its new directory to check relative paths.
             portable = load_recipe(folder / "check.plot.yaml")
             rerender = render_to_files(portable, folder / "check.plot.yaml")
             plt.close(rerender.rendered.figure)

@@ -1,0 +1,18 @@
+# Set the actual run path; multiple runs may be discovered with recursive: true.
+system:
+  path: lobster-run
+  name: example
+  recursive: false
+extraction:
+  populations: [COHP, COBI, COOP]
+  spin_mode: summed
+  orbitals: true
+  energy_range_eV: [-20, 8]
+  spilling_warning_percent: 5
+bands:
+  enabled: true
+benchmark:
+  enabled: false
+output:
+  directory: bonding-analysis
+  format: csv

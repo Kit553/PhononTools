@@ -4,8 +4,7 @@
 ## Workflow:
 **Prerequisites:** It is necessary to have the LOBSTER program downloaded and on `PATH` e.g. in your `/bin/` folder, for setup of the software see the [LOBSTER Website](http://www.cohp.de/).
 
-**Folder Setup:**
-**Static Calculation Run**
+**Folder Setup:** **Static Calculation Run**
 - `POSCAR`  &rarr; the final relaxed structure of your system
 - `POTCAR`  &rarr; the corresponding potential file
 - `INCAR`   &rarr; check that the LOBSTER relevant tags are set to the specifications below
@@ -20,15 +19,13 @@
 #### 1. Static Calculation
 The first step of this workflow is obtaining a high-quality PAW output from VASP, to achieve this make sure to adjust these tags of the `INCAR`:
 
-**Mandatory Tags**
-These tags are required for LOBSTER to work on your run.
+**Mandatory Tags** These tags are required for LOBSTER to work on your run.
 - Write the `WAVECAR` with `LWAVE = .TRUE.`
 - Disable Symmetry with `ISYM = 0`
 - `NBANDS` needs to be set to include enough states, a general rule of thumb to setting this tag is $NBANDS \gtrapprox \sum_{Ions} n_{\mathrm{Ion}}\cdot n_{\mathrm{Orbitals}}$
 - Enable VASPs internal projection to make LOBSTERS job easier `LORBIT = 11`
 
-**Recommended Tags**:
-These are common strategies to achieve the highest possible level of electronic precision.
+**Recommended Tags**: These are common strategies to achieve the highest possible level of electronic precision.
 - Set `LASPH = .TRUE.` to include non-spherical contributions
 - Use the high-precision algorithm `PREC = Accurate`
 - Set very strict electronic convergence with `EDIFF` e.g. `EDIFF = 1E-8`
@@ -39,13 +36,11 @@ Writing the `WAVECAR` can take some calculation time especially since the requir
 ---
 
 #### 2. Creation of the Input file:
-Creation of the `lobsterin` file depends strongly on the usecase of your calculation. The file provided here is an all-rounder
-providing basically all metric needed for thorough bonding analysis, an explanation of the keywords is given below, <opt> marks optional tags.
+Creation of the `lobsterin` file depends strongly on the usecase of your calculation. The file provided here is an all-rounder providing basically all metric needed for thorough bonding analysis, an explanation of the keywords is given below, <opt> marks optional tags.
 
 **Mandatory Keywords:** Basis set definition
 - `basisSet` &rarr; Defines the electronic basis set used for LOBSTER; recommended to use `pbeVaspFit2015` for PBE functionals, be sure to adjust this when using other functionals though; non-specified will use a standard LOBSTER set.
-- `basisFucntions` &rarr; defines what funtions are used and what orbitals are considered syntax like `basisFunctions Element orbitals` e.g. `basisFunctions S  3s 3p`.
-The chosen basis is extremely important for any descriptor you calculate, it should match well with the functional set used for the DFT runs**!**
+- `basisFucntions` &rarr; defines what funtions are used and what orbitals are considered syntax like `basisFunctions Element orbitals` e.g. `basisFunctions S  3s 3p`. The chosen basis is extremely important for any descriptor you calculate, it should match well with the functional set used for the DFT runs**!**
 
 ---
 
@@ -77,7 +72,7 @@ The chosen basis is extremely important for any descriptor you calculate, it sho
 - `cohpBetween`   &rarr; requests COHP calculation between an explicit pair of atoms syntax like `cohpBetween atom 1 atom 2 cell n1 n2 n3 <opt>:orbitalWise` where n1 n2 n3 denote the zero-based indices of the unitcell, if a primitive cell is used, wrapping between periodic images can be done by providing negative indices. The atom numeration follows the one-based `POSCAR` syntax.  
 - `skipCOHP`      &rarr; requests to skip COHP calculation for a pair of atoms  
 - `kSpaceCOHP`    &rarr; requests *k*-resolution of the COHP  
-The provided script PairFinder.py can read in your POSCAR and automatically generate the `cohpBetween` lines to match your usecase. The relevant CLI is
+The provided script `PairFinder.py` can read in your `POSCAR` and automatically generate the `cohpBetween` lines to match your usecase. The relevant CLI is
 
 ```bash
 python write_cohp_between.py POSCAR --pairs Element1-Element2 --rmax Value <opt:> --orbital-wise
@@ -106,22 +101,18 @@ Population analysis is needed for estimation of Madelung energies *vide infra*
 --- 
  
 **Fatbands:** Electronic branch diagram resolved via *k*- element- and orbital-contribution.
-- `createFatband` &rarr; requests calculation of the Fatband plot, syntax like `createFatband Element Orbital1 OrbitalN`
-This feature is **highly** dependent on the projection that is being used, make sure it is appropriate! Due to their tendency to get extremely crowded these are best used sparingly 
+- `createFatband` &rarr; requests calculation of the Fatband plot, syntax like `createFatband Element Orbital1 OrbitalN` This feature is **highly** dependent on the projection that is being used, make sure it is appropriate! Due to their tendency to get extremely crowded these are best used sparingly
 
 ---  
 
 **Distribution Funtions:** Weighted spatial RDFs used to reconstruct bonding structure.
 - `BWDF`     &rarr; calculate bond-weighted distribution funtion
-- `BWDFCOHP` &rarr; calculate COHP weighted distribution funtion
-These are especially useful for large/disordered/defective systems where the bonding information is spatially variant.
-For small/ordered phases this information is usually redundant with COHP/COBI/COOP
+- `BWDFCOHP` &rarr; calculate COHP weighted distribution funtion These are especially useful for large/disordered/defective systems where the bonding information is spatially variant. For small/ordered phases this information is usually redundant with COHP/COBI/COOP
 
 ---
 
 **Density of Energies:** COHP-like decomposition of the band-structure energy.
-- `densityOfEnergy` &rarr; calculate the density of energies (DOE)
-This is very informative in systems where bonding isnt necesarrily pair-wise but multi-centered.
+- `densityOfEnergy` &rarr; calculate the density of energies (DOE) This is very informative in systems where bonding isnt necesarrily pair-wise but multi-centered.
 
 ---
 
@@ -138,9 +129,7 @@ This is very informative in systems where bonding isnt necesarrily pair-wise but
 
 ---
 
-**Molecular Fragment Analysis:** deeper analysis of molecular fragments in the material
-This requires the molecules to be defined first via:
-`molecule atom i atom j atom k ... <opt> cell n1 n2 n3>`
+**Molecular Fragment Analysis:** deeper analysis of molecular fragments in the material This requires the molecules to be defined first via: `molecule atom i atom j atom k ... <opt> cell n1 n2 n3>`
 - `printLmosOnAtoms`                     &rarr; prints out localized molecular orbitals on the fragment, syntax like `printLmosOnAtoms atom1 atom2 ...`
 - `printLmosOnAtomswriteAtomicDensities` &rarr; *vide supra*, additionally writes out the atom-centered densities
 - `printMofeAtomWise`                    &rarr; only prints out the atom-centred densities
@@ -156,7 +145,7 @@ Once the calculation has finished running and the `lobsterin` file has been writ
 lobster > lobster.out
 ```
 
-Usually the post-processing take between ~15-20 minutes and can be done in an interactive job. If your system is huge or you request a lot of descriptors use the jobLOB.sh file to submit it to queue, this can make trouble with `PATH` inheritance be sure to alias your `LOBSTER` executable.
+Usually the post-processing take between ~15-20 minutes and can be done in an interactive job. If your system is huge or you request a lot of descriptors use the `jobLOB.sh` file to submit it to queue, this can make trouble with `PATH` inheritance be sure to alias your `LOBSTER` executable.
 
 ## Theory and Further Reading:
 

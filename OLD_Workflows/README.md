@@ -1,5 +1,5 @@
 #### 1.1 Building your `INCAR` file:
-The INCAR gives you full control over what VASP does with your supplied structure. This section presents a small overview over possible tags, a full list can be found at the [VASP Wiki](https://vasp.at/wiki/Category:INCAR_tag).
+The `INCAR` gives you full control over what VASP does with your supplied structure. This section presents a small overview over possible tags, a full list can be found at the [VASP Wiki](https://vasp.at/wiki/Category:INCAR_tag).
 
 **System and Output parsing:**
 - `NWRITE` &rarr; how much information is written to the `OUTCAR` file, leave at `NWRITE=2` for most purposes [Wiki](https://vasp.at/wiki/NWRITE)

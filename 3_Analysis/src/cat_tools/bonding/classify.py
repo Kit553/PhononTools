@@ -90,9 +90,7 @@ class InteractionClassifier:
                 continue
             if not rule.get("split_by_atom_index_groups", False):
                 return str(rule["name"])
-            # Unsafe legacy behavior deliberately disabled: intra/inter topology must never
-            # be inferred from atom-number blocks. If no exact structure topology reached
-            # this rule, report the configured unknown class instead of guessing.
+            # Atom-number groups do not identify periodic connectivity. Without structure topology, use the configured unknown class.
             return str(rule.get("unknown_group_name", rule["name"]))
         return element_pair(first, second)
 
@@ -116,8 +114,7 @@ class InteractionClassifier:
                 el1=first,
                 el2=second,
             )
-            # The topology module deliberately returns "other" outside its configured chemistry.
-            # In that case preserve the general rule-based classifier.
+            # Fall back to element rules when the contact lies outside the configured topology chemistry.
             interaction = details["interaction_class"]
             if interaction == "other":
                 interaction = self._rule_classification(first, second, index1, index2)
@@ -142,9 +139,7 @@ class InteractionClassifier:
             }
 
         interaction = self._rule_classification(first, second, index1, index2)
-        # Never pretend that an X-X same/different-polyhedron split is known without a
-        # translation-aware topology. Legacy index grouping is retained only when the user
-        # explicitly configured it; otherwise an anion-anion rule should be named generically.
+        # Rule-only classification has no reconstructed distance or periodic connectivity.
         return {
             "interaction": interaction,
             "topology_source": "rules_only",

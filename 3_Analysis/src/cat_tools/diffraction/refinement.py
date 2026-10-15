@@ -1,8 +1,6 @@
 """Consolidate TOPAS Rietveld-refinement exports for CATPlot.
 
-The refinement command deliberately keeps TOPAS parsing on the scientific-tooling
-side.  CATPlot receives one ordinary CSV plus a portable recipe and does not need
-to know about ``.out``, TOPAS profile exports, or ``hklm_d_Th2_Ip`` files.
+Parse TOPAS ``.out``, profile and ``hklm_d_Th2_Ip`` files into a CSV table and a portable CATPlot recipe.
 """
 
 from __future__ import annotations

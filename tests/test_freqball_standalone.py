@@ -3,6 +3,7 @@
 import ast
 import importlib.util
 import os
+import shlex
 import shutil
 import site
 import subprocess
@@ -13,6 +14,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import yaml
 from cat_tools.freqball.io import read_tensor
 from cat_tools.freqball.workflow import run_workflow
 from test_freqball_migration import make_config
@@ -104,16 +106,30 @@ sys.meta_path.insert(0, NoCat())
             ):
                 invoke(script, "--help")
 
+            for command in (
+                "run",
+                "compute",
+                "analyze",
+                "plot",
+                "view",
+                "bvpa",
+                "families",
+                "mass-scan",
+            ):
+                invoke("FreqBallz.py", command, "--help")
             config = make_config(root)
+            document = yaml.safe_load(config.read_text())
+            document["projections"] = {"directions": {"x": [1, 0, 0]}}
+            config.write_text(yaml.safe_dump(document))
             run_workflow(config)
             expected = read_tensor(root / "freqball.h5")
             expected_tables = {p.name: pd.read_csv(p) for p in (root / "analysis").glob("*.csv")}
-            invoke("FreqBallz.py", config)
+            invoke("FreqBallz.py", "run", config)
             actual = read_tensor(root / "freqball.h5")
             np.testing.assert_allclose(actual.tensor, expected.tensor, atol=1e-12)
             for name, table in expected_tables.items():
                 pd.testing.assert_frame_equal(table, pd.read_csv(root / "analysis" / name))
-            invoke("FreqBallz.py", config, "--action", "analyze")
+            invoke("FreqBallz.py", "analyze", config)
             invoke(
                 "FreqPlot.py",
                 "fatband",
@@ -131,7 +147,8 @@ sys.meta_path.insert(0, NoCat())
 
             scan = root / "mass scan"
             invoke(
-                "FreqMassScan.py",
+                "FreqBallz.py",
+                "mass-scan",
                 "setup",
                 config,
                 "-o",
@@ -144,9 +161,36 @@ sys.meta_path.insert(0, NoCat())
             )
             script = next(scan.glob("*/run.sh")).read_text()
             self.assertIn(str(bundle / "FreqBallz.py"), script)
-            self.assertNotIn("cat-freqball", script)
-            invoke("FreqMassScan.py", "run", scan, "--workers", 2)
-            invoke("FreqMassScan.py", "collect", scan, "-o", root / "mass-analysis", "--workers", 2)
+            command = shlex.split(script.splitlines()[-1])
+            self.assertEqual(Path(command[0]).resolve(), Path(sys.executable).resolve())
+            self.assertEqual(command[1], str(bundle / "FreqBallz.py"))
+            invoke("FreqBallz.py", "mass-scan", "run", scan, "--workers", 2)
+            invoke(
+                "FreqBallz.py",
+                "mass-scan",
+                "collect",
+                scan,
+                "-o",
+                root / "mass-analysis",
+                "--workers",
+                2,
+            )
+            invoke(
+                "FreqBallz.py",
+                "plot",
+                "spectra",
+                root / "analysis/freqball_projection_spectra.csv",
+                "-o",
+                root / "projections.png",
+            )
+            invoke(
+                "FreqBallz.py",
+                "plot",
+                "mass-summary",
+                root / "mass-analysis/freqball_mass_projection_descriptors.csv",
+                "-o",
+                root / "mass-projections.png",
+            )
             invoke(
                 "FreqPlot.py",
                 "mass-summary",

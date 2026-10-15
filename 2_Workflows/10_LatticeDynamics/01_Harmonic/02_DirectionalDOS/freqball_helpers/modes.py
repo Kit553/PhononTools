@@ -8,11 +8,12 @@ import re
 from collections.abc import Callable, Sequence
 
 import numpy as np
-
 from .artifacts import TableArtifact
+
 from .phonopy_modes import ModeData, mode_artifact
 
 from .families import FamilySet
+from .named_projections import projection_metadata
 
 
 def _eigenvectors(values: np.ndarray, atom_count: int) -> np.ndarray:
@@ -65,6 +66,7 @@ def directional_mode_artifact(
     selected_atoms: Sequence[int],
     families: FamilySet,
     name: str | None = None,
+    projections=(),
 ) -> TableArtifact:
     """Add absolute and conditional local-family weights to a standard mode table."""
     if data.eigenvectors is None:
@@ -84,6 +86,7 @@ def directional_mode_artifact(
         symbols=symbols,
         masses=masses,
         include_participation_ratio=True,
+        projections=projections,
     )
     frame = base.data.copy()
     frame["mobile_participation"] = mobile.reshape(-1)
@@ -133,6 +136,7 @@ def directional_mode_artifact(
             **base.metadata,
             "selected_primitive_indices": selected.tolist(),
             "family_source": families.source,
+            "projections": projection_metadata(projections),
             "weight_definition": "sum_atoms(max_references(|direction dot eigenvector|^2))",
         },
     )

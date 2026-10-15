@@ -1,0 +1,30 @@
+# Geometrical example only: replace Na3PS4.cif with a validated relaxed scaffold.
+structure: Na3PS4.cif
+output: atomic-configurations
+id_prefix: atomic-cub
+methods: [enumerate]
+supercells: [[1, 1, 1]]
+pair_cutoff_A: 7.5
+max_raw: 10000
+seed: 42
+sublattices:
+  - name: Pn
+    elements: [P]
+    states: [P, Sb]
+    fractions: {P: 0.5, Sb: 0.5}
+  - name: X
+    elements: [S]
+    states: [S, Se]
+    fractions: {S: 0.5, Se: 0.5}
+# All four endmembers plus representative points across both independent axes.
+compositions:
+  - {Pn: {P: 1, Sb: 0}, X: {S: 1, Se: 0}}
+  - {Pn: {P: 1, Sb: 0}, X: {S: 0, Se: 1}}
+  - {Pn: {P: 0, Sb: 1}, X: {S: 1, Se: 0}}
+  - {Pn: {P: 0, Sb: 1}, X: {S: 0, Se: 1}}
+  - {Pn: {P: 0.5, Sb: 0.5}, X: {S: 1, Se: 0}}
+  - {Pn: {P: 0.5, Sb: 0.5}, X: {S: 0, Se: 1}}
+  - {Pn: {P: 1, Sb: 0}, X: {S: 0.5, Se: 0.5}}
+  - {Pn: {P: 0, Sb: 1}, X: {S: 0.5, Se: 0.5}}
+  - {Pn: {P: 0.5, Sb: 0.5}, X: {S: 0.5, Se: 0.5}}
+selection: {method: diverse, per_composition: 6}

@@ -1,7 +1,6 @@
 # Built-in plot reference
 
-This table is the stable overview. `catplot inspect TYPE` is the authoritative
-option reference generated from the installed code.
+This table is the stable overview. `catplot inspect TYPE` is the authoritative option reference generated from the installed code.
 
 | Type | Family | Required mappings | Optional mappings |
 |---|---|---|---|
@@ -34,21 +33,13 @@ option reference generated from the installed code.
 | `text` | Annotation | x, y, text | z |
 | `arrow` | Annotation | x, y, dx, dy | — |
 
-Aliases include `points`, `hist`, `kde`, `map`, `pcolormesh`, `streamplot`,
-`boxplot`, `colour-line`, and `reference-line`. Recipes are dumped with the name
-they received; prefer canonical names in long-lived files.
+Aliases include `points`, `hist`, `kde`, `map`, `pcolormesh`, `streamplot`, `boxplot`, `colour-line`, and `reference-line`. Recipes are dumped with the name they received; prefer canonical names in long-lived files.
 
 ## Selection guide
 
-- Use `line` for ordered curves and repeated y mappings for compact multi-series
-  panels. Use `colored-line` only when a continuous variable along a path is
-  part of the message.
-- Use `scatter` for measurements or encodings. A categorical marker column and
-  numeric colour column may be combined.
-- Use `band` for uncertainty bounds already present in the data; use `errorbar`
-  for pointwise errors.
-- Use `strip` for visible raw categorical observations; add `violin` or `box`
-  behind it when distribution shape or robust summaries help.
-- Use `heatmap` for scalar fields, optionally overlaid with `contour`. Use
-  `quiver` or `stream` for vector fields.
+- Use `line` for ordered curves and repeated y mappings for compact multi-series panels. Use `colored-line` only when a continuous variable along a path is part of the message.
+- Use `scatter` for measurements or encodings. A categorical marker column and numeric colour column may be combined.
+- Use `band` for uncertainty bounds already present in the data; use `errorbar` for pointwise errors.
+- Use `strip` for visible raw categorical observations; add `violin` or `box` behind it when distribution shape or robust summaries help.
+- Use `heatmap` for scalar fields, optionally overlaid with `contour`. Use `quiver` or `stream` for vector fields.
 - Use 3D plots only in a panel whose `projection` is `3d`.

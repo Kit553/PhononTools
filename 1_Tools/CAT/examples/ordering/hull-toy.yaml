@@ -1,0 +1,11 @@
+# SYNTHETIC test energies, not DFT results or predictions for Na3PnX4.
+mode: mixing
+output: toy-hull
+terminal_ids: [PS, PSe, SbS, SbSe]
+entries:
+  - {id: PS, composition: Na3PS4, energy_eV: -8, energy_model: synthetic-demo, converged: true}
+  - {id: PSe, composition: Na3PSe4, energy_eV: -8, energy_model: synthetic-demo, converged: true}
+  - {id: SbS, composition: Na3SbS4, energy_eV: -8, energy_model: synthetic-demo, converged: true}
+  - {id: SbSe, composition: Na3SbSe4, energy_eV: -8, energy_model: synthetic-demo, converged: true}
+  - {id: mixed-low, composition: Na6PSbS4Se4, energy_eV: -18, energy_model: synthetic-demo, converged: true}
+  - {id: mixed-high, composition: Na6PSbS4Se4, energy_eV: -17, energy_model: synthetic-demo, converged: true}

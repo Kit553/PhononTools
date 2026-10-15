@@ -31,6 +31,7 @@ IMPORTS = {
     "cat_prepare.mass_scan": ".mass_setup",
     "cat_tools.phonopy.input": ".phonopy_input",
     "cat_tools.phonopy.modes": ".phonopy_modes",
+    "cat_tools.phonopy.projections": ".projections",
     "cat_tools.phonovis.layers": ".layers",
     "cat_tools.phonovis.render3d": ".render3d",
 }

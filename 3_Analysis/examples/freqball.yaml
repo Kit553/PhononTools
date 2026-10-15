@@ -10,6 +10,19 @@ system:
 atoms:
   elements: [Na]
 
+# One definition feeds named spectra, descriptors, and *_participation fatband
+# columns. Selections are restricted to the atoms stored above. Bare vectors are
+# Cartesian; fractional means a direct-lattice axis; miller means a plane normal.
+projections:
+  elements: true
+  sites: false
+  directions:
+    x: [1, 0, 0]
+    y: [0, 1, 0]
+    z: [0, 0, 1]
+    c_axis: {fractional: [0, 0, 1]}
+    ab_normal: {miller: [0, 0, 1]}
+
 spectrum:
   mesh: [21, 21, 21]
   frequency_range_THz: [0, 15]

@@ -1,0 +1,50 @@
+name: CAT tests and package
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.12", "3.13"]
+    env:
+      PYVISTA_OFF_SCREEN: "true"
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.20"
+          python-version: ${{ matrix.python }}
+          enable-cache: true
+      - name: Install locked dependencies
+        run: uv sync --locked --extra structure --extra bonding --extra ordering --extra visualization
+      - name: Check dependencies and run tests
+        run: |
+          uv pip check --python .venv/bin/python
+          uv run --no-sync python -m unittest discover -s tests -v
+      - name: Build release artifacts
+        env:
+          SETUPTOOLS_SCM_PRETEND_VERSION_FOR_CAT_TOOLING: "0.1.0"
+        run: uv build
+      - name: Check installed wheel outside checkout
+        run: |
+          uv pip install --python .venv/bin/python --no-deps --reinstall dist/*.whl
+          cat_venv="$PWD/.venv"
+          cd "$RUNNER_TEMP"
+          "$cat_venv/bin/cat-tools" --version
+          "$cat_venv/bin/cat-prepare" --version
+          "$cat_venv/bin/cat-tools" phono3py sample --help
+          "$cat_venv/bin/cat-tools" phono3py audit --help
+          "$cat_venv/bin/cat-freqball" --help
+          "$cat_venv/bin/cat-freqball" plot --help
+          "$cat_venv/bin/cat-freqball" mass-scan setup --help

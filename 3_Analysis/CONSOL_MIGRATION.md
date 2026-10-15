@@ -1,4 +1,4 @@
-> Historical notes copied from consol. See [the current migration map](../MIGRATION.md) for this repository’s layout.
+> Historical notes copied from consol.
 
 # Migration map
 
@@ -67,4 +67,4 @@ The original scripts remain reference material and are not imported by the new p
 - `thermal`: WIP core migrated; PPMS parsing and two-channel conductivity fit
 - `impedance`: WIP core migrated; RelaxIS one/two-process parsing and Arrhenius fits
 - `diffraction`: XRD/PDF processing, amorphous content, and LaTeX tables
-- `convergence`: ENCUT, k-point, smearing, and related SI diagnostics
+- `convergence`: `ENCUT`, k-point, smearing, and related SI diagnostics

@@ -71,9 +71,7 @@ grid_path: null
 #     - [[0.5, 0, 0], [0.5, 0.5, 0]]
 #   labels: [GAMMA, X, M]
 
-# Optional visual spectral function on the exact mesh path. This deliberately emits
-# a RuntimeWarning: independent Lorentzians are only a qualitative representation,
-# especially where adjacent linewidths overlap.
+# Optional Lorentzian spectrum on the exact mesh path. Emits RuntimeWarning because independent peaks do not describe mode mixing.
 lorentzian: null
 # lorentzian:
 #   name: lorentzian_band

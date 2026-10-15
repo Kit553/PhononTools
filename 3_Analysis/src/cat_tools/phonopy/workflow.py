@@ -1,4 +1,4 @@
-"""A deliberately small YAML-to-Phonopy workflow."""
+"""Run Phonopy calculations configured in YAML."""
 
 from __future__ import annotations
 

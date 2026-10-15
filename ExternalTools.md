@@ -3,8 +3,7 @@ It is recommended to set up a `bin/` folder containing the necessary files on th
 
 ### ALAMODE
 
-ALAMODE is used for harmonic and anharmonic lattice-dynamics workflows,
-including force-constant extraction and anharmonic phonon-property analysis.
+ALAMODE is used for harmonic and anharmonic lattice-dynamics workflows, including force-constant extraction and anharmonic phonon-property analysis.
 
 - Project: ALAMODE
 - Upstream repository: <https://github.com/ttadano/alamode>
@@ -25,8 +24,7 @@ These are the implementation of COHP and electronic DOS calculations.
 
 ### ModeMap
 
-ModeMap is used for mapping potential-energy surfaces along selected phonon
-modes, especially nice for soft-mode or anharmonic-mode analysis.
+ModeMap is used for mapping potential-energy surfaces along selected phonon modes, especially nice for soft-mode or anharmonic-mode analysis.
 
 - Project: ModeMap
 - Upstream repository: <https://github.com/JMSkelton/ModeMap>
@@ -37,8 +35,7 @@ modes, especially nice for soft-mode or anharmonic-mode analysis.
 
 ### PhonoPy
 
-PhonoPy is used as a finite displacement method implementation, it is the base for any
-harmonic phonon calculaiton.
+PhonoPy is used as a finite displacement method implementation, it is the base for any harmonic phonon calculaiton.
 
 - Project: PhonoPy
 - Upstream repository: <https://github.com/phonopy/phonopy/tree/master>
@@ -49,8 +46,7 @@ harmonic phonon calculaiton.
 
 ### Phono3Py
 
-Phono3Py is the finite displacement implementation up to third order force constants,
-wrappers for workflow and analysis are provided here.
+Phono3Py is the finite displacement implementation up to third order force constants, wrappers for workflow and analysis are provided here.
 
 - Project: Phono3Py
 - Upstream repository: <https://github.com/phonopy/phono3py>

@@ -4,7 +4,7 @@
 Runs with the adjacent freqball_helpers directory; no CAT installation is needed.
 """
 
-from freqball_helpers.workflow import main
+from freqball_helpers.cli import main
 
 if __name__ == "__main__":
     main()

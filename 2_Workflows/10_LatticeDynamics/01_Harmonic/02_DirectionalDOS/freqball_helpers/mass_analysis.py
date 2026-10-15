@@ -16,6 +16,7 @@ from .artifacts import TableArtifact
 from .analysis import descriptor_artifact, family_spectra_artifact, spectral_descriptors
 from .families import FamilySet, direction_grid, load_families
 from .io import TensorResult, read_tensor
+from .named_projections import projection_artifacts, projection_metadata, resolve_projections
 from .tensor import directional_spectra
 
 
@@ -57,6 +58,15 @@ def _mass(result: TensorResult, species: str) -> float:
     return float(selected[0])
 
 
+def _projections(result):
+    return resolve_projections(
+        result.metadata.get("effective_configuration", {}).get("projections"),
+        symbols=result.structure_symbols or result.symbols,
+        selected=result.primitive_indices,
+        lattice=result.lattice,
+    )
+
+
 def load_mass_points(
     paths: Sequence[str | Path], species: str, families: str | Path | None = None
 ) -> tuple[MassPoint, ...]:
@@ -80,8 +90,11 @@ def load_mass_points(
     if not selected:
         raise ValueError("No mass points supplied")
     reference = selected[0].result
+    reference_projections = projection_metadata(_projections(reference))
     for point in selected[1:]:
         current = point.result
+        if projection_metadata(_projections(current)) != reference_projections:
+            raise ValueError(f"{point.path}: named projections differ across mass points")
         if (
             current.system != reference.system
             or current.mesh != reference.mesh
@@ -240,7 +253,7 @@ def mass_scan_artifacts(
         "low_frequency_cutoff_THz": settings.low_frequency_cutoff_THz,
         "inverse_frequency_floor_THz": settings.inverse_frequency_floor_THz,
     }
-    return [
+    output = [
         TableArtifact(
             "freqball_mass_directions",
             direction_table,
@@ -305,3 +318,32 @@ def mass_scan_artifacts(
             common_metadata,
         ),
     ]
+    named = [
+        projection_artifacts(
+            point.result,
+            _projections(point.result),
+            low_cutoff=settings.low_frequency_cutoff_THz,
+            inverse_floor=settings.inverse_frequency_floor_THz,
+        )
+        for point in points
+    ]
+    definitions = [projection_metadata(_projections(point.result)) for point in points]
+    if any(value != definitions[0] for value in definitions[1:]):
+        raise ValueError("Named projections differ across mass points")
+    for index, first in enumerate(named[0]):
+        output.append(
+            TableArtifact(
+                first.name.replace("freqball_", "freqball_mass_", 1),
+                pd.concat(
+                    [
+                        _tag(group[index].data, point, species)
+                        for point, group in zip(points, named, strict=True)
+                    ],
+                    ignore_index=True,
+                ),
+                ("system", "mass_species", "mass_u", *first.keys),
+                {"mass_u": "u", **first.units},
+                {**common_metadata, **first.metadata},
+            )
+        )
+    return output

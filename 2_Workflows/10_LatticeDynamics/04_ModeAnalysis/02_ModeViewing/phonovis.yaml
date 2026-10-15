@@ -1,0 +1,109 @@
+# One configuration serves both interactive exploration and deterministic export.
+system:
+  path: ../harmonic
+  name: example
+  phonopy_yaml: phonopy_disp.yaml
+  force_sets: FORCE_SETS
+  # born: BORN
+
+# Zero-based band indices match Phonopy and the canonical CATPlot mode tables.
+mode:
+  qpoint: [0.0, 0.0, 0.0]
+  band: 3
+
+scene:
+  repeat: [2, 2, 2]
+  # Set true to derive the smallest axis-aligned phase-periodic repeat from q.
+  repeat_from_qpoint: false
+  max_denominator: 24
+  amplitude_A: 0.6
+  mass_weighting: true
+  normalization: max
+  arrow_scale: 1.0
+  hide_below: 0.02
+  show_arrows: true
+  show_cell: true
+  show_labels: false
+  show_axes: false
+  show_legend: true
+  show_title: true
+  boundary_images: true
+  view: iso
+  atom_radius_A: 0.28
+  atom_scale: {Na: 1.1}
+  atom_colors: {}
+
+  # Periodic neighbors are found by Pymatgen, including across cell boundaries.
+  bonds:
+    - elements: [Na, S]
+      cutoff_A: 3.2
+      color: "#777777"
+      width: 1.2
+      opacity: 0.72
+
+  # Uncomment and adapt to render complete periodic coordination polyhedra.
+  # polyhedra:
+  #   - center: P
+  #     ligand: S
+  #     cutoff_A: 2.6
+  #     neighbors: 4
+  #     color: "#F0A000"
+  #     edge_color: "#765000"
+  #     opacity: 0.22
+
+explore:
+  # dashboard: clickable dispersion + DOS + embedded animated mode
+  # mode: explicit q-point in `mode`, shown in the selected 3D viewer
+  kind: dashboard
+  viewer: pyvista
+  initial_q_index: 0
+  animation_interval_ms: 80
+  dispersion:
+    # Example path only: replace it for your primitive cell.
+    paths: [[[0, 0, 0], [0.5, 0, 0]]]
+    labels: [GAMMA, X]
+    npoints: 101
+    band_connection: true
+    color_by: Na_participation
+    color_map: viridis
+    # For a FreqBall-coloured dispersion, use the identical path sampling and:
+    # color_by: direction_score
+    # color_map: coolwarm
+    # color_range: [-1, 1]
+    # color_label: Conduction minus tetrahedral direction fraction
+    # joins:
+    #   - path: ../freqball-analysis/freqball_band_modes.csv
+    #     columns: [direction_score]
+    #     require_complete: true
+    projections:
+      elements: true
+      sites: false
+  dos:
+    mesh: [21, 21, 21]
+    sigma: 0.05
+    tetrahedron: false
+    projections:
+      elements: true
+
+export:
+  directory: ../phonovis-export
+  # Matplotlib is deterministic/headless. PyVista enables sphere-based PNG or
+  # GL2PS PDF/SVG output; use raster: false below for actual vector geometry.
+  backend: matplotlib
+  formats: [pdf, svg]
+  width_in: 6.0
+  dpi: 300
+  transparent: true
+  # window_size: [1600, 1600]  # PyVista only
+  # scale: 1                   # PyVista PNG only
+  # raster: false              # PyVista PDF/SVG only
+  gif:
+    enabled: true
+    backend: matplotlib
+    frames: 36
+    fps: 12
+    arrows: false
+    dpi: 160
+  vmd:
+    enabled: true
+    frames: 36
